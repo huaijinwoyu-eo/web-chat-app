@@ -1,0 +1,1633 @@
+/*全局定义*/
+body, html, div, blockquote, img, label, p, h1, h2, h3, h4, h5, h6, pre, ul, ol, li, dl, dt, dd, form, a, fieldset, input, th, td, table {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    font-family: "microsoft YaHei";
+}
+
+body {
+    font-size: 14px;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+img {
+    border: 0 none;
+    vertical-align: top;
+}
+
+i, span {
+    font-style: normal;
+}
+
+button {
+    cursor: pointer;
+}
+
+/*public common style*/
+table, th, td {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+a {
+    text-decoration: none;
+    font-family: "microsoft YaHei";
+    color: #333;
+}
+
+a:hover {
+    color: #0069b8;
+}
+
+ul, li {
+    list-style: none;
+}
+
+em, var {
+    font-style: normal;
+}
+
+/* 定义块位置浮动左右浮动 及清除浮动 */
+.fl {
+    display: inline;
+    float: left;
+}
+
+.fr {
+    display: inline;
+    float: right;
+}
+
+.cl {
+    clear: both;
+}
+
+/*定义全局段落行高*/
+p {
+    line-height: 24px;
+    /*text-indent:2em;*/
+}
+
+/*定义字体正常*/
+.n {
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*定义字体加粗*/
+.b {
+    font-weight: bold;
+}
+
+/* 字体对齐方式：中间。左右 */
+.tc {
+    text-align: center;
+}
+
+.tr {
+    text-align: right;
+}
+
+.tl {
+    text-align: left;
+}
+
+.auto0 {
+    margin: 0 auto;
+}
+
+/* 字体排版 */
+.fyh {
+    font-family: "Microsoft YaHei"
+}
+
+.fst {
+    font-family: simSun
+}
+
+.wh {
+    color: white;
+}
+
+.f12 {
+    font-size: 12px;
+}
+
+.f14 {
+    font-size: 14px;
+}
+
+.f16 {
+    font-size: 16px;
+}
+
+.f20 {
+    font-size: 20px;
+}
+
+.f22 {
+    font-size: 22px;
+}
+
+.f24 {
+    font-size: 24px;
+}
+
+.fb {
+    font-weight: bold;
+}
+
+.fn {
+    font-weight: normal;
+}
+
+.t2 {
+    text-indent: 2em;
+}
+
+.t0 {
+    text-indent: 0em;
+}
+
+/* 边距 */
+
+.m0 {
+    margin: 0 auto;
+}
+
+/* 边距 */
+.m10 {
+    margin: 10px;
+}
+
+.m15 {
+    margin: 15px;
+}
+
+.mt5 {
+    margin-top: 5px;
+}
+
+.mt10 {
+    margin-top: 10px;
+}
+
+.mt15 {
+    margin-top: 15px;
+}
+
+.mt20 {
+    margin-top: 20px;
+}
+
+.mr5 {
+    margin-right: 5px;
+}
+
+.mr10 {
+    margin-right: 10px;
+}
+
+.mr15 {
+    margin-right: 15px;
+}
+
+.mr20 {
+    margin-right: 20px;
+}
+
+.mb5 {
+    margin-bottom: 5px;
+}
+
+.mb10 {
+    margin-bottom: 10px;
+}
+
+.mb15 {
+    margin-bottom: 15px;
+}
+
+.mb20 {
+    margin-bottom: 20px;
+}
+
+.mb20sub li {
+    margin-bottom: 20px;
+}
+
+.ml5 {
+    margin-left: 5px;
+}
+
+.ml10 {
+    margin-left: 10px;
+}
+
+.ml15 {
+    margin-left: 15px;
+}
+
+.ml20 {
+    margin-left: 20px;
+}
+
+.ml30 {
+    margin-left: 30px;
+}
+
+.ml40 {
+    margin-left: 40px;
+}
+
+.p10 {
+    padding: 10px;
+}
+
+.p15 {
+    padding: 15px;
+}
+
+.p20 {
+    padding: 20px;
+}
+
+.pt5 {
+    padding-top: 5px;
+}
+
+.pt10 {
+    padding-top: 10px;
+}
+
+.pt15 {
+    padding-top: 15px;
+}
+
+.pt20 {
+    padding-top: 20px;
+}
+
+.pr5 {
+    padding-right: 5px;
+}
+
+.pr10 {
+    padding-right: 10px;
+}
+
+.pr15 {
+    padding-right: 15px;
+}
+
+.pr20 {
+    padding-right: 20px;
+}
+
+.pb5 {
+    padding-bottom: 5px;
+}
+
+.pb10 {
+    padding-bottom: 10px;
+}
+
+.pb15 {
+    padding-bottom: 15px;
+}
+
+.pb20 {
+    padding-bottom: 20px;
+}
+
+.pl5 {
+    padding-left: 5px;
+}
+
+.pl10 {
+    padding-left: 10px;
+}
+
+.pl15 {
+    padding-left: 15px;
+}
+
+.pl20 {
+    padding-left: 20px;
+}
+
+/* 定义块位置相对、绝对*/
+.rel {
+    position: relative;
+}
+
+.abs {
+    position: absolute;
+}
+
+/*定义块的顺序 只有div为absolute 才可用*/
+.zx1 {
+    z-index: 1;
+}
+
+.zx2 {
+    z-index: 2;
+}
+
+/*div 是行内样式 ，为块状样式*/
+.dn {
+    display: none;
+}
+
+.db {
+    display: block;
+}
+
+/*行内块状*/
+.dib {
+    -moz-inline-stack: inline-block;
+    display: inline-block;
+}
+
+.di {
+    display: inline;
+}
+
+.ovh {
+    overflow: hidden;
+}
+
+.ova {
+    overflow: auto;
+}
+
+.ovv {
+    overflow: visible;
+}
+
+/* 高度 */
+
+.lh24 {
+    line-height: 24px;
+}
+
+.h22 {
+    height: 22px;
+}
+
+.h24 {
+    height: 24px;
+}
+
+.h26 {
+    height: 26px;
+}
+
+.h32 {
+    height: 32px;
+}
+
+.lh24 {
+    height: 24px;
+    line-height: 24px;
+}
+
+.z {
+    _zoom: 1;
+}
+/* 超出隐藏并显示省略号*/
+.ellipsis{
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 清除浮动类 */
+.clearfix:after {
+    clear: both;
+    content: ".";
+    display: block;
+    font-size: 0;
+    height: 0;
+    visibility: hidden;
+}
+
+.clearfix {
+    display: block;
+}
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    padding: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+a {
+    cursor: pointer;
+}
+
+a[disabled=disabled] {
+    cursor: text;
+}
+
+.hidden {
+    display: none;
+}
+
+td .wrap {
+    margin: 0 auto;
+    width: 90%;
+    word-break: break-all;
+}
+
+.container {
+    width: 1366px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/*分页*/
+.pageList {
+    margin-top: 10px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.pageList span.isNow, .pageList a.isNow {
+    background: #1375cc none repeat scroll 0 0;
+    color: #fff;
+}
+
+.pageList span.isNow:hover {
+    background: #1375cc none repeat scroll 0 0;
+    color: #fff;
+}
+
+.pageList span, .pageList a {
+    border: 1px solid #e2e2e2;
+    color: #666;
+    cursor: pointer;
+    display: inline-block;
+    font: 12px/30px "Microsoft YaHei";
+    height: 30px;
+    margin-right: 5px;
+    text-align: center;
+    width: 30px;
+}
+
+.pageList a:hover {
+    background-color: #ddd;
+}
+
+.pageList span.red {
+    border: medium none;
+    color: red;
+}
+
+.pageList span a {
+    display: inline-block;
+    width: 24px;
+}
+
+.pageList span:hover {
+    background: #ddd none repeat scroll 0 0;
+    color: #111;
+}
+
+.pageList .Disabled a {
+    width: 60px;
+}
+
+.pageList a.Disabled {
+    color: #999;
+    width: 60px;
+    cursor: text;
+    background-color: #fff;
+}
+
+/*分页结束*/
+/*table相关*/
+
+.table-normal {
+    width: 100%;
+    vertical-align: middle;
+    text-align: center;
+    color: #333;
+}
+
+.table-normal input[type=text], .table-normal input[type=password], .item input[type=text] {
+    height: 26px;
+    line-height: 26px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.table-normal input[type=text] {
+    text-indent: 5px;
+    transition: all 0.3s ease 0s;
+}
+
+.table-normal select {
+    height: 28px;
+    line-height: 28px;
+    font-size: 14px;
+}
+
+.table-normal textarea {
+    width: 99.5%;
+    resize: none;
+    border: 1px solid #aaa;
+    font-size: 13px;
+}
+
+.table-normal.table-simple th {
+    font-weight: bold;
+    line-height: 20px;
+    height: 20px;
+}
+
+.table-normal.table-simple td {
+    line-height: 20px;
+    height: 20px;
+}
+
+.table-normal th, .table-normal td {
+    height: 28px;
+    font-weight: normal;
+    padding: 2px 5px;
+}
+
+.th-grey th {
+    background-color: #e6f1fd;
+    color: #111;
+}
+
+.th-grey th, .th-grey td {
+    height: 32px;
+    padding: 1px 5px 1px;
+    border: 1px solid #d3e1ea;
+}
+
+.th-grey-1 th {
+    color: #000;
+    background-color: #e2efda;
+}
+
+.th-grey-1 th, .th-grey-1 td {
+    border: 1px solid #70ad47;
+}
+
+.th-right th {
+    text-align: right;
+}
+
+.td-left td {
+    text-align: left;
+}
+
+td.img {
+    text-align: center;
+}
+
+td.img span.title {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+    width: 200px;
+}
+
+td.img img {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+td.left {
+    text-align: left;
+}
+
+.table-normal label.tips {
+    font-size: 12px;
+}
+
+.table-normal.th-right .table-center th {
+    text-align: center;
+}
+
+.radio-control {
+    vertical-align: middle;
+    margin-right: 3px;
+    margin-left: 10px;
+}
+
+/*table相关 end*/
+/*公告栏开始*/
+
+.c-notice {
+    height: 29px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.c-notice a {
+    color: #333;
+}
+
+.c-notice .c-n-l {
+    display: block;
+    float: left;
+    background: url(../images/noticeleft.gif) 0 0 no-repeat;
+    width: 48px;
+    height: 31px;
+    color: #fff;
+    font: normal 12px/31px "Microsoft yahei", "微软雅黑";
+    padding-left: 4em;
+    position: relative;
+    top: -1px;
+}
+
+.c-notice ul {
+    display: block;
+    float: left;
+    /*height: 29px;*/
+    overflow: hidden;
+    width: 6000px;
+}
+
+.c-notice ul li {
+    height: 29px;
+    width: 600px;
+    float: left;
+}
+
+.c-n-c {
+    display: block;
+    float: left;
+    height: 29px;
+    overflow: hidden;
+    width: 600px;
+}
+
+.c-notice ul li b {
+    width: 3px;
+    height: 3px;
+    background: #005b01;
+    margin: 14px 5px 14px 10px;
+    display: block;
+    float: left;
+    *zoom: 1;
+    *display: inline;
+}
+
+.c-notice ul li a {
+    display: block;
+    color: #333;
+    line-height: 31px;
+    float: left;
+    width: 580px;
+    overflow: hidden;
+    font-size: 12px;
+    *zoom: 1;
+    *display: inline;
+}
+
+.c-notice .c-n-r {
+    display: block;
+    float: right;
+    width: 40px;
+    height: 29px;
+    line-height: 30px;
+    padding-left: 1em;
+}
+
+/*公告栏结束*/
+/*提示栏*/
+
+.blue-tips {
+    background-color: #e6f1fd;
+    border: 1px solid #80bdfa;
+    color: #333;
+    font-size: 12px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.blue-tips .title {
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.org-tips {
+    border: 1px solid #ffb027;
+    background-color: #fff5d1;
+    padding: 10px;
+    font-size: 12px;
+    color: #333;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/*实心正方形列表*/
+ul.square li {
+    font-size: 10px;
+    line-height: 22px;
+    list-style: inside none square;
+}
+
+ul.square li span {
+    font-size: 12px;
+}
+
+ul.square li a {
+    font-size: 12px;
+}
+
+/*空心圆列表*/
+ul.circle li {
+    font-size: 10px;
+    line-height: 22px;
+    list-style: inside none circle;
+}
+
+ul.circle li span {
+    font-size: 12px;
+}
+
+ul.circle li a {
+    font-size: 12px;
+}
+
+/*实心圆列表*/
+ul.dot li {
+    font-size: 10px;
+    line-height: 22px;
+    list-style: inside none disc;
+}
+
+ul.dot li span {
+    font-size: 12px;
+}
+
+ul.dot li a {
+    font-size: 12px;
+}
+
+/*提示栏 end*/
+.list-inline::after {
+    clear: both;
+    content: "";
+    display: block;
+}
+
+.list-inline li {
+    float: left;
+    display: inline-block;
+}
+
+.list-inline dt {
+    float: left;
+    display: inline-block;
+}
+
+.list-inline dd {
+    float: left;
+    display: inline-block;
+}
+
+/*btn start*/
+a[class*=btn-][disabled=disabled], *[class*=btn-][disabled=disabled] {
+    color: #666;
+    background: #ccc;
+    cursor: text;
+}
+
+/*蓝色按钮*/
+.btn-blue-1, a.btn-blue-1 {
+    display: inline-block;
+    padding: 3px 15px;
+    color: white;
+    background-color: #1caaea;
+    border: 1px solid #1caaea;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+}
+
+.btn-blue-1.small, a.btn-blue-1.small {
+    padding: 3px 10px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.btn-blue-1.big, a.btn-blue-1.big {
+    padding: 3px 20px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.btn-blue-2, a.btn-blue-2 {
+    display: inline-block;
+    padding: 3px 15px;
+    border-radius: 5px;
+    background-color: #7bb7f6;
+    border: 1px solid #7bb7f6;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+}
+
+.btn-blue-2.small, a.btn-blue-2.small {
+    padding: 3px 10px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.btn-blue-2.big, a.btn-blue-2.big {
+    padding: 3px 20px;
+    height: 30px;
+    line-height: 30px;
+}
+.btn-blue-3, a.btn-blue-3 {
+    display: inline-block;
+    padding: 3px 15px;
+    border-radius: 5px;
+    background: #0094e0;
+    border: 1px solid #0094e0;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+}
+
+.btn-blue-3.small, a.btn-blue-3.small {
+    padding: 3px 10px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.btn-blue-3.big, a.btn-blue-3.big {
+    padding: 3px 20px;
+    height: 30px;
+    line-height: 30px;
+}
+
+.btn-blue-4, a.btn-blue-4 {
+    display: inline-block;
+    padding: 3px 15px;
+    background-color: #ddf1fc;
+    border: 1px solid #159aff;
+    border-radius: 5px;
+    cursor: pointer;
+    color: #159aff;
+    text-decoration: none;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+}
+
+.btn-blue-4.small, a.btn-blue-4.small {
+    padding: 3px 10px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.btn-blue-4.big, a.btn-blue-4.big {
+    padding: 3px 20px;
+    height: 30px;
+    line-height: 30px;
+}
+
+
+/*绿色按钮*/
+.btn-gre-1, a.btn-gre-1 {
+    display: inline-block;
+    padding: 3px 15px;
+    border-radius: 4px;
+    background: #8ec65b;
+    border: 1px solid #8ec65b;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+}
+
+.btn-gre-1.small, a.btn-gre-1.small {
+    padding: 3px 10px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.btn-gre-1.big, a.btn-gre-1.big {
+    padding: 3px 20px;
+    height: 30px;
+    line-height: 30px;
+}
+
+
+.btn-gre-2, a.btn-gre-2 {
+    display: inline-block;
+    padding: 3px 15px;
+    border-radius: 3px;
+    background: #55b537;
+    border: 1px solid #55b537;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+}
+
+.btn-gre-2.small, a.btn-gre-2.small {
+    padding: 3px 10px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.btn-gre-2.big, a.btn-gre-2.big {
+    padding: 3px 20px;
+    height: 30px;
+    line-height: 30px;
+}
+
+/*橙色按钮*/
+.btn-org-1, a.btn-org-1 {
+    display: inline-block;
+    padding: 3px 15px;
+    border-radius: 4px;
+    background: #ffa10f;
+    border: 1px solid #ffa10f;
+    color: #fff;
+    cursor: pointer;
+    text-decoration: none;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    height: 25px;
+    line-height: 25px;
+    font-size: 14px;
+}
+
+.btn-org-1.small, a.btn-org-1.small {
+    padding: 3px 10px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.btn-org-1.big, a.btn-org-1.big {
+    padding: 3px 20px;
+    height: 30px;
+    line-height: 30px;
+}
+
+
+
+/*字体加粗*/
+*[class*=btn-].bold {
+    font-weight: bold;
+}
+
+*[class*=btn-]:hover {
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+}
+
+/*btn end*/
+
+/*pic-hover*/
+.pic-hover {
+    width: auto;
+    overflow: hidden;
+}
+
+.pic-hover a {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.pic-hover i {
+    position: absolute;
+    padding: 0px 4px;
+    height: auto;
+    width: auto;
+    font-style: normal;
+    top: 0;
+    left: 0;
+    background: green;
+    color: #fff;
+    line-height: 20px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.pic-hover a img {
+    height: 100%;
+    width: 100%;
+}
+
+.center {
+    margin: 0 auto;
+}
+
+.pic-hover li {
+    height: 158px;
+    /*高度可以自定义*/
+    list-style: outside none none;
+    margin-right: 18px;
+    /*具体布局时，适当调整*/
+    width: 210px;
+    /*宽度也可以自定义*/
+}
+
+.trans-title {
+    background: rgba(0, 0, 0, 0) url('../images/pichover/transImg.png') repeat-x scroll 0 0;
+    bottom: 0;
+    color: #fff;
+    display: block;
+    height: 40px;
+    line-height: 40px;
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    -moz-transition: bottom 0.4s linear 0.1s;
+    -webkit-transition: bottom 0.4s linear 0.1s;
+    -o-transition: bottom 0.4s linear 0.1s;
+    transition: bottom 0.4s linear 0.1s;
+}
+
+.pic-hover a[name="video"] .trans-title::before {
+    background: url("../images/base/video.png") no-repeat 3px 21px;
+    content: " ";
+    display: inline-block;
+    height: 40px;
+    position: absolute;
+    right: 0;
+    width: 25px;
+}
+
+.pic-hover a[name="picture"] .trans-title::before {
+    background: url("../images/base/picture.png") no-repeat 3px 21px;
+    content: " ";
+    display: inline-block;
+    height: 40px;
+    position: absolute;
+    right: 0;
+    width: 25px;
+}
+
+a:hover .trans-title {
+    bottom: -100%;
+}
+
+.trans-title span {
+    display: table-cell;
+    font-size: 12px;
+    height: 40px;
+    line-height: 1.3;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+.shadow-big {
+    background: rgba(0, 0, 0, 0) url("../images/pichover/trans50.png") repeat scroll 0 0;
+    bottom: -100%;
+    color: #fff;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+    -moz-transition: bottom 0.4s linear 0.1s;
+    -webkit-transition: bottom 0.4s linear 0.1s;
+    -o-transition: bottom 0.4s linear 0.1s;
+    transition: bottom 0.4s linear 0.1s;
+}
+
+a:hover .shadow-big {
+    bottom: 0%;
+}
+
+.shadow-inner {
+    height: 80%;
+    margin: 20px auto;
+    width: 90%;
+}
+
+.shadow-inner h1 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.shadow-inner p {
+    font-size: 12px;
+    text-indent: 2em;
+}
+
+/*pic-hover end*/
+/*各种提示信息*/
+.tips-info {
+    display: inline-block;
+    color: #333;
+    font-size: 12px;
+    padding: 2px 5px 2px 20px;
+    border: 1px solid #5bc0de;
+    /*background-color: #dffcff;*/
+    background-image: url("../images/base/info.png");
+    background-repeat: no-repeat;
+    background-position: 3px 3px;
+}
+
+.tips-info.no-icon {
+    padding: 2px 5px;
+    background-image: none;
+}
+
+.tips-error {
+    display: inline-block;
+    color: #333 ;
+    font-size: 12px;
+    padding: 2px 5px 2px 20px;
+    border: 1px solid #d9534f;
+    /*background-color: #ffd3c5;*/
+    background-image: url("../images/base/error.png");
+    background-repeat: no-repeat;
+    background-position: 3px 3px;
+}
+
+.tips-error.no-icon {
+    padding: 2px 5px;
+    background-image: none;
+}
+
+.tips-warning {
+    display: inline-block;
+    color: #333;
+    font-size: 12px;
+    padding: 2px 5px 2px 20px;
+    border: 1px solid #f0ad4e;
+    /*  background-color: #ffebb6;*/
+    background-image: url("../images/base/warning.png");
+    background-repeat: no-repeat;
+    background-position: 3px 3px;
+}
+
+.tips-warning.no-icon {
+    padding: 2px 5px;
+    background-image: none;
+}
+
+.tips-success {
+    display: inline-block;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 5px 2px 20px;
+    border: 1px solid #fff;
+    background-color: #fff;
+    background-image: url("../images/base/success.png");
+    background-repeat: no-repeat;
+    background-position: 3px 3px;
+}
+
+.tips-success.no-icon {
+    padding: 2px 5px;
+    background-image: none;
+}
+
+/*提示信息 end*/
+
+/*文章、评论及相关 部分css*/
+.article-detail {
+    width: 100%;
+    height: auto;
+}
+
+.left-content {
+    width: 75%;
+    float: left;
+    background: #ffffff;
+    border: 1px solid #CCCCCC;
+    padding: 10px;
+}
+
+.right-list {
+    width: 20%;
+    float: right;
+    border: 1px solid #CCCCCC;
+
+}
+
+.news-detail .info {
+    border-bottom: 1px solid #ccc;
+}
+
+.news-detail .info dd {
+    padding-right: 20px;
+}
+
+.news-detail .info .fa {
+    color: #888;
+    font-size: 16px;
+}
+
+.news-detail .info .fa:hover {
+    color: #02A5E8;
+}
+
+.news-addon {
+    margin-top: 50px;
+}
+
+.news-addon .news-tags a {
+    display: inline-block;
+    padding: 5px 8px;
+    background: #ddd;
+    margin-left: 10px;
+}
+
+.news-addon .news-tags a.cur {
+    background: #0f75bd;
+    color: #fff;
+}
+
+.news-preNext {
+    background: #f9f9f9;
+    border: 1px solid #DCDCDC;
+    padding: 10px;
+    text-align: left;
+    line-height: 27px;
+}
+
+.news-preNext a {
+    display: block;
+}
+
+.news-preNext a i {
+    display: block;
+    color: #aaa;
+}
+
+.news-preNext a span {
+    margin-left: 60px;
+    float: none;
+    display: block;
+    max-height: 54px;
+    overflow: hidden;
+    /*overflow: hidden;*/
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+}
+
+.news-comment .info {
+    border-bottom: 1px solid #b8b8b8;
+    color: #373737;
+    font-size: 16px;
+    height: 32px;
+    line-height: 32px;
+    margin-bottom: 20px;
+    position: relative;
+    text-align: left;
+}
+
+.news-comment .info span {
+    border-bottom: 3px solid #02a5e8;
+    color: #111;
+    display: inline-block;
+    height: 100%;
+    position: absolute;
+    top: -2px;
+}
+
+.comment-box a.fa {
+    color: #888;
+    font-size: 14px;
+}
+
+.comment-box a.fa:hover {
+    color: #02A5E8;
+}
+
+.comment-box .face {
+    width: 50px;
+}
+
+.comment-box .comment-box-innner {
+    width: 95%;
+    /*宽度可以根据不同项目适当调整*/
+}
+
+.comment-box .reply {
+    margin-left: 60px;
+    float: none;
+}
+
+.comment-box textarea {
+    border: 1px solid #65b5f0;
+    box-sizing: border-box;
+    color: #333;
+    font-size: 12px;
+    height: 100px;
+    line-height: 22px;
+    outline: medium none;
+    overflow: auto;
+    padding: 5px;
+    resize: none;
+    vertical-align: top;
+    width: 100%;
+}
+
+.comment-submit {
+    border: 1px solid #65B5F0;
+    border-top: none;
+    overflow: hidden;
+    height: 40px;
+}
+
+.comment-submit .inner * {
+    float: left;
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+input.comment-name, input.comment-pictext, input.comment-password {
+    border: 1px solid #ccc;
+    height: 25px;
+    overflow: auto;
+    resize: none;
+    text-indent: 5px;
+    width: 130px;
+}
+
+.comment-submit .comment-login {
+    background: #0189dd none repeat scroll 0 0;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px 15px;
+    transition: all 0.1s ease-in-out 0s;
+}
+
+.comment-list {
+    text-align: left;
+}
+
+.reply .reply-info {
+    color: #111;
+    font-size: 12px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.reply-info span {
+    color: #111;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+.reply-text {
+    color: #666;
+    line-height: 24px;
+    margin-bottom: 16px;
+    margin-top: 10px;
+}
+
+.share-box .share-add {
+    height: 32px;
+    line-height: 32px;
+    margin: 0px 3px;
+}
+
+.share-box .share-add li a {
+    border-radius: 13px;
+    display: inline-block;
+    height: 100%;
+    opacity: 0.65;
+    padding: 0 10px;
+    transition: all 0.1s ease-in 0s;
+}
+
+.share-box .share-add li {
+    margin-left: 10px;
+}
+
+.color-green {
+    border: 1px solid #22b14c;
+    color: #22b14c;
+}
+
+.color-green:hover {
+    background: #22B14C;
+    color: #fff;
+}
+
+.color-blue {
+    border: 1px solid #00a2e8;
+    color: #00a2e8;
+}
+
+.color-blue:hover {
+    background: #00a2e8;
+    color: #fff;
+}
+
+.color-red {
+    border: 1px solid #ed1c24;
+    color: #ed1c24;
+}
+
+.color-red:hover {
+    background: #ED1C24;
+    color: #fff;
+}
+
+.share-box .share-add li i {
+    font-size: 20px;
+    padding-right: 10px;
+}
+
+/*文章、评论及相关 css结束*/
+
+/*通用活动掠影部分 css*/
+.picture-content li, .video-content li {
+    height: 215px;
+    width: 245px;
+    border: 1px solid #eee;
+    margin-right: 8px;
+    margin-left: 7px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.picture-content .pic, .video-content .pic {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+}
+
+.picture-content .pic img, .video-content .pic img {
+    width: 100%;
+    transition-property: all;
+    transition-duration: 0.3s;
+    transition-timing-function: linear;
+    transition-delay: 0.1s;
+    /* Firefox 4 */
+    -moz-transition-property: all;
+    -moz-transition-duration: 0.3s;
+    -moz-transition-timing-function: linear;
+    -moz-transition-delay: 0.1s;
+    /* Safari 和 Chrome */
+    -webkit-transition-property: all;
+    -webkit-transition-duration: 0.3s;
+    -webkit-transition-timing-function: linear;
+    -webkit-transition-delay: 0.1s;
+    /* Opera */
+    -o-transition-property: all;
+    -o-transition-duration: 0.3s;
+    -o-transition-timing-function: linear;
+    -o-transition-delay: 0.1s;
+}
+
+.picture-content .pic:hover img, .video-content .pic:hover img {
+    -moz-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    transform: scale(1.5);
+}
+
+.picture-content .name, .video-content .name {
+    display: table;
+    color: #555;
+    height: 40px;
+    width: 245px;
+    _position: relative;
+    overflow: hidden;
+}
+
+.picture-content .name1, .video-content .name1 {
+    vertical-align: middle;
+    display: table-cell;
+    _position: absolute;
+    _top: 50%;
+}
+
+.picture-content .name2, .video-content .name2 {
+    max-height: 40px;
+    overflow: hidden;
+    _position: relative;
+    _top: -50%;
+    padding: 0px 10px;
+}
+
+.picture-content .info {
+    color: #555;
+    height: 39px;
+    line-height: 39px;
+    border-top: 1px solid #eee;
+}
+
+.picture-content .info span {
+    padding: 0px 10px;
+}
+
+.picture-content .info span:hover {
+    color: #e26d28;
+}
+
+/*通用活动掠影 css 结束*/
+/*通用视频播报 css*/
+.video-content .info {
+    color: #555;
+    height: 39px;
+    line-height: 39px;
+    border-top: 1px solid #eee;
+}
+
+.video-content .info span {
+    padding: 0px 10px;
+}
+
+.video-content .pic i {
+    left: 50%;
+    margin-left: -20px;
+    top: 50%;
+    margin-top: -20px;
+    z-index: 10;
+    color: #fff;
+    font-size: 40px;
+}
+
+.video-content .pic:hover i {
+    color: #e26d28;
+}
+
+.video-content .info span:hover {
+    color: #e26d28;
+}
+
+/*通用视频播报css 结束*/
+
+/*单选复选框*/
+.normal-radio-group input[type=radio],.normal-radio-group input[type=checkbox]{
+    vertical-align: middle;
+}
+.normal-radio-group input[type=radio] + label,.normal-radio-group input[type=checkbox] + label{
+    vertical-align: middle;
+    margin-left:2px;
+    margin-right: 10px;
+}
+.normal-radio-group.x2 input[type=radio] + label,.normal-radio-group.x2 input[type=checkbox] + label{
+    margin-right: 20px;
+}
+.normal-radio-group.x3 input[type=radio] + label,.normal-radio-group.x3 input[type=checkbox] + label{
+    margin-right: 30px;
+}

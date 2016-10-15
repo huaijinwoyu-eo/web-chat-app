@@ -1,0 +1,189 @@
+.wrap{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    min-height: 731px;
+    min-width: 1295px;
+    top: 0;
+    left: 0;
+}
+.app{
+    height: 731px;
+    width: 1295px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -683px;
+    margin-top: -365px;
+    background: #eff3f7;
+}
+/*页面头*/
+.header{
+    height: 60px;
+    background: #3498db;
+    cursor: move;
+    -webkit-box-shadow: 0 5px 15px #3498db;
+    -moz-box-shadow: 0 5px 15px #3498db;
+    box-shadow: 0 5px 15px #3498db;
+}
+#user-info{
+    width: 230px;
+    height: 100%;
+    margin-right: 60px;
+    cursor: pointer;
+}
+img.user-photo{
+    height: 40px;
+    width: 40px;
+    -webkit-border-radius:100%;
+    -moz-border-radius:100%;
+    border-radius:100%;
+    margin-top: 10px;
+}
+.user-info-index .info{
+    margin-left: 50px;
+}
+.user-info-index .info .name{
+    line-height: 30px;
+    color: #ffffff;
+    font-size: 15px;
+}
+.user-info-index .info .log-text{
+    color: #2775a9;
+    font-size: 12px;
+    background: #3498db;
+}
+.user-info-index .info .log-text:focus{
+    background: #ffffff;
+}
+#search-btn{
+    height: 100%;
+    min-width: 22px;
+    cursor: pointer;
+    background: url("../images/search-btn.png") no-repeat 0 center;
+    margin-right: 20px;
+}
+
+/*body*/
+.body{
+    height: 671px;
+}
+.item-title{
+    line-height: 60px;
+    color: #3598db;
+    font-size: 16px;
+    padding: 0 20px;
+}
+.item-title .btn{
+    height: 35px;
+    width: 100px;
+    text-align: center;
+    line-height: 35px;
+    color: #8ea1b4;
+    font-size: 14px;
+    margin-top: 12px;
+    background: #d6e3ec;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+.item-title .btn:hover{
+    background: #3598db;
+    color: #fff;
+}
+.friend-list{
+    float: left;
+    width: 275px;
+    height: 640px;
+    background: #fff;
+    margin-left: 30px;
+    margin-top: 20px;
+    -webkit-box-shadow: 0 0 40px #d6e3ec;
+    -moz-box-shadow: 0 0 40px #d6e3ec;
+    box-shadow: 0 0 40px #d6e3ec;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+.friend-list hr{
+    width: 90%;
+    margin:0 auto;
+    color: #ecf0f2;
+}
+.friend-list .list{
+    height: 578px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.friend-list .list li{
+    padding: 0 20px;
+    height: 70px;
+    cursor: pointer;
+}
+.friend-list .list li:hover{
+    background: #f5f6f8;
+}
+.friend-list .list .info{
+    margin-left: 50px;
+    height: 50px;
+    padding-top: 10px;
+    position: relative;
+}
+.friend-list .list .info .name{
+    color: #34495e;
+    font-size: 16px;
+}
+.friend-list .list .info .message{
+    color:#8ea1b4;
+    font-size: 12px;
+    width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+}
+.friend-list .list .info .time{
+    font-size: 12px;
+    color: #8ea1b4;
+    float: right;
+}
+.friend-list .list .info .online-tag{
+    position: absolute;
+    height: 10px;
+    width: 10px;
+    -webkit-border-radius:100%;
+    -moz-border-radius:100%;
+    border-radius:100%;
+    background: #d4e1ea;
+    right: 0;
+    top: 15px;
+}
+.friend-list .list .info .online-tag.true{
+    background: #51dacf;
+}
+.chat-form{
+    float: left;
+    height: 640px;
+    width: 580px;
+    background: #ecf1f6;
+    margin-top: 20px;
+    margin-left: 15px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+.other-thing{
+    float: right;
+    width: 350px;
+    height: 640px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 0 40px #d6e3ec;
+    -moz-box-shadow: 0 0 40px #d6e3ec;
+    box-shadow: 0 0 40px #d6e3ec;
+    background: #ffffff;
+    margin-top: 20px;
+    margin-right: 30px;
+}
