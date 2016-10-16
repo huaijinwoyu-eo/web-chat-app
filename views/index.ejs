@@ -4,6 +4,10 @@
         <title><%= title %></title>
         <link rel='stylesheet' href='/stylesheets/style.css' />
         <link rel="stylesheet" href="/stylesheets/base.css" />
+        <script src="/javascript/socket.js"></script>
+        <script>
+            var socket = io();
+        </script>
     </head>
     <body>
         <div class="wrap">
@@ -44,7 +48,7 @@
                                     <div class="online-tag true"></div>
                                 </div>
                             </li>
-                            <li class="item">
+                            <li class="item cur">
                                 <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
                                 <div class="info">
                                     <p class="name">axx</p>
@@ -55,11 +59,80 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="chat-form"></div>
+                    <div class="chat-form">
+                        <div class="item-title">
+                            <div class="name">angeinmili laingi</div>
+                            <div class="online-tag"></div>
+                        </div>
+                        <hr>
+                        <div class="message-list">
+                            <div class="message-item">
+                                <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
+                                <div class="message">
+                                    <div class="white-message">
+                                        A message is from you dear friend.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message-item my">
+                                <img src="/images/user-photo-1.png" alt="" class="user-photo fr">
+                                <div class="message">
+                                    <div class="blue-message">A message is from you dear friend.</div>
+                                </div>
+                            </div>
+                            <div class="message-item">
+                                <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
+                                <div class="message">
+                                    <div class="white-message">
+                                        A message is from you dear friend.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message-item my">
+                                <img src="/images/user-photo-1.png" alt="" class="user-photo fr">
+                                <div class="message">
+                                    <div class="blue-message">A message is from you dear friend.</div>
+                                </div>
+                            </div>
+                            <div class="message-item">
+                                <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
+                                <div class="message">
+                                    <div class="white-message">
+                                        A message is from you dear friend.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message-item my">
+                                <img src="/images/user-photo-1.png" alt="" class="user-photo fr">
+                                <div class="message">
+                                    <div class="blue-message">A message is from you dear friend.</div>
+                                </div>
+                            </div>
+                            <div class="message-item">
+                                <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
+                                <div class="message">
+                                    <div class="white-message">
+                                        A message is from you dear friend.A message is from you dear friend.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="message-item my">
+                                <img src="/images/user-photo-1.png" alt="" class="user-photo fr">
+                                <div class="message">
+                                    <div class="blue-message">A message is from you dear friend.</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="message-send">
+                            <input type="text" placeholder="Type you message.">
+                            <input type="submit" class="fr" value=" ">
+                        </div>
+                    </div>
                     <div class="other-thing">
                         <div class="item-title">
                             其他功能
                         </div>
+                        <hr/>
                     </div>
                 </div>
             </div>
