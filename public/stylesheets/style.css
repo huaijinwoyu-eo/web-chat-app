@@ -40,6 +40,26 @@ img.user-photo{
     border-radius:100%;
     margin-top: 10px;
 }
+.user-login-register{
+
+}
+.login-btn{
+    display: inline-block;
+    height: 35px;
+    line-height: 35px;
+    margin-top: 10px;
+    margin-left: 10px;
+    border:1px solid #0f75bd;
+    -webkit-border-radius:10px;
+    -moz-border-radius:10px;
+    border-radius:10px;
+    padding: 0 15px;
+    background: #0f75bd;
+    color: #ffffff;
+}
+.login-btn:hover{
+    background: #ffffff;
+}
 .user-info-index .info{
     margin-left: 50px;
 }
@@ -62,6 +82,7 @@ img.user-photo{
     cursor: pointer;
     background: url("../images/search-btn.png") no-repeat 0 center;
     margin-right: 20px;
+    position: relative;
 }
 
 /*body*/
@@ -271,4 +292,36 @@ img.user-photo{
     width: 90%;
     margin:0 auto;
     color: #ecf0f2;
+}
+.other-thing .content{
+    padding: 15px;
+    height:550px;
+}
+.other-thing .content input{
+    display: inline-block;
+}
+.other-thing .content label{
+    width: 80px;
+    display: inline-block;
+    text-align: center;
+}
+.other-thing .content input[type=text],.other-thing .content input[type=password]{
+    border:1px solid #CCCCCC;
+    width: 193px;
+    padding-left: 15px;
+    margin-top: 15px;
+    line-height: 30px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+.other-thing .content input[type=submit]{
+    display: block;
+    height: 30px;
+    padding: 0 20px;
+    margin: 20px auto;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    cursor: pointer;
 }

@@ -5,9 +5,9 @@
         <link rel='stylesheet' href='/stylesheets/style.css' />
         <link rel="stylesheet" href="/stylesheets/base.css" />
         <script src="/javascript/socket.js"></script>
-        <script>
-            var socket = io();
-        </script>
+        <!--<script>-->
+            <!--var socket = io();-->
+        <!--</script>-->
     </head>
     <body>
         <div class="wrap">
@@ -16,17 +16,18 @@
                 <div class="header clearfix">
                     <div id="user-info" class="fr">
                         <!--用户个人信息-->
-                        <div class="user-info-index">
-                            <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
-                            <div class="info">
-                                <p class="name">axx</p>
-                                <input type="text" class="log-text" value="厉害了我的哥."/>
-                            </div>
-                        </div>
+                        <!--<div class="user-info-index">-->
+                            <!--<img src="/images/user-photo-1.png" alt="" class="user-photo fl">-->
+                            <!--<div class="info">-->
+                                <!--<p class="name">axx</p>-->
+                                <!--<input type="text" class="log-text" value="厉害了我的哥."/>-->
+                            <!--</div>-->
+                        <!--</div>-->
                         <!--登录注册按钮-->
-                        <div class="user-login-register">
-
-                        </div>
+                        <!--<div class="user-login-register">-->
+                            <!--<a href="#" class="login-btn">登录</a>-->
+                            <!--<a href="#" class="login-btn">注册</a>-->
+                        <!--</div>-->
                     </div>
                     <div id="search-btn" class="fr"></div>
                 </div>
@@ -128,7 +129,7 @@
                             <input type="submit" class="fr" value=" ">
                         </div>
                     </div>
-                    <div class="other-thing">
+                    <div class="other-thing" id="other-thing">
                         <div class="item-title">
                             其他功能
                         </div>
@@ -138,5 +139,6 @@
             </div>
 
         </div>
+        <script src="/javascript/bundle.js"></script>
     </body>
 </html>
