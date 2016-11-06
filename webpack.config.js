@@ -3,7 +3,7 @@
  */
 var webpack = require("webpack");
 module.exports = {
-    entry:"./modules/login-register.jsx",
+    entry:"./modules/entry.jsx",
     output:{
         path: __dirname +"/public/javascript/",
         filename:"bundle.js"

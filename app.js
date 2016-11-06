@@ -4,6 +4,8 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+//引入session
+var session = require("express-session");
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -22,6 +24,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//设置session中间件
+app.use(session({
+    secret:"web-chat-app/session-id",
+    cookie:{
+        maxAge:1000*60
+    }
+}));
+
+
+
+
 
 app.use('/', routes);
 app.use('/users', users);

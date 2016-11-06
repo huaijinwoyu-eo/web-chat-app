@@ -40,9 +40,6 @@ img.user-photo{
     border-radius:100%;
     margin-top: 10px;
 }
-.user-login-register{
-
-}
 .login-btn{
     display: inline-block;
     height: 35px;
@@ -63,10 +60,17 @@ img.user-photo{
 .user-info-index .info{
     margin-left: 50px;
 }
+.user-info-index .info .login-btn{
+    top:0;
+    right: 20px;
+}
 .user-info-index .info .name{
     line-height: 30px;
     color: #ffffff;
     font-size: 15px;
+}
+.user-info-index .info .name:hover{
+    text-decoration: underline;
 }
 .user-info-index .info .log-text{
     color: #2775a9;
@@ -94,6 +98,7 @@ img.user-photo{
     color: #3598db;
     font-size: 16px;
     padding: 0 20px;
+    position: relative;
 }
 .item-title .btn{
     height: 35px;
@@ -112,6 +117,22 @@ img.user-photo{
 .item-title .btn:hover{
     background: #3598db;
     color: #fff;
+}
+.item-title .form-close{
+    position: absolute;
+    top:0;
+    right: 20px;
+    height: 60px;
+    font-size: 25px;
+    line-height: 60px;
+    text-align: center;
+    width: 60px;
+    cursor: pointer;
+}
+.item-title .form-close:hover{
+    opacity: 0.8;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
 }
 .friend-list{
     float: left;
@@ -176,11 +197,17 @@ img.user-photo{
     -webkit-border-radius:100%;
     -moz-border-radius:100%;
     border-radius:100%;
-    background: #d4e1ea;
     right: 0;
     top: 15px;
+    overflow: hidden;
 }
-.friend-list .list .info .online-tag.true{
+.friend-list .list .info .online-tag span{
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: #d4e1ea;
+}
+.friend-list .list .info .online-tag span.true{
     background: #51dacf;
 }
 .chat-form{
@@ -324,4 +351,11 @@ img.user-photo{
     -moz-border-radius: 5px;
     border-radius: 5px;
     cursor: pointer;
+}
+
+
+/*时钟相关css*/
+.canvas-clock{
+    margin:25px auto;
+    display: block;
 }

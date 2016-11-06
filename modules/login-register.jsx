@@ -24,8 +24,4 @@ var Login = React.createClass({
         )
     }
 });
-ReactDOM.render(
-    <Login/>,
-    document.getElementById("user-info")
-);
 module.exports = Login;

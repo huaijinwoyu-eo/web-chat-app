@@ -4,6 +4,7 @@
         <title><%= title %></title>
         <link rel='stylesheet' href='/stylesheets/style.css' />
         <link rel="stylesheet" href="/stylesheets/base.css" />
+        <link rel="stylesheet" href="/stylesheets/font-awesome.min.css">
         <script src="/javascript/socket.js"></script>
         <!--<script>-->
             <!--var socket = io();-->
@@ -15,6 +16,7 @@
                 <!--页面头-->
                 <div class="header clearfix">
                     <div id="user-info" class="fr">
+                        <%= Sid %>
                         <!--用户个人信息-->
                         <!--<div class="user-info-index">-->
                             <!--<img src="/images/user-photo-1.png" alt="" class="user-photo fl">-->
@@ -39,26 +41,32 @@
                             <div class="fr btn">匹配</div>
                         </div>
                         <hr/>
-                        <ul class="list">
-                            <li class="item">
-                                <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
-                                <div class="info">
-                                    <p class="name">axx</p>
-                                    <div class="message">a message in my in my head that love you .</div>
-                                    <span class="time">1 min</span>
-                                    <div class="online-tag true"></div>
-                                </div>
-                            </li>
-                            <li class="item cur">
-                                <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
-                                <div class="info">
-                                    <p class="name">axx</p>
-                                    <div class="message">a message in my in my head that love you .</div>
-                                    <span class="time">1 min</span>
-                                    <div class="online-tag"></div>
-                                </div>
-                            </li>
-                        </ul>
+                        <div id="user-list">
+                            <ul class="list">
+                                <li class="item">
+                                    <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
+                                    <div class="info">
+                                        <p class="name">axx</p>
+                                        <div class="message">a message in my in my head that love you .</div>
+                                        <span class="time">1 min</span>
+                                        <div class="online-tag">
+                                            <span class="true"></span>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="item cur">
+                                    <img src="/images/user-photo-1.png" alt="" class="user-photo fl">
+                                    <div class="info">
+                                        <p class="name">axx</p>
+                                        <div class="message">a message in my in my head that love you .</div>
+                                        <span class="time">1 min</span>
+                                        <div class="online-tag">
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="chat-form">
                         <div class="item-title">
