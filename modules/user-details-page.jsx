@@ -99,6 +99,7 @@ var UserDetails = React.createClass({
             type:"POST",
             url:"/users/details",
             data:{
+                username:this.props.username,
                 sexual:this.state.sexual,
                 age:this.state.age,
                 educational_background:this.state.educational_background,
@@ -115,6 +116,7 @@ var UserDetails = React.createClass({
                         this.setState({
                             status:"恭喜你，详细信息提交成功！"
                         });
+                    {this.props.Ffunction()}
                         setTimeout(function () {
                             ReactDOM.render(
                                 <Clock title="当前时钟"/>,

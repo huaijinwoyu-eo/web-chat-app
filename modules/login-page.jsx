@@ -99,7 +99,7 @@ var LoginPage = React.createClass({
                                 document.getElementById("other-thing")
                             );
                             ReactDOM.render(
-                                <UserInfo username={this.state.username}/>,
+                                <UserInfo username={this.state.username} hasInput="完善信息"/>,
                                 document.getElementById("user-info")
                             )
                         }.bind(this),1000);
@@ -108,6 +108,21 @@ var LoginPage = React.createClass({
                         status:"密码错误，请重新输入。",
                         password:""
                     });
+                        break;
+                    case "5":this.setState({
+                        status:"用户登录成功。"
+                    });
+                        var socket = io();
+                        setTimeout(function () {
+                            ReactDOM.render(
+                                <Clock title="当前时钟"/>,
+                                document.getElementById("other-thing")
+                            );
+                            ReactDOM.render(
+                                <UserInfo username={this.state.username} hasInput="修改信息"/>,
+                                document.getElementById("user-info")
+                            )
+                        }.bind(this),1000);
                         break;
                     default:break;
                 }

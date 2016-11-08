@@ -8,7 +8,11 @@ db.on("error",console.error.bind(console,"connection error"));
 
 var UserSchema = new mongoose.Schema({
     username:String,
-    password:String
+    password:String,
+    sexual:String,
+    age:String,
+    educational_background:String,
+    profession:String
 });
 var Users = mongoose.model("Users",UserSchema);
 

@@ -7,6 +7,7 @@ var UserDetails = require("./user-details-page");
 var UserInfo = React.createClass({
     getInitialState:function () {
         return{
+            thisText: this.props.hasInput,
             userImg:"/images/user-photo-1.png",
             userText:""
         }
@@ -19,7 +20,7 @@ var UserInfo = React.createClass({
                     <p className="name" title="点击登出。" onClick={this.HandleLogout}>{this.props.username}</p>
                     <input type="text" className="log-text" value={this.state.userText} placeholder="请设置自己的个性签名。"/>
                     <a href="#" className="abs login-btn" onClick={this.HandleClick}>
-                        完善信息
+                        {this.state.thisText}
                     </a>
                 </div>
             </div>
@@ -39,10 +40,15 @@ var UserInfo = React.createClass({
             }
         })
     },
+    HandleInner:function () {
+        this.setState({
+            thisText:"修改信息"
+        })
+    },
     HandleClick:function (event) {
         event.preventDefault();
         ReactDOM.render(
-            <UserDetails title="完善个人信息"/>,
+            <UserDetails title="完善个人信息" username={this.props.username} Ffunction = {this.HandleInner}/>,
             document.getElementById("other-thing")
         )
     }

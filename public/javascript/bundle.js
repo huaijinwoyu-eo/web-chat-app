@@ -21568,7 +21568,7 @@
 	                                document.getElementById("other-thing")
 	                            );
 	                            ReactDOM.render(
-	                                React.createElement(UserInfo, {username: this.state.username}),
+	                                React.createElement(UserInfo, {username: this.state.username, hasInput: "完善信息"}),
 	                                document.getElementById("user-info")
 	                            )
 	                        }.bind(this),1000);
@@ -21577,6 +21577,21 @@
 	                        status:"密码错误，请重新输入。",
 	                        password:""
 	                    });
+	                        break;
+	                    case "5":this.setState({
+	                        status:"用户登录成功。"
+	                    });
+	                        var socket = io();
+	                        setTimeout(function () {
+	                            ReactDOM.render(
+	                                React.createElement(Clock, {title: "当前时钟"}),
+	                                document.getElementById("other-thing")
+	                            );
+	                            ReactDOM.render(
+	                                React.createElement(UserInfo, {username: this.state.username, hasInput: "修改信息"}),
+	                                document.getElementById("user-info")
+	                            )
+	                        }.bind(this),1000);
 	                        break;
 	                    default:break;
 	                }
@@ -31960,6 +31975,7 @@
 	var UserInfo = React.createClass({displayName: "UserInfo",
 	    getInitialState:function () {
 	        return{
+	            thisText: this.props.hasInput,
 	            userImg:"/images/user-photo-1.png",
 	            userText:""
 	        }
@@ -31972,7 +31988,7 @@
 	                    React.createElement("p", {className: "name", title: "点击登出。", onClick: this.HandleLogout}, this.props.username), 
 	                    React.createElement("input", {type: "text", className: "log-text", value: this.state.userText, placeholder: "请设置自己的个性签名。"}), 
 	                    React.createElement("a", {href: "#", className: "abs login-btn", onClick: this.HandleClick}, 
-	                        "完善信息"
+	                        this.state.thisText
 	                    )
 	                )
 	            )
@@ -31992,10 +32008,15 @@
 	            }
 	        })
 	    },
+	    HandleInner:function () {
+	        this.setState({
+	            thisText:"修改信息"
+	        })
+	    },
 	    HandleClick:function (event) {
 	        event.preventDefault();
 	        ReactDOM.render(
-	            React.createElement(UserDetails, {title: "完善个人信息"}),
+	            React.createElement(UserDetails, {title: "完善个人信息", username: this.props.username, Ffunction: this.HandleInner}),
 	            document.getElementById("other-thing")
 	        )
 	    }
@@ -32107,6 +32128,7 @@
 	            type:"POST",
 	            url:"/users/details",
 	            data:{
+	                username:this.props.username,
 	                sexual:this.state.sexual,
 	                age:this.state.age,
 	                educational_background:this.state.educational_background,
@@ -32123,6 +32145,7 @@
 	                        this.setState({
 	                            status:"恭喜你，详细信息提交成功！"
 	                        });
+	                    {this.props.Ffunction()}
 	                        setTimeout(function () {
 	                            ReactDOM.render(
 	                                React.createElement(Clock, {title: "当前时钟"}),
