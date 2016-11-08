@@ -56,6 +56,11 @@ router.post("/login",function (req, res, next) {
     })
 });
 
+router.get("/signOut",function (req, res, next) {
+    req.session.username = null;
+    res.send(req.session.username);
+});
+
 
 
 

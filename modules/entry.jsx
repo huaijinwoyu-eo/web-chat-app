@@ -7,7 +7,6 @@ var UserInfo = require("./user-info");
 //引入时钟模块
 var Clock = require("./clock");
 var content = document.getElementById("user-info").innerText;
-console.log(content);
 
 ReactDOM.render(
     <Clock title="当前时钟"/>,
