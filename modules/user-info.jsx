@@ -26,7 +26,7 @@ var UserInfo = React.createClass({
 
     },
     HandleLogout:function () {
-        
+
     }
 });
 module.exports = UserInfo;

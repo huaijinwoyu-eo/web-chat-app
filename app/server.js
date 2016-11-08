@@ -3,6 +3,6 @@
 var http = require("http");
 var app = require("../app");
 
-var server = http.createServer(app);
+var server_io = http.Server(app);
 
-module.exports = server;
+module.exports = server_io;

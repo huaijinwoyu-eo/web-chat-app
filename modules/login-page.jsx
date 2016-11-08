@@ -5,6 +5,8 @@ var Jquery = require("jquery");
 var Clock = require("./clock");
 //引入用户信息页面
 var UserInfo = require("./user-info");
+//引入socket.io-client模块
+var io = require("socket.io-client");
 var LoginPage = React.createClass({
     getInitialState:function () {
         return{
@@ -90,6 +92,7 @@ var LoginPage = React.createClass({
                     case "3":this.setState({
                         status:"用户登录成功。"
                     });
+                        var socket = io();
                         setTimeout(function () {
                             ReactDOM.render(
                                 <Clock title="当前时钟"/>,

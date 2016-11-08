@@ -1,14 +1,11 @@
 var express = require('express');
 var router = express.Router();
+//引入mongoose模块
 var mongoose = require("mongoose");
-
-mongoose.connect("mongodb://localhost/users");
-var UserSchema = new mongoose.Schema({
-    username:String,
-    password:String
-});
-var Users = mongoose.model("Users",UserSchema);
+//引用mongoose-schema
+require("../app/models/model-user");
 var User = mongoose.model("Users");
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
@@ -57,7 +54,8 @@ router.post("/login",function (req, res, next) {
             res.send("4");//用户密码错误，请确认密码重试。
         }
     })
-})
+});
+
 
 
 
