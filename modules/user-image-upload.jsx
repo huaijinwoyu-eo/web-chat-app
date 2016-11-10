@@ -29,7 +29,6 @@ var UserImage = React.createClass({
                         <canvas id="copy" width={290}></canvas>
                         <canvas id="trans" width={290}></canvas>
                         <canvas id="Mir"></canvas>
-                        <canvas id="test" width={290} height={300}></canvas>
                         <a href="#" className="upload-wrap">
                             选择图片
                             <input id="upload-btn" type="file" accept="image/png,image/jpeg" />
@@ -67,9 +66,10 @@ var UserImage = React.createClass({
                         status:"上传失败，请稍后重试。"
                     });
                         break;
-                    case "3":this.setState({
+                    case "2":this.setState({
                         status:"头像上传成功。"
                     });
+                        this.props.InnerUp(this.state.targetImage);
                         setTimeout(function () {
                             ReactDOM.render(
                                 <Clock title="当前时钟"/>,
@@ -83,17 +83,6 @@ var UserImage = React.createClass({
         })
     },
     componentDidMount:function () {
-
-        var test = document.getElementById("test");
-        var testContext = test.getContext("2d");
-
-
-
-
-
-
-
-
         /*如果浏览器不支持FileReader功能，错误弹窗。*/
         if(typeof FileReader == "undified") {
             alert("您老的浏览器不行了！");
@@ -131,7 +120,7 @@ var UserImage = React.createClass({
             if(isMouseDown && !isRect){
                 constPoint = basePoint;
                 Mir.width = Point.x - basePoint.x;
-                Mir.height = Point.y - basePoint.y;
+                Mir.height = Point.x - basePoint.x;
                 MirContext.clearRect(0,0,Mir.width,Mir.height);
                 MirContext.drawImage(canvas_copy,basePoint.x,basePoint.y,Mir.width,Mir.height,0,0,Mir.width,Mir.height);
                 context.clearRect(0,0,canvas.width,canvas.height);
@@ -166,15 +155,7 @@ var UserImage = React.createClass({
             }
             this.setState({
                 targetImage:Mir.toDataURL("image/png")
-            },function () {
-                testContext.clearRect(0,0,test.width,test.height);
-                var testImage = new Image();
-                testImage.src = this.state.targetImage;
-                testImage.onload = function () {
-                    testContext.drawImage(testImage,0,0,test.width,test.height);
-                }
             });
-
         }.bind(this);
         canvas.onmouseup = function (event) {
             event.preventDefault();
@@ -183,7 +164,11 @@ var UserImage = React.createClass({
         };
         canvas.onmouseout = function (event) {
             event.preventDefault();
+            if(isMouseDown){
+                isRect = true;
+            }
             isMouseDown = false;
+
 
         };
         var cancel = document.getElementById("btn");

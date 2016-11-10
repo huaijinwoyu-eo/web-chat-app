@@ -17,8 +17,7 @@ var UserInfo = React.createClass({
     render: function () {
         return (
             <div className="user-info-index">
-                <img src={this.state.userImg} alt="#" className="fl user-photo"/>
-
+                <img title="点击头像，更换头像。" src={this.state.userImg} alt="#" className="fl user-photo" onClick={this.HandleUpImage}/>
                 <div className="info">
                     <p className="name" title="点击登出。" onClick={this.HandleLogout}>{this.props.username}</p>
                     <input type="text" className="log-text" value={this.state.userText} placeholder="请设置自己的个性签名。"/>
@@ -41,14 +40,28 @@ var UserInfo = React.createClass({
                     userImg: data.UserPhoto,
                     userText: data.UserText
                 });
+                if(data.age){
+                    this.setState({
+                        thisText:"修改信息"
+                    })
+                }else {
+                    this.setState({
+                        thisText:"完善信息"
+                    })
+                }
             }.bind(this)
         })
     },
     HandleUpImage:function () {
         ReactDOM.render(
-            <UserImageU title="修改头像" username={this.props.username}/>,
+            <UserImageU title="修改头像" username={this.props.username} InnerUp = {this.HandleUpImageInner}/>,
             document.getElementById("other-thing")
         );
+    },
+    HandleUpImageInner:function (obj) {
+        this.setState({
+            userImg:obj
+        })
     },
     HandleLogout: function () {
         Jquery.ajax({

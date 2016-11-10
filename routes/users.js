@@ -123,7 +123,8 @@ router.post("/getInfo",function (req, res, next) {
         }
         res.send({
             UserPhoto:doc.UserPhoto,
-            UserText:doc.UserText
+            UserText:doc.UserText,
+            age:doc.age
         })
     })
 });

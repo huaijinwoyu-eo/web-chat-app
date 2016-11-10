@@ -31985,8 +31985,7 @@
 	    render: function () {
 	        return (
 	            React.createElement("div", {className: "user-info-index"}, 
-	                React.createElement("img", {src: this.state.userImg, alt: "#", className: "fl user-photo"}), 
-
+	                React.createElement("img", {title: "点击头像，更换头像。", src: this.state.userImg, alt: "#", className: "fl user-photo", onClick: this.HandleUpImage}), 
 	                React.createElement("div", {className: "info"}, 
 	                    React.createElement("p", {className: "name", title: "点击登出。", onClick: this.HandleLogout}, this.props.username), 
 	                    React.createElement("input", {type: "text", className: "log-text", value: this.state.userText, placeholder: "请设置自己的个性签名。"}), 
@@ -32009,14 +32008,28 @@
 	                    userImg: data.UserPhoto,
 	                    userText: data.UserText
 	                });
+	                if(data.age){
+	                    this.setState({
+	                        thisText:"修改信息"
+	                    })
+	                }else {
+	                    this.setState({
+	                        thisText:"完善信息"
+	                    })
+	                }
 	            }.bind(this)
 	        })
 	    },
 	    HandleUpImage:function () {
 	        ReactDOM.render(
-	            React.createElement(UserImageU, {title: "修改头像", username: this.props.username}),
+	            React.createElement(UserImageU, {title: "修改头像", username: this.props.username, InnerUp: this.HandleUpImageInner}),
 	            document.getElementById("other-thing")
 	        );
+	    },
+	    HandleUpImageInner:function (obj) {
+	        this.setState({
+	            userImg:obj
+	        })
 	    },
 	    HandleLogout: function () {
 	        Jquery.ajax({
@@ -32218,7 +32231,6 @@
 	                        React.createElement("canvas", {id: "copy", width: 290}), 
 	                        React.createElement("canvas", {id: "trans", width: 290}), 
 	                        React.createElement("canvas", {id: "Mir"}), 
-	                        React.createElement("canvas", {id: "test", width: 290, height: 300}), 
 	                        React.createElement("a", {href: "#", className: "upload-wrap"}, 
 	                            "选择图片", 
 	                            React.createElement("input", {id: "upload-btn", type: "file", accept: "image/png,image/jpeg"})
@@ -32256,9 +32268,10 @@
 	                        status:"上传失败，请稍后重试。"
 	                    });
 	                        break;
-	                    case "3":this.setState({
+	                    case "2":this.setState({
 	                        status:"头像上传成功。"
 	                    });
+	                        this.props.InnerUp(this.state.targetImage);
 	                        setTimeout(function () {
 	                            ReactDOM.render(
 	                                React.createElement(Clock, {title: "当前时钟"}),
@@ -32272,17 +32285,6 @@
 	        })
 	    },
 	    componentDidMount:function () {
-
-	        var test = document.getElementById("test");
-	        var testContext = test.getContext("2d");
-
-
-
-
-
-
-
-
 	        /*如果浏览器不支持FileReader功能，错误弹窗。*/
 	        if(typeof FileReader == "undified") {
 	            alert("您老的浏览器不行了！");
@@ -32320,7 +32322,7 @@
 	            if(isMouseDown && !isRect){
 	                constPoint = basePoint;
 	                Mir.width = Point.x - basePoint.x;
-	                Mir.height = Point.y - basePoint.y;
+	                Mir.height = Point.x - basePoint.x;
 	                MirContext.clearRect(0,0,Mir.width,Mir.height);
 	                MirContext.drawImage(canvas_copy,basePoint.x,basePoint.y,Mir.width,Mir.height,0,0,Mir.width,Mir.height);
 	                context.clearRect(0,0,canvas.width,canvas.height);
@@ -32355,15 +32357,7 @@
 	            }
 	            this.setState({
 	                targetImage:Mir.toDataURL("image/png")
-	            },function () {
-	                testContext.clearRect(0,0,test.width,test.height);
-	                var testImage = new Image();
-	                testImage.src = this.state.targetImage;
-	                testImage.onload = function () {
-	                    testContext.drawImage(testImage,0,0,test.width,test.height);
-	                }
 	            });
-
 	        }.bind(this);
 	        canvas.onmouseup = function (event) {
 	            event.preventDefault();
@@ -32372,7 +32366,11 @@
 	        };
 	        canvas.onmouseout = function (event) {
 	            event.preventDefault();
+	            if(isMouseDown){
+	                isRect = true;
+	            }
 	            isMouseDown = false;
+
 
 	        };
 	        var cancel = document.getElementById("btn");
