@@ -40,7 +40,7 @@ var RegisterPage = React.createClass({
                 </div>
                 <hr/>
                 <div className="content">
-                    <form className="content" onSubmit={this.HandleSubmit}>
+                    <form onSubmit={this.HandleSubmit}>
                         <div className="">{this.state.status}</div>
                         <label htmlFor="user-name">用户名：</label>
                         <input value={this.state.username} onChange={this.HandleChange.bind(this,"username")} type="text" placeholder="请输入用户名。" />

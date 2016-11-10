@@ -26,7 +26,7 @@ var LoginPage = React.createClass({
                 </div>
                 <hr/>
                 <div className="content">
-                    <form className="content" onSubmit={this.HandleSubmit}>
+                    <form onSubmit={this.HandleSubmit}>
                         <div className="">{this.state.status}</div>
                         <label htmlFor="user-name">用户名：</label>
                         <input type="text" placeholder="请输入用户名。" onChange={this.HandleChang.bind(this,"username")} value={this.state.username} />

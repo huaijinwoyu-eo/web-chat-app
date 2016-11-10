@@ -12,7 +12,15 @@ var UserSchema = new mongoose.Schema({
     sexual:String,
     age:String,
     educational_background:String,
-    profession:String
+    profession:String,
+    UserPhoto:{
+        type:String,
+        default:"/images/user-photo-1.png"
+    },
+    UserText:{
+        type:String,
+        default:"风格"
+    }
 });
 var Users = mongoose.model("Users",UserSchema);
 

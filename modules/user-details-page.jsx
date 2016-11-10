@@ -44,7 +44,7 @@ var UserDetails = React.createClass({
                 </div>
                 <hr/>
                 <div className="content">
-                    <form className="content" onSubmit={this.HandleSubmit}>
+                    <form onSubmit={this.HandleSubmit}>
                         <div className="">{this.state.status}</div>
                         <label htmlFor="">性别：</label>
                         <input value={this.state.sexual} onChange={this.HandleChange.bind(this,"sexual")} type="text" placeholder="请输入性别。" />

@@ -40,6 +40,12 @@ img.user-photo{
     border-radius:100%;
     margin-top: 10px;
 }
+canvas.user-photo{
+    -webkit-border-radius:100%;
+    -moz-border-radius:100%;
+    border-radius:100%;
+    margin-top: 10px;
+}
 .login-btn{
     display: inline-block;
     height: 35px;
@@ -322,7 +328,9 @@ img.user-photo{
 }
 .other-thing .content{
     padding: 15px;
-    height:550px;
+    height: 550px;;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 .other-thing .content input{
     display: inline-block;
@@ -358,4 +366,43 @@ img.user-photo{
 .canvas-clock{
     margin:25px auto;
     display: block;
+}
+/*上传头像相关*/
+canvas#copy{
+    display: none;
+}
+canvas#trans{
+    display: none;
+}
+canvas#Mir{
+    display: none;
+}
+a.upload-wrap{
+    display: inline-block;
+    padding: 0 15px;
+    height: 35px;
+    line-height: 35px;
+    background: #0f75bd;
+    color: #ffffff;
+    border: 1px solid #0f75bd;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+a.upload-wrap:hover{
+    background: #ffffff;
+}
+a.upload-wrap.margin{
+    margin-left: 4px;
+    margin-right: 4px;
+}
+a.upload-wrap input{
+    position: absolute;
+    display: block;
+    right: 0;
+    top:0;
+    font-size: 100px;
+    opacity: 0;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
 }

@@ -24,11 +24,7 @@ router.post("/register",function(req, res, next){
         }else {
             var user = new User({
                 username:req.body.username,
-                password:req.body.password,
-                sexual:"",
-                age:"",
-                educational_background:"",
-                profession:""
+                password:req.body.password
             });
             user.save(function (err) {
                 if(err){
@@ -61,7 +57,7 @@ router.post("/login",function (req, res, next) {
         }else {
             res.send("4");//用户密码错误，请确认密码重试。
         }
-    })
+    });
 });
 
 router.get("/signOut",function (req, res, next) {
@@ -91,11 +87,46 @@ router.post("/details",function (req, res, next) {
             }
             res.send("2");
             return;
+        });
+    })
+});
+//上传头像
+router.post("/uploadImage",function (req, res, next) {
+    User.findOne({username:req.body.username},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("1");
+            return
+        }
+        doc.set({
+            UserPhoto:req.body.targetImage
+        });
+        doc.save(function (err) {
+            if(err){
+                console.log(err);
+                res.send("1");
+                return
+            }
+            res.send("2");
+            return;
         })
     })
 });
-
-
+//获取头像，签名
+router.post("/getInfo",function (req, res, next) {
+    console.log(req.body.username);
+    User.findOne({username:req.body.username},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("err");
+            return
+        }
+        res.send({
+            UserPhoto:doc.UserPhoto,
+            UserText:doc.UserText
+        })
+    })
+});
 
 
 module.exports = router;

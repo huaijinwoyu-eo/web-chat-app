@@ -21437,7 +21437,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	var LoginPage = __webpack_require__(173);
-	var RegisterPage = __webpack_require__(228);
+	var RegisterPage = __webpack_require__(229);
 	var Login = React.createClass({displayName: "Login",
 	    render:function(){
 	        return(
@@ -21475,7 +21475,7 @@
 	//引入用户信息页面
 	var UserInfo = __webpack_require__(176);
 	//引入socket.io-client模块
-	var io = __webpack_require__(178);
+	var io = __webpack_require__(179);
 	var LoginPage = React.createClass({displayName: "LoginPage",
 	    getInitialState:function () {
 	        return{
@@ -21495,7 +21495,7 @@
 	                ), 
 	                React.createElement("hr", null), 
 	                React.createElement("div", {className: "content"}, 
-	                    React.createElement("form", {className: "content", onSubmit: this.HandleSubmit}, 
+	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
 	                        React.createElement("div", {className: ""}, this.state.status), 
 	                        React.createElement("label", {htmlFor: "user-name"}, "用户名："), 
 	                        React.createElement("input", {type: "text", placeholder: "请输入用户名。", onChange: this.HandleChang.bind(this,"username"), value: this.state.username}), 
@@ -31972,18 +31972,21 @@
 	var Jquery = __webpack_require__(174);
 	//用于详细信息完善
 	var UserDetails = __webpack_require__(177);
+	//引用用户图片上传
+	var UserImageU = __webpack_require__(178);
 	var UserInfo = React.createClass({displayName: "UserInfo",
-	    getInitialState:function () {
-	        return{
+	    getInitialState: function () {
+	        return {
 	            thisText: this.props.hasInput,
-	            userImg:"/images/user-photo-1.png",
-	            userText:""
+	            userImg: "/images/user-photo-1.png",
+	            userText: ""
 	        }
 	    },
-	    render:function(){
-	        return(
+	    render: function () {
+	        return (
 	            React.createElement("div", {className: "user-info-index"}, 
-	                React.createElement("img", {src: this.state.userImg, alt: "", className: "user-photo fl"}), 
+	                React.createElement("img", {src: this.state.userImg, alt: "#", className: "fl user-photo"}), 
+
 	                React.createElement("div", {className: "info"}, 
 	                    React.createElement("p", {className: "name", title: "点击登出。", onClick: this.HandleLogout}, this.props.username), 
 	                    React.createElement("input", {type: "text", className: "log-text", value: this.state.userText, placeholder: "请设置自己的个性签名。"}), 
@@ -31994,31 +31997,49 @@
 	            )
 	        )
 	    },
-	    componentDidMount:function () {
-
-	    },
-	    HandleLogout:function () {
+	    componentDidMount: function () {
 	        Jquery.ajax({
-	            type:"GET",
-	            url:"/users/signOut",
-	            success:function (code) {
-	                if(!code){
+	            type:"POST",
+	            url:"/users/getInfo",
+	            data:{
+	                username:this.props.username,
+	            },
+	            success:function (data) {
+	                this.setState({
+	                    userImg: data.UserPhoto,
+	                    userText: data.UserText
+	                });
+	            }.bind(this)
+	        })
+	    },
+	    HandleUpImage:function () {
+	        ReactDOM.render(
+	            React.createElement(UserImageU, {title: "修改头像", username: this.props.username}),
+	            document.getElementById("other-thing")
+	        );
+	    },
+	    HandleLogout: function () {
+	        Jquery.ajax({
+	            type: "GET",
+	            url: "/users/signOut",
+	            success: function (code) {
+	                if (!code) {
 	                    window.location.reload();
 	                }
 	            }
 	        })
 	    },
-	    HandleInner:function () {
+	    HandleInner: function () {
 	        this.setState({
-	            thisText:"修改信息"
+	            thisText: "修改信息"
 	        })
 	    },
-	    HandleClick:function (event) {
+	    HandleClick: function (event) {
 	        event.preventDefault();
 	        ReactDOM.render(
 	            React.createElement(UserDetails, {title: "完善个人信息", username: this.props.username, Ffunction: this.HandleInner}),
 	            document.getElementById("other-thing")
-	        )
+	        );
 	    }
 	});
 	module.exports = UserInfo;
@@ -32073,7 +32094,7 @@
 	                ), 
 	                React.createElement("hr", null), 
 	                React.createElement("div", {className: "content"}, 
-	                    React.createElement("form", {className: "content", onSubmit: this.HandleSubmit}, 
+	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
 	                        React.createElement("div", {className: ""}, this.state.status), 
 	                        React.createElement("label", {htmlFor: ""}, "性别："), 
 	                        React.createElement("input", {value: this.state.sexual, onChange: this.HandleChange.bind(this,"sexual"), type: "text", placeholder: "请输入性别。"}), 
@@ -32166,15 +32187,258 @@
 /* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	var Jquery = __webpack_require__(174);
+	//时钟模块
+	var Clock = __webpack_require__(175);
+	var UserImage = React.createClass({displayName: "UserImage",
+	    getInitialState:function () {
+	        return{
+	            status:this.props.status || "",
+	            targetImage:[]
+	        }
+	    },
+	    render:function () {
+	        return(
+	            React.createElement("div", null, 
+	                React.createElement("div", {className: "item-title"}, 
+	                    this.props.title, 
+	                    React.createElement("div", {className: "form-close", onClick: this.HandleClose}, 
+	                        React.createElement("span", {className: "fa fa-times"})
+	                    )
+	                ), 
+	                React.createElement("hr", null), 
+	                React.createElement("div", {className: "content"}, 
+	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
+	                        React.createElement("div", {className: ""}, this.state.status), 
+	                        React.createElement("canvas", {id: "canvas", width: 290}, 
+	                            "您的浏览器不支持canvas。"
+	                        ), 
+	                        React.createElement("canvas", {id: "copy", width: 290}), 
+	                        React.createElement("canvas", {id: "trans", width: 290}), 
+	                        React.createElement("canvas", {id: "Mir"}), 
+	                        React.createElement("canvas", {id: "test", width: 290, height: 300}), 
+	                        React.createElement("a", {href: "#", className: "upload-wrap"}, 
+	                            "选择图片", 
+	                            React.createElement("input", {id: "upload-btn", type: "file", accept: "image/png,image/jpeg"})
+	                        ), 
+	                        React.createElement("a", {href: "#", className: "margin upload-wrap", onClick: this.HandleSubmit}, 
+	                            "提交头像"
+	                        ), 
+	                        React.createElement("a", {href: "#", id: "btn", className: "upload-wrap"}, 
+	                            "取消选择"
+	                        )
+	                    )
+	                )
+	            )
+	        )
+	    },
+	    HandleClose:function () {
+	        ReactDOM.render(
+	            React.createElement(Clock, {title: "当前时钟"}),
+	            document.getElementById("other-thing")
+	        );
+	    },
+	    HandleSubmit:function (event) {
+	        event.preventDefault();
+	        Jquery.ajax({
+	            type:"POST",
+	            url:"/users/uploadImage",
+	            data:{
+	                targetImage:this.state.targetImage,
+	                username:this.props.username
+	            },
+	            success:function (code) {
+	                console.log(code);
+	                switch (code){
+	                    case "1":this.setState({
+	                        status:"上传失败，请稍后重试。"
+	                    });
+	                        break;
+	                    case "3":this.setState({
+	                        status:"头像上传成功。"
+	                    });
+	                        setTimeout(function () {
+	                            ReactDOM.render(
+	                                React.createElement(Clock, {title: "当前时钟"}),
+	                                document.getElementById("other-thing")
+	                            );
+	                        }.bind(this),1000);
+	                        break;
+	                    default:break;
+	                }
+	            }.bind(this)
+	        })
+	    },
+	    componentDidMount:function () {
+
+	        var test = document.getElementById("test");
+	        var testContext = test.getContext("2d");
+
+
+
+
+
+
+
+
+	        /*如果浏览器不支持FileReader功能，错误弹窗。*/
+	        if(typeof FileReader == "undified") {
+	            alert("您老的浏览器不行了！");
+	        }
+	        //获取主canvas以及上下文。
+	        var canvas = document.getElementById("canvas");
+	        var context = canvas.getContext("2d");
+	        //备份，通过离屏canvas，，用来截取想的图像。
+	        var canvas_copy = document.getElementById("copy");
+	        var context_copy = canvas_copy.getContext("2d");
+	        //截取的部分。
+	        var Mir = document.getElementById("Mir");
+	        var MirContext = Mir.getContext("2d");
+	        //遮罩层。
+	        var trans = document.getElementById("trans");
+	        var transcontext = trans.getContext("2d");
+
+	        var image = new Image();
+	        var image_bg = new Image();
+	        // 检测是否有鼠标按下
+	        var isMouseDown = false;
+	        var isRect = false;
+
+
+	        var basePoint;
+	        var constPoint;
+	        canvas.onmousedown = function (event) {
+	            event.preventDefault();
+	            isMouseDown = true;
+	            basePoint = getInitalPoint(event.clientX,event.clientY);
+	        };
+	        canvas.onmousemove = function (event) {
+	            event.preventDefault();
+	            var Point = getInitalPoint(event.clientX,event.clientY);
+	            if(isMouseDown && !isRect){
+	                constPoint = basePoint;
+	                Mir.width = Point.x - basePoint.x;
+	                Mir.height = Point.y - basePoint.y;
+	                MirContext.clearRect(0,0,Mir.width,Mir.height);
+	                MirContext.drawImage(canvas_copy,basePoint.x,basePoint.y,Mir.width,Mir.height,0,0,Mir.width,Mir.height);
+	                context.clearRect(0,0,canvas.width,canvas.height);
+	                context.drawImage(image,0,0,canvas.width,canvas.height);
+	                context.drawImage(trans,0,0,canvas.width,canvas.height);
+	                context.save();
+	                context.beginPath();
+	                context.strokeStyle = "#42AA69";
+	                context.lineWidth = 5;
+	                context.rect(basePoint.x,basePoint.y,Mir.width,Mir.height);
+	                context.stroke();
+	                context.clip();
+	                context.drawImage(Mir,0,0,Mir.width,Mir.height,basePoint.x,basePoint.y,Mir.width,Mir.height);
+	                context.restore();
+	            }else if(isRect && isMouseDown){
+	                var scroll_x = Point.x - basePoint.x;
+	                var scroll_y = Point.y - basePoint.y;
+	                MirContext.clearRect(0,0,Mir.width,Mir.height);
+	                MirContext.drawImage(canvas_copy,constPoint.x-scroll_x,constPoint.y-scroll_y,Mir.width,Mir.height,0,0,Mir.width,Mir.height);
+	                context.clearRect(0,0,canvas.width,canvas.height);
+	                context.drawImage(image,scroll_x,scroll_y,canvas.width,canvas.height);
+	                context.drawImage(trans,0,0,canvas.width,canvas.height);
+	                context.save();
+	                context.beginPath();
+	                context.strokeStyle = "#42AA69";
+	                context.lineWidth = 5;
+	                context.rect(constPoint.x,constPoint.y,Mir.width,Mir.height);
+	                context.stroke();
+	                context.clip();
+	                context.drawImage(Mir,0,0,Mir.width,Mir.height,constPoint.x,constPoint.y,Mir.width,Mir.height);
+	                context.restore();
+	            }
+	            this.setState({
+	                targetImage:Mir.toDataURL("image/png")
+	            },function () {
+	                testContext.clearRect(0,0,test.width,test.height);
+	                var testImage = new Image();
+	                testImage.src = this.state.targetImage;
+	                testImage.onload = function () {
+	                    testContext.drawImage(testImage,0,0,test.width,test.height);
+	                }
+	            });
+
+	        }.bind(this);
+	        canvas.onmouseup = function (event) {
+	            event.preventDefault();
+	            isMouseDown = false;
+	            isRect = true;
+	        };
+	        canvas.onmouseout = function (event) {
+	            event.preventDefault();
+	            isMouseDown = false;
+
+	        };
+	        var cancel = document.getElementById("btn");
+	        cancel.onclick = function () {
+	            isMouseDown = false;
+	            isRect = false;
+	            context.clearRect(0,0,canvas.width,canvas.height);
+	            context.drawImage(image,0,0,canvas.width,canvas.height);
+	            context.drawImage(trans,0,0,canvas.width,canvas.height);
+	        };
+	        //获取从上传按钮提供的内容。
+	        function showDataByURL() {
+	            var resultFile = document.getElementById("upload-btn").files[0];
+	            if (resultFile) {
+	                var reader = new FileReader();
+	                reader.readAsDataURL(resultFile);
+	                reader.onload = function (e) {
+	                    image.src =this.result;
+	                    context.clearRect(0,0,canvas.width,canvas.height);
+	                    image.onload = function () {
+	                        canvas.height = this.height*canvas.width/this.width;
+	                        trans.height = this.height*canvas.width/this.width;
+	                        canvas_copy.height = this.height*canvas.width/this.width;
+	                        context.drawImage(this,0,0,canvas.width,canvas.height);
+	                        image_bg.src = "/images/trans50.png";
+	                        image_bg.onload = function () {
+	                            transcontext.drawImage(image_bg,0,0,trans.width,trans.height);
+	                            context.drawImage(trans,0,0,canvas.width,canvas.height);
+	                            context_copy.drawImage(image,0,0,canvas_copy.width,canvas_copy.height);
+	                        };
+	                    }
+	                };
+	            }
+	        }
+	        function getInitalPoint(x,y) {
+	            var box = canvas.getBoundingClientRect();
+	            return{
+	                x:x-box.left,
+	                y:y-box.top
+	            }
+	        }
+	        Jquery("#upload-btn").change(function (event) {
+	            showDataByURL();
+	            this.setState({
+	                status:"请在阴影区域拖拽，以获取希望得到的图像区域，并且点击“提交头像”按钮完成操作。"
+	            });
+	        }.bind(this));
+
+	    }
+	});
+
+	module.exports = UserImage;
+
+/***/ },
+/* 179 */
+/***/ function(module, exports, __webpack_require__) {
+
 	
 	/**
 	 * Module dependencies.
 	 */
 
-	var url = __webpack_require__(179);
-	var parser = __webpack_require__(184);
-	var Manager = __webpack_require__(192);
-	var debug = __webpack_require__(181)('socket.io-client');
+	var url = __webpack_require__(180);
+	var parser = __webpack_require__(185);
+	var Manager = __webpack_require__(193);
+	var debug = __webpack_require__(182)('socket.io-client');
 
 	/**
 	 * Module exports.
@@ -32273,12 +32537,12 @@
 	 * @api public
 	 */
 
-	exports.Manager = __webpack_require__(192);
-	exports.Socket = __webpack_require__(220);
+	exports.Manager = __webpack_require__(193);
+	exports.Socket = __webpack_require__(221);
 
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -32286,8 +32550,8 @@
 	 * Module dependencies.
 	 */
 
-	var parseuri = __webpack_require__(180);
-	var debug = __webpack_require__(181)('socket.io-client:url');
+	var parseuri = __webpack_require__(181);
+	var debug = __webpack_require__(182)('socket.io-client:url');
 
 	/**
 	 * Module exports.
@@ -32360,7 +32624,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports) {
 
 	/**
@@ -32405,7 +32669,7 @@
 
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -32415,7 +32679,7 @@
 	 * Expose `debug()` as the module.
 	 */
 
-	exports = module.exports = __webpack_require__(182);
+	exports = module.exports = __webpack_require__(183);
 	exports.log = log;
 	exports.formatArgs = formatArgs;
 	exports.save = save;
@@ -32579,7 +32843,7 @@
 
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -32595,7 +32859,7 @@
 	exports.disable = disable;
 	exports.enable = enable;
 	exports.enabled = enabled;
-	exports.humanize = __webpack_require__(183);
+	exports.humanize = __webpack_require__(184);
 
 	/**
 	 * The currently active debug mode names, and names to skip.
@@ -32782,7 +33046,7 @@
 
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports) {
 
 	/**
@@ -32913,7 +33177,7 @@
 
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -32921,11 +33185,11 @@
 	 * Module dependencies.
 	 */
 
-	var debug = __webpack_require__(181)('socket.io-parser');
-	var json = __webpack_require__(185);
-	var Emitter = __webpack_require__(188);
-	var binary = __webpack_require__(189);
-	var isBuf = __webpack_require__(191);
+	var debug = __webpack_require__(182)('socket.io-parser');
+	var json = __webpack_require__(186);
+	var Emitter = __webpack_require__(189);
+	var binary = __webpack_require__(190);
+	var isBuf = __webpack_require__(192);
 
 	/**
 	 * Protocol version.
@@ -33323,14 +33587,14 @@
 
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
 	;(function () {
 	  // Detect the `define` function exposed by asynchronous module loaders. The
 	  // strict `define` check is necessary for compatibility with `r.js`.
-	  var isLoader = "function" === "function" && __webpack_require__(187);
+	  var isLoader = "function" === "function" && __webpack_require__(188);
 
 	  // A set of types used to distinguish objects from primitives.
 	  var objectTypes = {
@@ -34229,10 +34493,10 @@
 	  }
 	}).call(this);
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(186)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(187)(module), (function() { return this; }())))
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -34248,7 +34512,7 @@
 
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -34256,7 +34520,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports) {
 
 	
@@ -34426,7 +34690,7 @@
 
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/*global Blob,File*/
@@ -34435,8 +34699,8 @@
 	 * Module requirements
 	 */
 
-	var isArray = __webpack_require__(190);
-	var isBuf = __webpack_require__(191);
+	var isArray = __webpack_require__(191);
+	var isBuf = __webpack_require__(192);
 
 	/**
 	 * Replaces every Buffer | ArrayBuffer in packet with a numbered placeholder.
@@ -34574,7 +34838,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -34583,7 +34847,7 @@
 
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -34603,7 +34867,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -34611,15 +34875,15 @@
 	 * Module dependencies.
 	 */
 
-	var eio = __webpack_require__(193);
-	var Socket = __webpack_require__(220);
-	var Emitter = __webpack_require__(221);
-	var parser = __webpack_require__(184);
-	var on = __webpack_require__(223);
-	var bind = __webpack_require__(224);
-	var debug = __webpack_require__(181)('socket.io-client:manager');
-	var indexOf = __webpack_require__(218);
-	var Backoff = __webpack_require__(227);
+	var eio = __webpack_require__(194);
+	var Socket = __webpack_require__(221);
+	var Emitter = __webpack_require__(222);
+	var parser = __webpack_require__(185);
+	var on = __webpack_require__(224);
+	var bind = __webpack_require__(225);
+	var debug = __webpack_require__(182)('socket.io-client:manager');
+	var indexOf = __webpack_require__(219);
+	var Backoff = __webpack_require__(228);
 
 	/**
 	 * IE6+ hasOwnProperty
@@ -35169,19 +35433,19 @@
 
 
 /***/ },
-/* 193 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	module.exports = __webpack_require__(194);
-
-
-/***/ },
 /* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
 	module.exports = __webpack_require__(195);
+
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	module.exports = __webpack_require__(196);
 
 	/**
 	 * Exports parser
@@ -35189,25 +35453,25 @@
 	 * @api public
 	 *
 	 */
-	module.exports.parser = __webpack_require__(202);
+	module.exports.parser = __webpack_require__(203);
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module dependencies.
 	 */
 
-	var transports = __webpack_require__(196);
-	var Emitter = __webpack_require__(211);
-	var debug = __webpack_require__(181)('engine.io-client:socket');
-	var index = __webpack_require__(218);
-	var parser = __webpack_require__(202);
-	var parseuri = __webpack_require__(180);
-	var parsejson = __webpack_require__(219);
-	var parseqs = __webpack_require__(212);
+	var transports = __webpack_require__(197);
+	var Emitter = __webpack_require__(212);
+	var debug = __webpack_require__(182)('engine.io-client:socket');
+	var index = __webpack_require__(219);
+	var parser = __webpack_require__(203);
+	var parseuri = __webpack_require__(181);
+	var parsejson = __webpack_require__(220);
+	var parseqs = __webpack_require__(213);
 
 	/**
 	 * Module exports.
@@ -35334,9 +35598,9 @@
 	 */
 
 	Socket.Socket = Socket;
-	Socket.Transport = __webpack_require__(201);
-	Socket.transports = __webpack_require__(196);
-	Socket.parser = __webpack_require__(202);
+	Socket.Transport = __webpack_require__(202);
+	Socket.transports = __webpack_require__(197);
+	Socket.parser = __webpack_require__(203);
 
 	/**
 	 * Creates transport of the given type.
@@ -35931,17 +36195,17 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module dependencies
 	 */
 
-	var XMLHttpRequest = __webpack_require__(197);
-	var XHR = __webpack_require__(199);
-	var JSONP = __webpack_require__(215);
-	var websocket = __webpack_require__(216);
+	var XMLHttpRequest = __webpack_require__(198);
+	var XHR = __webpack_require__(200);
+	var JSONP = __webpack_require__(216);
+	var websocket = __webpack_require__(217);
 
 	/**
 	 * Export transports.
@@ -35991,12 +36255,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {// browser shim for xmlhttprequest module
 
-	var hasCORS = __webpack_require__(198);
+	var hasCORS = __webpack_require__(199);
 
 	module.exports = function (opts) {
 	  var xdomain = opts.xdomain;
@@ -36035,7 +36299,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports) {
 
 	
@@ -36058,18 +36322,18 @@
 
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module requirements.
 	 */
 
-	var XMLHttpRequest = __webpack_require__(197);
-	var Polling = __webpack_require__(200);
-	var Emitter = __webpack_require__(211);
-	var inherit = __webpack_require__(213);
-	var debug = __webpack_require__(181)('engine.io-client:polling-xhr');
+	var XMLHttpRequest = __webpack_require__(198);
+	var Polling = __webpack_require__(201);
+	var Emitter = __webpack_require__(212);
+	var inherit = __webpack_require__(214);
+	var debug = __webpack_require__(182)('engine.io-client:polling-xhr');
 
 	/**
 	 * Module exports.
@@ -36482,19 +36746,19 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies.
 	 */
 
-	var Transport = __webpack_require__(201);
-	var parseqs = __webpack_require__(212);
-	var parser = __webpack_require__(202);
-	var inherit = __webpack_require__(213);
-	var yeast = __webpack_require__(214);
-	var debug = __webpack_require__(181)('engine.io-client:polling');
+	var Transport = __webpack_require__(202);
+	var parseqs = __webpack_require__(213);
+	var parser = __webpack_require__(203);
+	var inherit = __webpack_require__(214);
+	var yeast = __webpack_require__(215);
+	var debug = __webpack_require__(182)('engine.io-client:polling');
 
 	/**
 	 * Module exports.
@@ -36507,7 +36771,7 @@
 	 */
 
 	var hasXHR2 = (function () {
-	  var XMLHttpRequest = __webpack_require__(197);
+	  var XMLHttpRequest = __webpack_require__(198);
 	  var xhr = new XMLHttpRequest({ xdomain: false });
 	  return null != xhr.responseType;
 	})();
@@ -36733,15 +36997,15 @@
 
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies.
 	 */
 
-	var parser = __webpack_require__(202);
-	var Emitter = __webpack_require__(211);
+	var parser = __webpack_require__(203);
+	var Emitter = __webpack_require__(212);
 
 	/**
 	 * Module exports.
@@ -36894,22 +37158,22 @@
 
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module dependencies.
 	 */
 
-	var keys = __webpack_require__(203);
-	var hasBinary = __webpack_require__(204);
-	var sliceBuffer = __webpack_require__(206);
-	var after = __webpack_require__(207);
-	var utf8 = __webpack_require__(208);
+	var keys = __webpack_require__(204);
+	var hasBinary = __webpack_require__(205);
+	var sliceBuffer = __webpack_require__(207);
+	var after = __webpack_require__(208);
+	var utf8 = __webpack_require__(209);
 
 	var base64encoder;
 	if (global && global.ArrayBuffer) {
-	  base64encoder = __webpack_require__(209);
+	  base64encoder = __webpack_require__(210);
 	}
 
 	/**
@@ -36967,7 +37231,7 @@
 	 * Create a blob api even for blob builder when vendor prefixes exist
 	 */
 
-	var Blob = __webpack_require__(210);
+	var Blob = __webpack_require__(211);
 
 	/**
 	 * Encodes a packet.
@@ -37510,7 +37774,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports) {
 
 	
@@ -37535,7 +37799,7 @@
 
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -37543,7 +37807,7 @@
 	 * Module requirements.
 	 */
 
-	var isArray = __webpack_require__(205);
+	var isArray = __webpack_require__(206);
 
 	/**
 	 * Module exports.
@@ -37600,7 +37864,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -37609,7 +37873,7 @@
 
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports) {
 
 	/**
@@ -37644,7 +37908,7 @@
 
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports) {
 
 	module.exports = after
@@ -37678,7 +37942,7 @@
 
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/wtf8 v1.0.0 by @mathias */
@@ -37914,10 +38178,10 @@
 
 	}(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(186)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(187)(module), (function() { return this; }())))
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports) {
 
 	/*
@@ -37990,7 +38254,7 @@
 
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -38093,7 +38357,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports) {
 
 	
@@ -38263,7 +38527,7 @@
 
 
 /***/ },
-/* 212 */
+/* 213 */
 /***/ function(module, exports) {
 
 	/**
@@ -38306,7 +38570,7 @@
 
 
 /***/ },
-/* 213 */
+/* 214 */
 /***/ function(module, exports) {
 
 	
@@ -38318,7 +38582,7 @@
 	};
 
 /***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38392,7 +38656,7 @@
 
 
 /***/ },
-/* 215 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -38400,8 +38664,8 @@
 	 * Module requirements.
 	 */
 
-	var Polling = __webpack_require__(200);
-	var inherit = __webpack_require__(213);
+	var Polling = __webpack_require__(201);
+	var inherit = __webpack_require__(214);
 
 	/**
 	 * Module exports.
@@ -38630,19 +38894,19 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 216 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module dependencies.
 	 */
 
-	var Transport = __webpack_require__(201);
-	var parser = __webpack_require__(202);
-	var parseqs = __webpack_require__(212);
-	var inherit = __webpack_require__(213);
-	var yeast = __webpack_require__(214);
-	var debug = __webpack_require__(181)('engine.io-client:websocket');
+	var Transport = __webpack_require__(202);
+	var parser = __webpack_require__(203);
+	var parseqs = __webpack_require__(213);
+	var inherit = __webpack_require__(214);
+	var yeast = __webpack_require__(215);
+	var debug = __webpack_require__(182)('engine.io-client:websocket');
 	var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 
 	/**
@@ -38654,7 +38918,7 @@
 	var WebSocket = BrowserWebSocket;
 	if (!WebSocket && typeof window === 'undefined') {
 	  try {
-	    WebSocket = __webpack_require__(217);
+	    WebSocket = __webpack_require__(218);
 	  } catch (e) { }
 	}
 
@@ -38911,13 +39175,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 217 */
+/* 218 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports) {
 
 	
@@ -38932,7 +39196,7 @@
 	};
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -38970,7 +39234,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -38978,13 +39242,13 @@
 	 * Module dependencies.
 	 */
 
-	var parser = __webpack_require__(184);
-	var Emitter = __webpack_require__(221);
-	var toArray = __webpack_require__(222);
-	var on = __webpack_require__(223);
-	var bind = __webpack_require__(224);
-	var debug = __webpack_require__(181)('socket.io-client:socket');
-	var hasBin = __webpack_require__(225);
+	var parser = __webpack_require__(185);
+	var Emitter = __webpack_require__(222);
+	var toArray = __webpack_require__(223);
+	var on = __webpack_require__(224);
+	var bind = __webpack_require__(225);
+	var debug = __webpack_require__(182)('socket.io-client:socket');
+	var hasBin = __webpack_require__(226);
 
 	/**
 	 * Module exports.
@@ -39395,7 +39659,7 @@
 
 
 /***/ },
-/* 221 */
+/* 222 */
 /***/ function(module, exports) {
 
 	
@@ -39562,7 +39826,7 @@
 
 
 /***/ },
-/* 222 */
+/* 223 */
 /***/ function(module, exports) {
 
 	module.exports = toArray
@@ -39581,7 +39845,7 @@
 
 
 /***/ },
-/* 223 */
+/* 224 */
 /***/ function(module, exports) {
 
 	
@@ -39611,7 +39875,7 @@
 
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports) {
 
 	/**
@@ -39640,7 +39904,7 @@
 
 
 /***/ },
-/* 225 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -39648,7 +39912,7 @@
 	 * Module requirements.
 	 */
 
-	var isArray = __webpack_require__(226);
+	var isArray = __webpack_require__(227);
 
 	/**
 	 * Module exports.
@@ -39706,7 +39970,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 226 */
+/* 227 */
 /***/ function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -39715,7 +39979,7 @@
 
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports) {
 
 	
@@ -39806,7 +40070,7 @@
 
 
 /***/ },
-/* 228 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -39851,7 +40115,7 @@
 	                ), 
 	                React.createElement("hr", null), 
 	                React.createElement("div", {className: "content"}, 
-	                    React.createElement("form", {className: "content", onSubmit: this.HandleSubmit}, 
+	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
 	                        React.createElement("div", {className: ""}, this.state.status), 
 	                        React.createElement("label", {htmlFor: "user-name"}, "用户名："), 
 	                        React.createElement("input", {value: this.state.username, onChange: this.HandleChange.bind(this,"username"), type: "text", placeholder: "请输入用户名。"}), 
