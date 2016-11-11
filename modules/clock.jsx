@@ -7,11 +7,15 @@ var Clock = React.createClass({
             <div>
                 <div className="item-title">{this.props.title}</div>
                 <hr/>
+                <div className="form-tips m10">
+                    {this.props.tipsText}
+                </div>
                 <canvas id="clock" height="300" width="300" className="canvas-clock"></canvas>
             </div>
         )
     },
     componentDidMount:function () {
+
         var clock = document.getElementById("clock");
         var cxt = clock.getContext("2d");
         var width = cxt.canvas.width;

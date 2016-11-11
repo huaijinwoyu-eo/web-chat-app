@@ -11,7 +11,9 @@ var UserDetails = React.createClass({
             age:"",
             educational_background:"",
             profession:"",
-            status:""
+            status:"请填写个人详细信息。",
+            flage:true,
+            formTips:"form-tips"
         }
     },
     HandleChange:function(value,event){
@@ -45,7 +47,7 @@ var UserDetails = React.createClass({
                 <hr/>
                 <div className="content">
                     <form onSubmit={this.HandleSubmit}>
-                        <div className="">{this.state.status}</div>
+                        <div className={this.state.formTips}>{this.state.status}</div>
                         <label htmlFor="">性别：</label>
                         <input value={this.state.sexual} onChange={this.HandleChange.bind(this,"sexual")} type="text" placeholder="请输入性别。" />
                         <br/>
@@ -66,7 +68,7 @@ var UserDetails = React.createClass({
     },
     HandleClose:function () {
         ReactDOM.render(
-            <Clock title="当前时钟"/>,
+            <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
             document.getElementById("other-thing")
         );
     },
@@ -74,60 +76,73 @@ var UserDetails = React.createClass({
         event.preventDefault();
         if(!this.state.sexual){
             this.setState({
-                status:"用户性别不能为空。"
+                status:"用户性别不能为空。",
+                formTips:"form-tips"+" "+"warning"
             });
             return;
         }
         if(!this.state.age){
             this.setState({
-                status:"用户年龄不能为空。"
+                status:"用户年龄不能为空。",
+                formTips:"form-tips"+" "+"warning"
             });
             return;
         }
         if(!this.state.educational_background){
             this.setState({
-                status:"学历不能为空。"
+                status:"学历不能为空。",
+                formTips:"form-tips"+" "+"warning"
             });
             return;
         }
         if(!this.state.profession){
             this.setState({
-                status:"专业不能为空。"
+                status:"专业不能为空。",
+                formTips:"form-tips"+" "+"warning"
             })
         }
-        Jquery.ajax({
-            type:"POST",
-            url:"/users/details",
-            data:{
-                username:this.props.username,
-                sexual:this.state.sexual,
-                age:this.state.age,
-                educational_background:this.state.educational_background,
-                profession:this.state.profession
-            },
-            success:function (code) {
-                console.log(code);
-                switch (code){
-                    case "1":this.setState({
-                        status:"提交失败，请稍后重试。"
-                    });
-                        break;
-                    case "2":
-                        this.setState({
-                            status:"恭喜你，详细信息提交成功！"
+        if(this.state.flage){
+            this.setState({
+                flage:false
+            });
+            Jquery.ajax({
+                type:"POST",
+                url:"/users/details",
+                data:{
+                    username:this.props.username,
+                    sexual:this.state.sexual,
+                    age:this.state.age,
+                    educational_background:this.state.educational_background,
+                    profession:this.state.profession
+                },
+                success:function (code) {
+                    switch (code){
+                        case "1":this.setState({
+                            status:"提交失败，请稍后重试。",
+                            formTips:"form-tips"+" "+"error"
                         });
-                    {this.props.Ffunction()}
-                        setTimeout(function () {
-                            ReactDOM.render(
-                                <Clock title="当前时钟"/>,
-                                document.getElementById("other-thing")
-                            );
-                        }.bind(this),1000);
-                        break;
-                    default:break;
-                }
-            }.bind(this)
-        })
+                            break;
+                        case "2":
+                            this.setState({
+                                status:"恭喜你，详细信息提交成功！",
+                                formTips:"form-tips"+" "+"success"
+                            });
+                        {this.props.Ffunction()}
+                            setTimeout(function () {
+                                ReactDOM.render(
+                                    <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
+                                    document.getElementById("other-thing")
+                                );
+                            }.bind(this),1000);
+                            break;
+                        default:break;
+                    }
+                    this.setState({
+                        flage:true
+                    })
+                }.bind(this)
+            })
+        }
     }
 });
 

@@ -7,12 +7,20 @@ var Clock = require("./clock");
 var UserInfo = require("./user-info");
 //引入socket.io-client模块
 var io = require("socket.io-client");
+//引入用户朋友列表
+var FriendList = require("./friend-list");
+//引入搜索按钮
+var SearchBtn = require("./search-btn");
+
+
 var LoginPage = React.createClass({
     getInitialState:function () {
         return{
             username:this.props.username || "",
             password:"",
-            status:this.props.status || ""
+            status:this.props.status || "请填写用户名和密码进行登录。",
+            flage:true,
+            formTips:"form-tips"
         }
     },
     render:function(){
@@ -27,7 +35,7 @@ var LoginPage = React.createClass({
                 <hr/>
                 <div className="content">
                     <form onSubmit={this.HandleSubmit}>
-                        <div className="">{this.state.status}</div>
+                        <div className={this.state.formTips}>{this.state.status}</div>
                         <label htmlFor="user-name">用户名：</label>
                         <input type="text" placeholder="请输入用户名。" onChange={this.HandleChang.bind(this,"username")} value={this.state.username} />
                         <br/>
@@ -53,7 +61,7 @@ var LoginPage = React.createClass({
     },
     HandleClose:function () {
         ReactDOM.render(
-            <Clock title="当前时钟"/>,
+            <Clock title="当前时钟" tipsText="点击“注册”按钮进行注册，如果已经注册请点击“登录”按钮进行登录。"/>,
             document.getElementById("other-thing")
         );
     },
@@ -61,73 +69,104 @@ var LoginPage = React.createClass({
         event.preventDefault();
         if(!this.state.username){
             this.setState({
-                status:"用户名不能为空。"
+                status:"用户名不能为空。",
+                formTips:"form-tips"+" "+"warning"
             });
             return;
         }
         if(!this.state.password){
             this.setState({
-                status:"登录密码不能为空。"
+                status:"登录密码不能为空。",
+                formTips:"form-tips"+" "+"warning"
             });
             return;
         }
-        Jquery.ajax({
-            type:"POST",
-            url:"/users/login",
-            data:{
-                username:this.state.username,
-                password:this.state.password
-            },
-            success:function (code) {
-                console.log(code);
-                switch (code){
-                    case "1":this.setState({
-                        status:"用户登录失败，请稍后重试。"
-                    });
-                        break;
-                    case "2":this.setState({
-                        status:"该用户不存在，请注册。"
-                    });
-                        break;
-                    case "3":this.setState({
-                        status:"用户登录成功。"
-                    });
-                        var socket = io();
-                        setTimeout(function () {
-                            ReactDOM.render(
-                                <Clock title="当前时钟"/>,
-                                document.getElementById("other-thing")
-                            );
-                            ReactDOM.render(
-                                <UserInfo username={this.state.username} hasInput="完善信息"/>,
-                                document.getElementById("user-info")
-                            )
-                        }.bind(this),1000);
-                        break;
-                    case "4":this.setState({
-                        status:"密码错误，请重新输入。",
-                        password:""
-                    });
-                        break;
-                    case "5":this.setState({
-                        status:"用户登录成功。"
-                    });
-                        var socket = io();
-                        setTimeout(function () {
-                            ReactDOM.render(
-                                <Clock title="当前时钟"/>,
-                                document.getElementById("other-thing")
-                            );
-                            ReactDOM.render(
-                                <UserInfo username={this.state.username} hasInput="修改信息"/>,
-                                document.getElementById("user-info")
-                            )
-                        }.bind(this),1000);
-                        break;
-                    default:break;
-                }
-            }.bind(this)
-        })
+        if(this.state.flage){
+            this.setState({
+                flage:false
+            });
+            Jquery.ajax({
+                type:"POST",
+                url:"/users/login",
+                data:{
+                    username:this.state.username,
+                    password:this.state.password
+                },
+                success:function (code) {
+                    switch (code){
+                        case "1":this.setState({
+                            status:"用户登录失败，请稍后重试。",
+                            formTips:"form-tips"+" "+"error"
+                        });
+                            break;
+                        case "2":this.setState({
+                            status:"该用户不存在，请注册。",
+                            formTips:"form-tips"+" "+"info"
+                        });
+                            break;
+                        case "3":this.setState({
+                            status:"用户登录成功。",
+                            formTips:"form-tips"+" "+"success"
+                        });
+                            var socket = io();
+                            setTimeout(function () {
+                                ReactDOM.render(
+                                    <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
+                                    document.getElementById("other-thing")
+                                );
+                                ReactDOM.render(
+                                    <UserInfo username={this.state.username} hasInput="完善信息"/>,
+                                    document.getElementById("user-info")
+                                );
+                                ReactDOM.render(
+                                    <FriendList username={this.state.username}/>,
+                                    document.getElementById("user-list")
+                                );
+                                ReactDOM.render(
+                                    <SearchBtn username={this.state.username}/>,
+                                    document.getElementById("search-btn")
+                                )
+                            }.bind(this),1000);
+                            break;
+                        case "4":this.setState({
+                            status:"密码错误，请重新输入。",
+                            password:"",
+                            formTips:"form-tips"+" "+"warning"
+                        });
+                            break;
+                        case "5":this.setState({
+                            status:"用户登录成功。",
+                            formTips:"form-tips"+" "+"success"
+                        });
+                            var socket = io();
+                            setTimeout(function () {
+                                ReactDOM.render(
+                                    <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
+                                    document.getElementById("other-thing")
+                                );
+                                ReactDOM.render(
+                                    <UserInfo username={this.state.username} hasInput="修改信息"/>,
+                                    document.getElementById("user-info")
+                                );
+                                ReactDOM.render(
+                                    <FriendList username={this.state.username}/>,
+                                    document.getElementById("user-list")
+                                );
+                                ReactDOM.render(
+                                    <SearchBtn username={this.state.username}/>,
+                                    document.getElementById("search-btn")
+                                )
+                            }.bind(this),1000);
+                            break;
+                        default:break;
+                    }
+                    this.setState({
+                        flage:true
+                    })
+                }.bind(this)
+            })
+        }
+
     }
 });
 module.exports = LoginPage;

@@ -10,40 +10,44 @@ var User = mongoose.model("Users");
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
+//注册
 router.post("/register",function(req, res, next){
-    User.findOne({username:req.body.username},function (err,doc) {
+    User.count({},function (err,count) {
         if(err){
             console.log(err);
-            res.send("1");//操作数据库错误。
-            return;
-        }
-        if(doc){
-            console.log(doc);
-            res.send("2");//用户已被注册。
-            return;
         }else {
-            var user = new User({
-                username:req.body.username,
-                password:req.body.password
-            });
-            user.save(function (err) {
+            User.findOne({username:req.body.username},function (err,doc) {
                 if(err){
                     console.log(err);
-                }else {
-                    console.log("save success");
+                    res.send("1");//操作数据库错误。
                 }
-            });
-            res.send("3");//注册成功。
+                if(doc){
+                    res.send("2");//用户已被注册。
+                }else {
+                    var user = new User({
+                        id:count+1,
+                        username:req.body.username,
+                        password:req.body.password
+                    });
+                    user.save(function (err) {
+                        if(err){
+                            console.log(err);
+                        }else {
+                            console.log("save success");
+                        }
+                    });
+                    res.send("3");//注册成功。
+                }
+            })
         }
-    })
+    });
 });
-
+//登录
 router.post("/login",function (req, res, next) {
     User.findOne({username:req.body.username},function (err, doc) {
         if(err){
             console.log(err);
             res.send("1");//操作数据库错误。
-            return;
         }
         if(!doc){
             res.send("2");//没找到该用户，用户未被注册。
@@ -59,7 +63,7 @@ router.post("/login",function (req, res, next) {
         }
     });
 });
-
+//退出
 router.get("/signOut",function (req, res, next) {
     req.session.username = null;
     res.send(req.session.username);
@@ -71,7 +75,6 @@ router.post("/details",function (req, res, next) {
         if(err){
             console.log(err);
             res.send("1");
-            return;
         }
         doc.set({
             sexual:req.body.sexual,
@@ -83,10 +86,8 @@ router.post("/details",function (req, res, next) {
             if(err){
                 console.log(err);
                 res.send("1");
-                return;
             }
             res.send("2");
-            return;
         });
     })
 });
@@ -96,7 +97,6 @@ router.post("/uploadImage",function (req, res, next) {
         if(err){
             console.log(err);
             res.send("1");
-            return
         }
         doc.set({
             UserPhoto:req.body.targetImage
@@ -108,24 +108,54 @@ router.post("/uploadImage",function (req, res, next) {
                 return
             }
             res.send("2");
-            return;
         })
     })
 });
 //获取头像，签名
 router.post("/getInfo",function (req, res, next) {
-    console.log(req.body.username);
     User.findOne({username:req.body.username},function (err, doc) {
         if(err){
             console.log(err);
             res.send("err");
-            return
         }
         res.send({
             UserPhoto:doc.UserPhoto,
             UserText:doc.UserText,
             age:doc.age
         })
+    })
+});
+//修改签名
+router.post("/upText",function (req, res, next) {
+    User.findOne({username:req.body.username},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("1");
+        }else {
+            doc.set({
+                UserText:req.body.userText
+            });
+            doc.save(function (err) {
+                if(err){
+                    console.log(err);
+                    res.send("1");
+                }else{
+                    res.send("2");
+                }
+            })
+        }
+    })
+});
+//获取用户好友列表
+router.post("/getFriendList",function (req, res, next) {
+    User.findOne({username:req.body.username},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("err");
+        }
+        res.send({
+            FriendList:doc.FriendList
+        });
     })
 });
 

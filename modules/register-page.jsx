@@ -11,7 +11,9 @@ var RegisterPage = React.createClass({
             username:"",
             password:"",
             checkPassword:"",
-            status:""
+            status:"请填写用户名，密码进行注册。",
+            flage:true,
+            formTips:"form-tips"
         }
     },
     HandleChange:function(value,event){
@@ -41,7 +43,7 @@ var RegisterPage = React.createClass({
                 <hr/>
                 <div className="content">
                     <form onSubmit={this.HandleSubmit}>
-                        <div className="">{this.state.status}</div>
+                        <div className={this.state.formTips}>{this.state.status}</div>
                         <label htmlFor="user-name">用户名：</label>
                         <input value={this.state.username} onChange={this.HandleChange.bind(this,"username")} type="text" placeholder="请输入用户名。" />
                         <br/>
@@ -58,7 +60,7 @@ var RegisterPage = React.createClass({
     },
     HandleClose:function () {
         ReactDOM.render(
-            <Clock title="当前时钟"/>,
+            <Clock title="当前时钟" tipsText="点击“注册”按钮进行注册，如果已经注册请点击“登录”按钮进行登录。"/>,
             document.getElementById("other-thing")
         );
     },
@@ -66,55 +68,68 @@ var RegisterPage = React.createClass({
         event.preventDefault();
         if(!this.state.username){
             this.setState({
-                status:"用户名不能为空。"
+                status:"用户名不能为空。",
+                formTips:"form-tips"+" "+"warning"
             });
             return;
         }
         if(!this.state.password){
             this.setState({
-                status:"密码不能为空。"
+                status:"密码不能为空。",
+                formTips:"form-tips"+" "+"warning"
             });
             return;
         }
         if(this.state.password !== this.state.checkPassword){
             this.setState({
-                status:"确认密码与所填写密码不一致，请重新确认。"
+                status:"确认密码与所填写密码不一致，请重新确认。",
+                formTips:"form-tips"+" "+"warning"
             });
             return;
         }
-        Jquery.ajax({
-            type:"POST",
-            url:"/users/register",
-            data:{
-                username:this.state.username,
-                password:this.state.password
-            },
-            success:function (code) {
-                console.log(code);
-                switch (code){
-                    case "1":this.setState({
-                        status:"用户注册失败，请稍后重试。"
-                    });
-                        break;
-                    case "3":
-                        this.setState({
-                            status:"恭喜你，注册成功！"
+        if(this.state.flage){
+            this.setState({
+                flage:false
+            });
+            Jquery.ajax({
+                type:"POST",
+                url:"/users/register",
+                data:{
+                    username:this.state.username,
+                    password:this.state.password
+                },
+                success:function (code) {
+                    switch (code){
+                        case "1":this.setState({
+                            status:"用户注册失败，请稍后重试。",
+                            formTips:"form-tips"+" "+"error"
                         });
-                        setTimeout(function () {
-                            ReactDOM.render(
-                                <LoginPage username = {this.state.username} status ="请登录..." title="登录"/>,
-                                document.getElementById("other-thing")
-                            );
-                        }.bind(this),1000);
-                        break;
-                    case "2":this.setState({
-                        status:"抱歉，该用户名已被注册。"
-                    });
-                        break;
-                    default:break;
-                }
-            }.bind(this)
-        })
+                            break;
+                        case "3":
+                            this.setState({
+                                status:"恭喜你，注册成功！",
+                                formTips:"form-tips"+" "+"success"
+                            });
+                            setTimeout(function () {
+                                ReactDOM.render(
+                                    <LoginPage username = {this.state.username} status ="请登录..." title="登录"/>,
+                                    document.getElementById("other-thing")
+                                );
+                            }.bind(this),1000);
+                            break;
+                        case "2":this.setState({
+                            status:"抱歉，该用户名已被注册。",
+                            formTips:"form-tips"+" "+"error"
+                        });
+                            break;
+                        default:break;
+                    }
+                    this.setState({
+                        flage:true
+                    })
+                }.bind(this)
+            })
+        }
     }
 });
 

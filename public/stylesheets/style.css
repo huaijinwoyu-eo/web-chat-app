@@ -90,9 +90,13 @@ canvas.user-photo{
     height: 100%;
     min-width: 22px;
     cursor: pointer;
-    background: url("../images/search-btn.png") no-repeat 0 center;
     margin-right: 20px;
     position: relative;
+}
+#search-btn .search-btn{
+    display: block;
+    height: 100%;
+    background: url("../images/search-btn.png") no-repeat 0 center;
 }
 
 /*body*/
@@ -359,6 +363,10 @@ canvas.user-photo{
     -moz-border-radius: 5px;
     border-radius: 5px;
     cursor: pointer;
+    border: 1px solid #dddddd;
+}
+.other-thing .content input[type=submit]:hover{
+    background: #ffffff;
 }
 
 
@@ -367,7 +375,40 @@ canvas.user-photo{
     margin:25px auto;
     display: block;
 }
+/*form-tips*/
+.form-tips{
+    border: 1px solid #3498db;
+    line-height: 25px;
+    text-indent: 2em;
+    margin-bottom: 10px;
+    padding: 0 5px;
+    text-align: justify;
+    position: relative;
+}
+.form-tips::before{
+    content: "";
+    height: 15px;
+    width: 15px;
+    position: relative;
+    top: 3px;
+    left: -15px;
+    display: inline-block;
+    background: url("../images/form-tips.png") no-repeat 1px 1px;
+}
+.form-tips.error::before{
+    background-position: 0 -38px;
+}
+.form-tips.success::before{
+    background-position: 0 -77px;
+}
+.form-tips.warning::before{
+    background-position: 0 -115px;
+}
 /*上传头像相关*/
+canvas#canvas{
+    display: block;
+    margin: 10px auto;
+}
 canvas#copy{
     display: none;
 }
@@ -405,4 +446,12 @@ a.upload-wrap input{
     opacity: 0;
     -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+}
+/*未登录时，朋友列表处显示内容，样式。*/
+.FriendBase{
+    font-size: 25px;
+    color: #cccccc;
+    padding: 0 15px;
+    text-align: justify;
+    line-height: 578px;
 }

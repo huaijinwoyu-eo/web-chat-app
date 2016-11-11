@@ -7,6 +7,7 @@ db.on("error",console.error.bind(console,"connection error"));
 
 
 var UserSchema = new mongoose.Schema({
+    id:Number,
     username:String,
     password:String,
     sexual:String,
@@ -19,10 +20,18 @@ var UserSchema = new mongoose.Schema({
     },
     UserText:{
         type:String,
-        default:"风格"
+        default:""
+    },
+    FriendList:{
+        type:Array,
+        default:[{
+            id:0,
+            username:"小艾",
+            ImageLink:"/images/user-photo-1.png",
+            LastMessage:"",
+            rangTiem:"",
+            OnlineTag:true
+        }]
     }
 });
 var Users = mongoose.model("Users",UserSchema);
-
-
-

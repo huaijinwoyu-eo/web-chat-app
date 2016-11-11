@@ -6,8 +6,10 @@ var Clock = require("./clock");
 var UserImage = React.createClass({
     getInitialState:function () {
         return{
-            status:this.props.status || "",
-            targetImage:[]
+            status:this.props.status || "请点击“选择图片”按钮，选择图片，修改并上传。",
+            targetImage:"",
+            flage:true,
+            formTips:"form-tips"
         }
     },
     render:function () {
@@ -22,23 +24,26 @@ var UserImage = React.createClass({
                 <hr/>
                 <div className="content">
                     <form onSubmit={this.HandleSubmit}>
-                        <div className="">{this.state.status}</div>
+                        <div className={this.state.formTips}>{this.state.status}</div>
                         <canvas id="canvas" width={290}>
                             {"您的浏览器不支持canvas。"}
                         </canvas>
                         <canvas id="copy" width={290}></canvas>
                         <canvas id="trans" width={290}></canvas>
                         <canvas id="Mir"></canvas>
-                        <a href="#" className="upload-wrap">
-                            选择图片
-                            <input id="upload-btn" type="file" accept="image/png,image/jpeg" />
-                        </a>
-                        <a href="#" className="margin upload-wrap" onClick={this.HandleSubmit}>
-                            提交头像
-                        </a>
-                        <a href="#" id="btn" className="upload-wrap">
-                            取消选择
-                        </a>
+                        <div className="db auto0 tc">
+                            <a href="#" className="upload-wrap">
+                                选择图片
+                                <input id="upload-btn" type="file" accept="image/png,image/jpeg" />
+                            </a>
+                            <a disabled="disabled" href="#" className="margin upload-wrap" onClick={this.HandleSubmit}>
+                                提交头像
+                            </a>
+                            <a href="#" id="btn" className="upload-wrap">
+                                取消选择
+                            </a>
+                        </div>
+
                     </form>
                 </div>
             </div>
@@ -46,41 +51,53 @@ var UserImage = React.createClass({
     },
     HandleClose:function () {
         ReactDOM.render(
-            <Clock title="当前时钟"/>,
+            <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
             document.getElementById("other-thing")
         );
     },
     HandleSubmit:function (event) {
         event.preventDefault();
-        Jquery.ajax({
-            type:"POST",
-            url:"/users/uploadImage",
-            data:{
-                targetImage:this.state.targetImage,
-                username:this.props.username
-            },
-            success:function (code) {
-                console.log(code);
-                switch (code){
-                    case "1":this.setState({
-                        status:"上传失败，请稍后重试。"
-                    });
-                        break;
-                    case "2":this.setState({
-                        status:"头像上传成功。"
-                    });
-                        this.props.InnerUp(this.state.targetImage);
-                        setTimeout(function () {
-                            ReactDOM.render(
-                                <Clock title="当前时钟"/>,
-                                document.getElementById("other-thing")
-                            );
-                        }.bind(this),1000);
-                        break;
-                    default:break;
-                }
-            }.bind(this)
-        })
+        if(this.state.flage){
+            this.setState({
+                flage:false
+            });
+            Jquery.ajax({
+                type:"POST",
+                url:"/users/uploadImage",
+                data:{
+                    targetImage:this.state.targetImage,
+                    username:this.props.username
+                },
+                success:function (code) {
+                    switch (code){
+                        case "1":this.setState({
+                            status:"上传失败，请稍后重试。",
+                            formTips:"form-tips"+" "+"error"
+                        });
+                            break;
+                        case "2":this.setState({
+                            status:"头像上传成功。",
+                            formTips:"form-tips"+" "+"success"
+                        });
+                            this.props.InnerUp(this.state.targetImage);
+                            setTimeout(function () {
+                                ReactDOM.render(
+                                    <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
+                                    document.getElementById("other-thing")
+                                );
+                            }.bind(this),1000);
+                            break;
+                        default:break;
+                    }
+                    this.setState({
+                        flage:true
+                    })
+                }.bind(this)
+            })
+        }
+
+
+
     },
     componentDidMount:function () {
         /*如果浏览器不支持FileReader功能，错误弹窗。*/

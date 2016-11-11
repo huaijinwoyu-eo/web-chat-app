@@ -11,7 +11,8 @@ var UserInfo = React.createClass({
         return {
             thisText: this.props.hasInput,
             userImg: "/images/user-photo-1.png",
-            userText: ""
+            userText: "",
+            userBeforeText:""
         }
     },
     render: function () {
@@ -20,13 +21,40 @@ var UserInfo = React.createClass({
                 <img title="点击头像，更换头像。" src={this.state.userImg} alt="#" className="fl user-photo" onClick={this.HandleUpImage}/>
                 <div className="info">
                     <p className="name" title="点击登出。" onClick={this.HandleLogout}>{this.props.username}</p>
-                    <input type="text" className="log-text" value={this.state.userText} placeholder="请设置自己的个性签名。"/>
+                    <input onChange={this.HandleChange} onBlur={this.HandleTextup} type="text" className="log-text" value={this.state.userText} placeholder="请设置自己的个性签名。"/>
                     <a href="#" className="abs login-btn" onClick={this.HandleClick}>
                         {this.state.thisText}
                     </a>
                 </div>
             </div>
         )
+    },
+    HandleChange:function (event) {
+        this.setState({
+            userText:event.target.value
+        });
+    },
+    HandleTextup:function () {
+        if(this.state.userBeforeText!==this.state.userText){
+            Jquery.ajax({
+                type:"POST",
+                url:"/users/upText",
+                data:{
+                    username:this.props.username,
+                    userText:this.state.userText
+                },
+                success:function (code) {
+                    if(code == "1"){
+                        alert("签名修改失败，请稍后重试。")
+                    }else if(code=="2"){
+                        alert("签名修改成功。")
+                    }
+                    this.setState({
+                        userBeforeText:this.state.userText
+                    });
+                }.bind(this)
+            });
+        }
     },
     componentDidMount: function () {
         Jquery.ajax({
@@ -38,7 +66,8 @@ var UserInfo = React.createClass({
             success:function (data) {
                 this.setState({
                     userImg: data.UserPhoto,
-                    userText: data.UserText
+                    userText: data.UserText,
+                    userBeforeText:data.UserText
                 });
                 if(data.age){
                     this.setState({

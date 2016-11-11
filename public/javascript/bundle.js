@@ -52,15 +52,33 @@
 	var UserInfo = __webpack_require__(176);
 	//引入时钟模块
 	var Clock = __webpack_require__(175);
+	//引入用户朋友列表
+	var FriendList = __webpack_require__(229);
+	//未登录时朋友列表处显示的信息。
+	var FriendListBase = __webpack_require__(231);
+	//登录按钮
+	var SearchBtn = __webpack_require__(232);
+
+
+
+
 	var content = document.getElementById("user-info").innerText;
 
 	ReactDOM.render(
-	    React.createElement(Clock, {title: "当前时钟"}),
+	    React.createElement(Clock, {title: "当前时钟", tipsText: "点击“注册”按钮进行注册，如果已经注册请点击“登录”按钮进行登录。"}),
 	    document.getElementById("other-thing")
 	);
 	ReactDOM.render(
 	    content ? React.createElement(UserInfo, {username: content}) : React.createElement(LoginRegister, null),
 	    document.getElementById("user-info")
+	);
+	ReactDOM.render(
+	    content ? React.createElement(FriendList, {username: content}) : React.createElement(FriendListBase, {Text: "请登录以获取朋友列表。"}),
+	    document.getElementById("user-list")
+	);
+	ReactDOM.render(
+	    React.createElement(SearchBtn, {username: content}),
+	    document.getElementById("search-btn")
 	);
 
 /***/ },
@@ -21437,7 +21455,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	var LoginPage = __webpack_require__(173);
-	var RegisterPage = __webpack_require__(229);
+	var RegisterPage = __webpack_require__(234);
 	var Login = React.createClass({displayName: "Login",
 	    render:function(){
 	        return(
@@ -21476,12 +21494,20 @@
 	var UserInfo = __webpack_require__(176);
 	//引入socket.io-client模块
 	var io = __webpack_require__(179);
+	//引入用户朋友列表
+	var FriendList = __webpack_require__(229);
+	//引入搜索按钮
+	var SearchBtn = __webpack_require__(232);
+
+
 	var LoginPage = React.createClass({displayName: "LoginPage",
 	    getInitialState:function () {
 	        return{
 	            username:this.props.username || "",
 	            password:"",
-	            status:this.props.status || ""
+	            status:this.props.status || "请填写用户名和密码进行登录。",
+	            flage:true,
+	            formTips:"form-tips"
 	        }
 	    },
 	    render:function(){
@@ -21496,7 +21522,7 @@
 	                React.createElement("hr", null), 
 	                React.createElement("div", {className: "content"}, 
 	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
-	                        React.createElement("div", {className: ""}, this.state.status), 
+	                        React.createElement("div", {className: this.state.formTips}, this.state.status), 
 	                        React.createElement("label", {htmlFor: "user-name"}, "用户名："), 
 	                        React.createElement("input", {type: "text", placeholder: "请输入用户名。", onChange: this.HandleChang.bind(this,"username"), value: this.state.username}), 
 	                        React.createElement("br", null), 
@@ -21522,7 +21548,7 @@
 	    },
 	    HandleClose:function () {
 	        ReactDOM.render(
-	            React.createElement(Clock, {title: "当前时钟"}),
+	            React.createElement(Clock, {title: "当前时钟", tipsText: "点击“注册”按钮进行注册，如果已经注册请点击“登录”按钮进行登录。"}),
 	            document.getElementById("other-thing")
 	        );
 	    },
@@ -21530,73 +21556,104 @@
 	        event.preventDefault();
 	        if(!this.state.username){
 	            this.setState({
-	                status:"用户名不能为空。"
+	                status:"用户名不能为空。",
+	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
 	        }
 	        if(!this.state.password){
 	            this.setState({
-	                status:"登录密码不能为空。"
+	                status:"登录密码不能为空。",
+	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
 	        }
-	        Jquery.ajax({
-	            type:"POST",
-	            url:"/users/login",
-	            data:{
-	                username:this.state.username,
-	                password:this.state.password
-	            },
-	            success:function (code) {
-	                console.log(code);
-	                switch (code){
-	                    case "1":this.setState({
-	                        status:"用户登录失败，请稍后重试。"
-	                    });
-	                        break;
-	                    case "2":this.setState({
-	                        status:"该用户不存在，请注册。"
-	                    });
-	                        break;
-	                    case "3":this.setState({
-	                        status:"用户登录成功。"
-	                    });
-	                        var socket = io();
-	                        setTimeout(function () {
-	                            ReactDOM.render(
-	                                React.createElement(Clock, {title: "当前时钟"}),
-	                                document.getElementById("other-thing")
-	                            );
-	                            ReactDOM.render(
-	                                React.createElement(UserInfo, {username: this.state.username, hasInput: "完善信息"}),
-	                                document.getElementById("user-info")
-	                            )
-	                        }.bind(this),1000);
-	                        break;
-	                    case "4":this.setState({
-	                        status:"密码错误，请重新输入。",
-	                        password:""
-	                    });
-	                        break;
-	                    case "5":this.setState({
-	                        status:"用户登录成功。"
-	                    });
-	                        var socket = io();
-	                        setTimeout(function () {
-	                            ReactDOM.render(
-	                                React.createElement(Clock, {title: "当前时钟"}),
-	                                document.getElementById("other-thing")
-	                            );
-	                            ReactDOM.render(
-	                                React.createElement(UserInfo, {username: this.state.username, hasInput: "修改信息"}),
-	                                document.getElementById("user-info")
-	                            )
-	                        }.bind(this),1000);
-	                        break;
-	                    default:break;
-	                }
-	            }.bind(this)
-	        })
+	        if(this.state.flage){
+	            this.setState({
+	                flage:false
+	            });
+	            Jquery.ajax({
+	                type:"POST",
+	                url:"/users/login",
+	                data:{
+	                    username:this.state.username,
+	                    password:this.state.password
+	                },
+	                success:function (code) {
+	                    switch (code){
+	                        case "1":this.setState({
+	                            status:"用户登录失败，请稍后重试。",
+	                            formTips:"form-tips"+" "+"error"
+	                        });
+	                            break;
+	                        case "2":this.setState({
+	                            status:"该用户不存在，请注册。",
+	                            formTips:"form-tips"+" "+"info"
+	                        });
+	                            break;
+	                        case "3":this.setState({
+	                            status:"用户登录成功。",
+	                            formTips:"form-tips"+" "+"success"
+	                        });
+	                            var socket = io();
+	                            setTimeout(function () {
+	                                ReactDOM.render(
+	                                    React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
+	                                    document.getElementById("other-thing")
+	                                );
+	                                ReactDOM.render(
+	                                    React.createElement(UserInfo, {username: this.state.username, hasInput: "完善信息"}),
+	                                    document.getElementById("user-info")
+	                                );
+	                                ReactDOM.render(
+	                                    React.createElement(FriendList, {username: this.state.username}),
+	                                    document.getElementById("user-list")
+	                                );
+	                                ReactDOM.render(
+	                                    React.createElement(SearchBtn, {username: this.state.username}),
+	                                    document.getElementById("search-btn")
+	                                )
+	                            }.bind(this),1000);
+	                            break;
+	                        case "4":this.setState({
+	                            status:"密码错误，请重新输入。",
+	                            password:"",
+	                            formTips:"form-tips"+" "+"warning"
+	                        });
+	                            break;
+	                        case "5":this.setState({
+	                            status:"用户登录成功。",
+	                            formTips:"form-tips"+" "+"success"
+	                        });
+	                            var socket = io();
+	                            setTimeout(function () {
+	                                ReactDOM.render(
+	                                    React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
+	                                    document.getElementById("other-thing")
+	                                );
+	                                ReactDOM.render(
+	                                    React.createElement(UserInfo, {username: this.state.username, hasInput: "修改信息"}),
+	                                    document.getElementById("user-info")
+	                                );
+	                                ReactDOM.render(
+	                                    React.createElement(FriendList, {username: this.state.username}),
+	                                    document.getElementById("user-list")
+	                                );
+	                                ReactDOM.render(
+	                                    React.createElement(SearchBtn, {username: this.state.username}),
+	                                    document.getElementById("search-btn")
+	                                )
+	                            }.bind(this),1000);
+	                            break;
+	                        default:break;
+	                    }
+	                    this.setState({
+	                        flage:true
+	                    })
+	                }.bind(this)
+	            })
+	        }
+
 	    }
 	});
 	module.exports = LoginPage;
@@ -31840,11 +31897,15 @@
 	            React.createElement("div", null, 
 	                React.createElement("div", {className: "item-title"}, this.props.title), 
 	                React.createElement("hr", null), 
+	                React.createElement("div", {className: "form-tips m10"}, 
+	                    this.props.tipsText
+	                ), 
 	                React.createElement("canvas", {id: "clock", height: "300", width: "300", className: "canvas-clock"})
 	            )
 	        )
 	    },
 	    componentDidMount:function () {
+
 	        var clock = document.getElementById("clock");
 	        var cxt = clock.getContext("2d");
 	        var width = cxt.canvas.width;
@@ -31979,7 +32040,8 @@
 	        return {
 	            thisText: this.props.hasInput,
 	            userImg: "/images/user-photo-1.png",
-	            userText: ""
+	            userText: "",
+	            userBeforeText:""
 	        }
 	    },
 	    render: function () {
@@ -31988,13 +32050,40 @@
 	                React.createElement("img", {title: "点击头像，更换头像。", src: this.state.userImg, alt: "#", className: "fl user-photo", onClick: this.HandleUpImage}), 
 	                React.createElement("div", {className: "info"}, 
 	                    React.createElement("p", {className: "name", title: "点击登出。", onClick: this.HandleLogout}, this.props.username), 
-	                    React.createElement("input", {type: "text", className: "log-text", value: this.state.userText, placeholder: "请设置自己的个性签名。"}), 
+	                    React.createElement("input", {onChange: this.HandleChange, onBlur: this.HandleTextup, type: "text", className: "log-text", value: this.state.userText, placeholder: "请设置自己的个性签名。"}), 
 	                    React.createElement("a", {href: "#", className: "abs login-btn", onClick: this.HandleClick}, 
 	                        this.state.thisText
 	                    )
 	                )
 	            )
 	        )
+	    },
+	    HandleChange:function (event) {
+	        this.setState({
+	            userText:event.target.value
+	        });
+	    },
+	    HandleTextup:function () {
+	        if(this.state.userBeforeText!==this.state.userText){
+	            Jquery.ajax({
+	                type:"POST",
+	                url:"/users/upText",
+	                data:{
+	                    username:this.props.username,
+	                    userText:this.state.userText
+	                },
+	                success:function (code) {
+	                    if(code == "1"){
+	                        alert("签名修改失败，请稍后重试。")
+	                    }else if(code=="2"){
+	                        alert("签名修改成功。")
+	                    }
+	                    this.setState({
+	                        userBeforeText:this.state.userText
+	                    });
+	                }.bind(this)
+	            });
+	        }
 	    },
 	    componentDidMount: function () {
 	        Jquery.ajax({
@@ -32006,7 +32095,8 @@
 	            success:function (data) {
 	                this.setState({
 	                    userImg: data.UserPhoto,
-	                    userText: data.UserText
+	                    userText: data.UserText,
+	                    userBeforeText:data.UserText
 	                });
 	                if(data.age){
 	                    this.setState({
@@ -32074,7 +32164,9 @@
 	            age:"",
 	            educational_background:"",
 	            profession:"",
-	            status:""
+	            status:"请填写个人详细信息。",
+	            flage:true,
+	            formTips:"form-tips"
 	        }
 	    },
 	    HandleChange:function(value,event){
@@ -32108,7 +32200,7 @@
 	                React.createElement("hr", null), 
 	                React.createElement("div", {className: "content"}, 
 	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
-	                        React.createElement("div", {className: ""}, this.state.status), 
+	                        React.createElement("div", {className: this.state.formTips}, this.state.status), 
 	                        React.createElement("label", {htmlFor: ""}, "性别："), 
 	                        React.createElement("input", {value: this.state.sexual, onChange: this.HandleChange.bind(this,"sexual"), type: "text", placeholder: "请输入性别。"}), 
 	                        React.createElement("br", null), 
@@ -32129,7 +32221,7 @@
 	    },
 	    HandleClose:function () {
 	        ReactDOM.render(
-	            React.createElement(Clock, {title: "当前时钟"}),
+	            React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
 	            document.getElementById("other-thing")
 	        );
 	    },
@@ -32137,60 +32229,73 @@
 	        event.preventDefault();
 	        if(!this.state.sexual){
 	            this.setState({
-	                status:"用户性别不能为空。"
+	                status:"用户性别不能为空。",
+	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
 	        }
 	        if(!this.state.age){
 	            this.setState({
-	                status:"用户年龄不能为空。"
+	                status:"用户年龄不能为空。",
+	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
 	        }
 	        if(!this.state.educational_background){
 	            this.setState({
-	                status:"学历不能为空。"
+	                status:"学历不能为空。",
+	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
 	        }
 	        if(!this.state.profession){
 	            this.setState({
-	                status:"专业不能为空。"
+	                status:"专业不能为空。",
+	                formTips:"form-tips"+" "+"warning"
 	            })
 	        }
-	        Jquery.ajax({
-	            type:"POST",
-	            url:"/users/details",
-	            data:{
-	                username:this.props.username,
-	                sexual:this.state.sexual,
-	                age:this.state.age,
-	                educational_background:this.state.educational_background,
-	                profession:this.state.profession
-	            },
-	            success:function (code) {
-	                console.log(code);
-	                switch (code){
-	                    case "1":this.setState({
-	                        status:"提交失败，请稍后重试。"
-	                    });
-	                        break;
-	                    case "2":
-	                        this.setState({
-	                            status:"恭喜你，详细信息提交成功！"
+	        if(this.state.flage){
+	            this.setState({
+	                flage:false
+	            });
+	            Jquery.ajax({
+	                type:"POST",
+	                url:"/users/details",
+	                data:{
+	                    username:this.props.username,
+	                    sexual:this.state.sexual,
+	                    age:this.state.age,
+	                    educational_background:this.state.educational_background,
+	                    profession:this.state.profession
+	                },
+	                success:function (code) {
+	                    switch (code){
+	                        case "1":this.setState({
+	                            status:"提交失败，请稍后重试。",
+	                            formTips:"form-tips"+" "+"error"
 	                        });
-	                    {this.props.Ffunction()}
-	                        setTimeout(function () {
-	                            ReactDOM.render(
-	                                React.createElement(Clock, {title: "当前时钟"}),
-	                                document.getElementById("other-thing")
-	                            );
-	                        }.bind(this),1000);
-	                        break;
-	                    default:break;
-	                }
-	            }.bind(this)
-	        })
+	                            break;
+	                        case "2":
+	                            this.setState({
+	                                status:"恭喜你，详细信息提交成功！",
+	                                formTips:"form-tips"+" "+"success"
+	                            });
+	                        {this.props.Ffunction()}
+	                            setTimeout(function () {
+	                                ReactDOM.render(
+	                                    React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
+	                                    document.getElementById("other-thing")
+	                                );
+	                            }.bind(this),1000);
+	                            break;
+	                        default:break;
+	                    }
+	                    this.setState({
+	                        flage:true
+	                    })
+	                }.bind(this)
+	            })
+	        }
 	    }
 	});
 
@@ -32208,8 +32313,10 @@
 	var UserImage = React.createClass({displayName: "UserImage",
 	    getInitialState:function () {
 	        return{
-	            status:this.props.status || "",
-	            targetImage:[]
+	            status:this.props.status || "请点击“选择图片”按钮，选择图片，修改并上传。",
+	            targetImage:"",
+	            flage:true,
+	            formTips:"form-tips"
 	        }
 	    },
 	    render:function () {
@@ -32224,23 +32331,26 @@
 	                React.createElement("hr", null), 
 	                React.createElement("div", {className: "content"}, 
 	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
-	                        React.createElement("div", {className: ""}, this.state.status), 
+	                        React.createElement("div", {className: this.state.formTips}, this.state.status), 
 	                        React.createElement("canvas", {id: "canvas", width: 290}, 
 	                            "您的浏览器不支持canvas。"
 	                        ), 
 	                        React.createElement("canvas", {id: "copy", width: 290}), 
 	                        React.createElement("canvas", {id: "trans", width: 290}), 
 	                        React.createElement("canvas", {id: "Mir"}), 
-	                        React.createElement("a", {href: "#", className: "upload-wrap"}, 
-	                            "选择图片", 
-	                            React.createElement("input", {id: "upload-btn", type: "file", accept: "image/png,image/jpeg"})
-	                        ), 
-	                        React.createElement("a", {href: "#", className: "margin upload-wrap", onClick: this.HandleSubmit}, 
-	                            "提交头像"
-	                        ), 
-	                        React.createElement("a", {href: "#", id: "btn", className: "upload-wrap"}, 
-	                            "取消选择"
+	                        React.createElement("div", {className: "db auto0 tc"}, 
+	                            React.createElement("a", {href: "#", className: "upload-wrap"}, 
+	                                "选择图片", 
+	                                React.createElement("input", {id: "upload-btn", type: "file", accept: "image/png,image/jpeg"})
+	                            ), 
+	                            React.createElement("a", {disabled: "disabled", href: "#", className: "margin upload-wrap", onClick: this.HandleSubmit}, 
+	                                "提交头像"
+	                            ), 
+	                            React.createElement("a", {href: "#", id: "btn", className: "upload-wrap"}, 
+	                                "取消选择"
+	                            )
 	                        )
+
 	                    )
 	                )
 	            )
@@ -32248,41 +32358,53 @@
 	    },
 	    HandleClose:function () {
 	        ReactDOM.render(
-	            React.createElement(Clock, {title: "当前时钟"}),
+	            React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
 	            document.getElementById("other-thing")
 	        );
 	    },
 	    HandleSubmit:function (event) {
 	        event.preventDefault();
-	        Jquery.ajax({
-	            type:"POST",
-	            url:"/users/uploadImage",
-	            data:{
-	                targetImage:this.state.targetImage,
-	                username:this.props.username
-	            },
-	            success:function (code) {
-	                console.log(code);
-	                switch (code){
-	                    case "1":this.setState({
-	                        status:"上传失败，请稍后重试。"
-	                    });
-	                        break;
-	                    case "2":this.setState({
-	                        status:"头像上传成功。"
-	                    });
-	                        this.props.InnerUp(this.state.targetImage);
-	                        setTimeout(function () {
-	                            ReactDOM.render(
-	                                React.createElement(Clock, {title: "当前时钟"}),
-	                                document.getElementById("other-thing")
-	                            );
-	                        }.bind(this),1000);
-	                        break;
-	                    default:break;
-	                }
-	            }.bind(this)
-	        })
+	        if(this.state.flage){
+	            this.setState({
+	                flage:false
+	            });
+	            Jquery.ajax({
+	                type:"POST",
+	                url:"/users/uploadImage",
+	                data:{
+	                    targetImage:this.state.targetImage,
+	                    username:this.props.username
+	                },
+	                success:function (code) {
+	                    switch (code){
+	                        case "1":this.setState({
+	                            status:"上传失败，请稍后重试。",
+	                            formTips:"form-tips"+" "+"error"
+	                        });
+	                            break;
+	                        case "2":this.setState({
+	                            status:"头像上传成功。",
+	                            formTips:"form-tips"+" "+"success"
+	                        });
+	                            this.props.InnerUp(this.state.targetImage);
+	                            setTimeout(function () {
+	                                ReactDOM.render(
+	                                    React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
+	                                    document.getElementById("other-thing")
+	                                );
+	                            }.bind(this),1000);
+	                            break;
+	                        default:break;
+	                    }
+	                    this.setState({
+	                        flage:true
+	                    })
+	                }.bind(this)
+	            })
+	        }
+
+
+
 	    },
 	    componentDidMount:function () {
 	        /*如果浏览器不支持FileReader功能，错误弹窗。*/
@@ -40073,6 +40195,240 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
+	//朋友列表基本单元
+	var Item = __webpack_require__(230);
+	//引入jquery
+	var Jquery = __webpack_require__(174);
+	//未登录时朋友列表处显示的信息。
+	var FriendListBase = __webpack_require__(231);
+
+
+	var UserList = React.createClass({displayName: "UserList",
+	    getInitialState:function () {
+	        return{
+	            FriendsDate:{}
+	        }
+	    },
+	    render:function () {
+	        var Items = [];
+	        for(var i in this.state.FriendsDate){
+	            if(this.state.FriendsDate[i].OnlineTag){
+	                Items.unshift(React.createElement(Item, {key: this.state.FriendsDate[i].id, BaseDate: this.state.FriendsDate[i]}));
+	            }else {
+	                Items.push(React.createElement(Item, {key: this.state.FriendsDate[i].id, BaseDate: this.state.FriendsDate[i]}));
+	            }
+	        }
+	        return(
+	            React.createElement("ul", {className: "list"}, 
+	                Items
+	            )
+	        )
+	    },
+	    componentDidMount:function () {
+	        Jquery.ajax({
+	            type:"POST",
+	            url:"/users/getFriendList",
+	            data:{
+	                username:this.props.username
+	            },
+	            success:function (data) {
+	                if(data=="err"){
+	                    ReactDOM.render(
+	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
+	                        document.getElementById("user-list")
+	                    )
+	                }
+	                this.setState({
+	                    FriendsDate:data.FriendList
+	                })
+	            }.bind(this)
+	        });
+	    }
+	});
+
+	module.exports = UserList;
+
+/***/ },
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+
+	var UserListItem = React.createClass({displayName: "UserListItem",
+	    render:function () {
+	        return(
+	            React.createElement("li", {className: "item"}, 
+	                React.createElement("img", {src: this.props.BaseDate.ImageLink, alt: "", className: "user-photo fl"}), 
+	                React.createElement("div", {className: "info"}, 
+	                    React.createElement("p", {className: "name"}, this.props.BaseDate.username), 
+	                    React.createElement("div", {className: "message"}, this.props.BaseDate.LastMessage), 
+	                    React.createElement("span", {className: "time"}, this.props.BaseDate.rangTiem), 
+	                    React.createElement("div", {className: "online-tag"}, 
+	                        React.createElement("span", {className: this.props.BaseDate.OnlineTag}
+
+	                        )
+	                    )
+	                )
+	            )
+	        )
+	    }
+	});
+
+	module.exports = UserListItem;
+
+/***/ },
+/* 231 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+
+	var FriendListBase = React.createClass({displayName: "FriendListBase",
+	    render:function () {
+	        return(
+	            React.createElement("div", {className: "FriendBase"}, 
+	                this.props.Text
+	            )
+	        )
+	    }
+	});
+
+	module.exports = FriendListBase;
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	//引入搜索页面
+	var SearchPage = __webpack_require__(233);
+
+
+
+	var SearchBtn = React.createClass({displayName: "SearchBtn",
+	    render:function () {
+	        return(
+	            React.createElement("div", {className: "search-btn", onClick: this.HandleClick})
+	        )
+	    },
+	    HandleClick:function () {
+	        if(this.props.username){
+	            ReactDOM.render(
+	                React.createElement(SearchPage, {title: "搜索好友"}),
+	                document.getElementById("other-thing")
+	            );
+	        }else {
+	            alert("请登录。")
+	        }
+	    }
+	});
+
+	module.exports = SearchBtn;
+
+/***/ },
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	var Jquery = __webpack_require__(174);
+	//引入时钟模块
+	var Clock = __webpack_require__(175);
+
+
+	var SearchPage = React.createClass({displayName: "SearchPage",
+	    getInitialState:function () {
+	        return{
+	            username:"",
+	            ID:"",
+	            status:"请填写用户名或者用户ID进行搜索。",
+	            flage:true,
+	            formTips:"form-tips"
+	        }
+	    },
+	    render:function(){
+	        return(
+	            React.createElement("div", null, 
+	                React.createElement("div", {className: "item-title"}, 
+	                    this.props.title, 
+	                    React.createElement("div", {className: "form-close", onClick: this.HandleClose}, 
+	                        React.createElement("span", {className: "fa fa-times"})
+	                    )
+	                ), 
+	                React.createElement("hr", null), 
+	                React.createElement("div", {className: "content"}, 
+	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
+	                        React.createElement("div", {className: this.state.formTips}, this.state.status), 
+	                        React.createElement("label", null, "用户名："), 
+	                        React.createElement("input", {type: "text", placeholder: "请输入搜索用户名。", onChange: this.HandleChang.bind(this,"username"), value: this.state.username}), 
+	                        React.createElement("br", null), 
+	                        React.createElement("label", null, "用户ID："), 
+	                        React.createElement("input", {type: "text", placeholder: "请输入搜索用户ID。", onChange: this.HandleChang.bind(this,"ID"), value: this.state.ID}), 
+	                        React.createElement("br", null), 
+	                        React.createElement("input", {type: "submit", value: "搜索"})
+	                    )
+	                )
+	            )
+	        )
+	    },
+	    HandleChang:function (value,event) {
+	        if(value==="username"){
+	            this.setState({
+	                username:event.target.value
+	            })
+	        }else {
+	            this.setState({
+	                ID:event.target.value
+	            })
+	        }
+	    },
+	    HandleClose:function () {
+	        ReactDOM.render(
+	            React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
+	            document.getElementById("other-thing")
+	        );
+	    },
+	    HandleSubmit:function (event) {
+	        event.preventDefault();
+	        if(!this.state.username && !this.state.ID){
+	            this.setState({
+	                status:"用户名或者用户ID至少填写一个。",
+	                formTips:"form-tips"+" "+"warning"
+	            });
+	            return;
+	        }
+	        if(this.state.flage){
+	            this.setState({
+	                flage:false
+	            });
+	            Jquery.ajax({
+	                type:"POST",
+	                url:"/users/login",
+	                data:{
+	                    username:this.state.username,
+	                    password:this.state.password
+	                },
+	                success:function (code) {
+
+	                    this.setState({
+	                        flage:true
+	                    })
+	                }.bind(this)
+	            })
+	        }
+
+	    }
+	});
+	module.exports = SearchPage;
+
+/***/ },
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
 	var Jquery = __webpack_require__(174);
 	//登录模块
 	var LoginPage = __webpack_require__(173);
@@ -40084,7 +40440,9 @@
 	            username:"",
 	            password:"",
 	            checkPassword:"",
-	            status:""
+	            status:"请填写用户名，密码进行注册。",
+	            flage:true,
+	            formTips:"form-tips"
 	        }
 	    },
 	    HandleChange:function(value,event){
@@ -40114,7 +40472,7 @@
 	                React.createElement("hr", null), 
 	                React.createElement("div", {className: "content"}, 
 	                    React.createElement("form", {onSubmit: this.HandleSubmit}, 
-	                        React.createElement("div", {className: ""}, this.state.status), 
+	                        React.createElement("div", {className: this.state.formTips}, this.state.status), 
 	                        React.createElement("label", {htmlFor: "user-name"}, "用户名："), 
 	                        React.createElement("input", {value: this.state.username, onChange: this.HandleChange.bind(this,"username"), type: "text", placeholder: "请输入用户名。"}), 
 	                        React.createElement("br", null), 
@@ -40131,7 +40489,7 @@
 	    },
 	    HandleClose:function () {
 	        ReactDOM.render(
-	            React.createElement(Clock, {title: "当前时钟"}),
+	            React.createElement(Clock, {title: "当前时钟", tipsText: "点击“注册”按钮进行注册，如果已经注册请点击“登录”按钮进行登录。"}),
 	            document.getElementById("other-thing")
 	        );
 	    },
@@ -40139,55 +40497,68 @@
 	        event.preventDefault();
 	        if(!this.state.username){
 	            this.setState({
-	                status:"用户名不能为空。"
+	                status:"用户名不能为空。",
+	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
 	        }
 	        if(!this.state.password){
 	            this.setState({
-	                status:"密码不能为空。"
+	                status:"密码不能为空。",
+	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
 	        }
 	        if(this.state.password !== this.state.checkPassword){
 	            this.setState({
-	                status:"确认密码与所填写密码不一致，请重新确认。"
+	                status:"确认密码与所填写密码不一致，请重新确认。",
+	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
 	        }
-	        Jquery.ajax({
-	            type:"POST",
-	            url:"/users/register",
-	            data:{
-	                username:this.state.username,
-	                password:this.state.password
-	            },
-	            success:function (code) {
-	                console.log(code);
-	                switch (code){
-	                    case "1":this.setState({
-	                        status:"用户注册失败，请稍后重试。"
-	                    });
-	                        break;
-	                    case "3":
-	                        this.setState({
-	                            status:"恭喜你，注册成功！"
+	        if(this.state.flage){
+	            this.setState({
+	                flage:false
+	            });
+	            Jquery.ajax({
+	                type:"POST",
+	                url:"/users/register",
+	                data:{
+	                    username:this.state.username,
+	                    password:this.state.password
+	                },
+	                success:function (code) {
+	                    switch (code){
+	                        case "1":this.setState({
+	                            status:"用户注册失败，请稍后重试。",
+	                            formTips:"form-tips"+" "+"error"
 	                        });
-	                        setTimeout(function () {
-	                            ReactDOM.render(
-	                                React.createElement(LoginPage, {username: this.state.username, status: "请登录...", title: "登录"}),
-	                                document.getElementById("other-thing")
-	                            );
-	                        }.bind(this),1000);
-	                        break;
-	                    case "2":this.setState({
-	                        status:"抱歉，该用户名已被注册。"
-	                    });
-	                        break;
-	                    default:break;
-	                }
-	            }.bind(this)
-	        })
+	                            break;
+	                        case "3":
+	                            this.setState({
+	                                status:"恭喜你，注册成功！",
+	                                formTips:"form-tips"+" "+"success"
+	                            });
+	                            setTimeout(function () {
+	                                ReactDOM.render(
+	                                    React.createElement(LoginPage, {username: this.state.username, status: "请登录...", title: "登录"}),
+	                                    document.getElementById("other-thing")
+	                                );
+	                            }.bind(this),1000);
+	                            break;
+	                        case "2":this.setState({
+	                            status:"抱歉，该用户名已被注册。",
+	                            formTips:"form-tips"+" "+"error"
+	                        });
+	                            break;
+	                        default:break;
+	                    }
+	                    this.setState({
+	                        flage:true
+	                    })
+	                }.bind(this)
+	            })
+	        }
 	    }
 	});
 

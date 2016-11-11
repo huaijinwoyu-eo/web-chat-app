@@ -1,7 +1,7 @@
 var React = require("react");
 var ReactDOM = require("react-dom");
 var LoginPage = require("./login-page.jsx");
-var RegisterPage = require("./register.jsx");
+var RegisterPage = require("./register-page.jsx");
 var Login = React.createClass({
     render:function(){
         return(
