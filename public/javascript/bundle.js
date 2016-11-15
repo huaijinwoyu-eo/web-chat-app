@@ -40647,7 +40647,7 @@
 	                    this.setState({
 	                        username:data.username,
 	                        ID:data.ID,
-	                        userText:data.username,
+	                        userText:data.userText,
 	                        UserPhoto:data.UserPhoto,
 	                        sexual:data.sexual,
 	                        age:data.age
