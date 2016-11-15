@@ -14,7 +14,7 @@ var SearchBtn = React.createClass({
     HandleClick:function () {
         if(this.props.username){
             ReactDOM.render(
-                <SearchPage title="搜索好友"/>,
+                <SearchPage addTemFriend={this.props.addTemFriend} title="搜索好友" username = {this.props.username}/>,
                 document.getElementById("other-thing")
             );
         }else {

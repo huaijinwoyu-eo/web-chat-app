@@ -349,6 +349,7 @@ canvas.user-photo{
     width: 193px;
     padding-left: 15px;
     margin-top: 15px;
+    height: 30px;
     line-height: 30px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
@@ -453,5 +454,76 @@ a.upload-wrap input{
     color: #cccccc;
     padding: 0 15px;
     text-align: justify;
-    line-height: 578px;
+    text-align: left;
+    padding-top: 200px;
 }
+/*搜索结果相关样式*/
+.Result-img{
+    display: block;
+    height: 220px;
+    width: 220px;
+    -webkit-border-radius:100%;
+    -moz-border-radius:100%;
+    border-radius:100%;
+    margin:10px auto;
+}
+.Result-p{
+    line-height: 30px;
+    font-size: 14px;
+    color: #666666;
+}
+.Result-p span{
+    display: inline-block;
+    width: 85px;
+    text-align: right;
+}
+.add-btn{
+    display: block;
+    height: 35px;
+    width: 80%;
+    margin: 10px auto;
+    background: #0f75bd;
+    color: #ffffff;
+    border: 1px solid #0f75bd;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: center;
+    line-height: 35px;
+    font-size: 15px;
+}
+.add-btn:hover{
+    background: #ffffff;
+    color: #0f75bd;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

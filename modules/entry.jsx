@@ -16,21 +16,38 @@ var SearchBtn = require("./search-btn");
 
 
 
-var content = document.getElementById("user-info").innerText;
+//引入jquery
+var Jquery = require("jquery");
 
+
+
+
+var content_orig = document.getElementById("user-info").innerText;
+var content = Jquery.trim(content_orig);
 ReactDOM.render(
     <Clock title="当前时钟" tipsText="点击“注册”按钮进行注册，如果已经注册请点击“登录”按钮进行登录。"/>,
     document.getElementById("other-thing")
 );
-ReactDOM.render(
-    content ? <UserInfo username={content}/> : <LoginRegister/>,
-    document.getElementById("user-info")
-);
-ReactDOM.render(
-    content ? <FriendList username={content}/> : <FriendListBase Text="请登录以获取朋友列表。"/>,
-    document.getElementById("user-list")
-);
-ReactDOM.render(
-    <SearchBtn username={content}/>,
-    document.getElementById("search-btn")
-);
+if(content !== "") {
+    ReactDOM.render(
+        <UserInfo username={content}/>,
+        document.getElementById("user-info")
+    );
+    ReactDOM.render(
+        <FriendList username={content}/>,
+        document.getElementById("user-list")
+    );
+}else {
+    ReactDOM.render(
+        <LoginRegister/>,
+        document.getElementById("user-info")
+    );
+    ReactDOM.render(
+        <FriendListBase Text="请登录以获取朋友列表。"/>,
+        document.getElementById("user-list")
+    );
+    ReactDOM.render(
+        <SearchBtn username={null}/>,
+        document.getElementById("search-btn")
+    );
+}

@@ -154,10 +154,63 @@ router.post("/getFriendList",function (req, res, next) {
             res.send("err");
         }
         res.send({
-            FriendList:doc.FriendList
+            FriendList:doc.FriendList,
+            TempFriendList:doc.TempFriendList
         });
     })
 });
-
+//用户搜索功能
+router.post("/search",function (req, res, next) {
+    User.findOne({id:req.body.ID},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("1");
+        }
+        if(doc.username !== req.body.username){
+            res.send("2");
+        }else {
+            for(var i = 0; i<doc.FriendList.length; i++){
+                if(doc.FriendList[i].id == req.body.ID){
+                    res.send({
+                        isYouFriend:true,
+                        username:this.username,
+                        ID:this.id,
+                        userText:this.UserText,
+                        userPhoto:this.UserPhoto,
+                        sexual:this.sexual,
+                        age:this.age
+                    });
+                    break;
+                }
+            }
+            res.send({
+                isYouFriend:false,
+                username:doc.username,
+                ID:doc.id,
+                userText:doc.UserText,
+                userPhoto:doc.UserPhoto,
+                sexual:doc.sexual,
+                age:doc.age
+            });
+        }
+    });
+});
+//请求添加好友
+router.post("/addFriend",function (req, res, next){
+    User.findOne({id:req.body.ID},function (err,doc) {
+        if(err){
+            console.log(err);
+            res.send("1");
+        }else {
+            doc.addTempFriend(req.body,function (err) {
+                if(err){
+                    console.log(err);
+                    res.send("1");
+                }
+            });
+            res.send("2");
+        }
+    })
+});
 
 module.exports = router;

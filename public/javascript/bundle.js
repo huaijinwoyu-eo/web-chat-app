@@ -62,24 +62,41 @@
 
 
 
-	var content = document.getElementById("user-info").innerText;
+	//引入jquery
+	var Jquery = __webpack_require__(174);
 
+
+
+
+	var content_orig = document.getElementById("user-info").innerText;
+	var content = Jquery.trim(content_orig);
 	ReactDOM.render(
 	    React.createElement(Clock, {title: "当前时钟", tipsText: "点击“注册”按钮进行注册，如果已经注册请点击“登录”按钮进行登录。"}),
 	    document.getElementById("other-thing")
 	);
-	ReactDOM.render(
-	    content ? React.createElement(UserInfo, {username: content}) : React.createElement(LoginRegister, null),
-	    document.getElementById("user-info")
-	);
-	ReactDOM.render(
-	    content ? React.createElement(FriendList, {username: content}) : React.createElement(FriendListBase, {Text: "请登录以获取朋友列表。"}),
-	    document.getElementById("user-list")
-	);
-	ReactDOM.render(
-	    React.createElement(SearchBtn, {username: content}),
-	    document.getElementById("search-btn")
-	);
+	if(content !== "") {
+	    ReactDOM.render(
+	        React.createElement(UserInfo, {username: content}),
+	        document.getElementById("user-info")
+	    );
+	    ReactDOM.render(
+	        React.createElement(FriendList, {username: content}),
+	        document.getElementById("user-list")
+	    );
+	}else {
+	    ReactDOM.render(
+	        React.createElement(LoginRegister, null),
+	        document.getElementById("user-info")
+	    );
+	    ReactDOM.render(
+	        React.createElement(FriendListBase, {Text: "请登录以获取朋友列表。"}),
+	        document.getElementById("user-list")
+	    );
+	    ReactDOM.render(
+	        React.createElement(SearchBtn, {username: null}),
+	        document.getElementById("search-btn")
+	    );
+	}
 
 /***/ },
 /* 1 */
@@ -21455,7 +21472,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	var LoginPage = __webpack_require__(173);
-	var RegisterPage = __webpack_require__(234);
+	var RegisterPage = __webpack_require__(235);
 	var Login = React.createClass({displayName: "Login",
 	    render:function(){
 	        return(
@@ -21496,8 +21513,6 @@
 	var io = __webpack_require__(179);
 	//引入用户朋友列表
 	var FriendList = __webpack_require__(229);
-	//引入搜索按钮
-	var SearchBtn = __webpack_require__(232);
 
 
 	var LoginPage = React.createClass({displayName: "LoginPage",
@@ -21588,7 +21603,8 @@
 	                            break;
 	                        case "2":this.setState({
 	                            status:"该用户不存在，请注册。",
-	                            formTips:"form-tips"+" "+"info"
+	                            formTips:"form-tips"+" "+"info",
+	                            flage:false
 	                        });
 	                            break;
 	                        case "3":this.setState({
@@ -21609,10 +21625,6 @@
 	                                    React.createElement(FriendList, {username: this.state.username}),
 	                                    document.getElementById("user-list")
 	                                );
-	                                ReactDOM.render(
-	                                    React.createElement(SearchBtn, {username: this.state.username}),
-	                                    document.getElementById("search-btn")
-	                                )
 	                            }.bind(this),1000);
 	                            break;
 	                        case "4":this.setState({
@@ -21639,17 +21651,10 @@
 	                                    React.createElement(FriendList, {username: this.state.username}),
 	                                    document.getElementById("user-list")
 	                                );
-	                                ReactDOM.render(
-	                                    React.createElement(SearchBtn, {username: this.state.username}),
-	                                    document.getElementById("search-btn")
-	                                )
 	                            }.bind(this),1000);
 	                            break;
 	                        default:break;
 	                    }
-	                    this.setState({
-	                        flage:true
-	                    })
 	                }.bind(this)
 	            })
 	        }
@@ -40201,13 +40206,17 @@
 	var Jquery = __webpack_require__(174);
 	//未登录时朋友列表处显示的信息。
 	var FriendListBase = __webpack_require__(231);
+	//引入搜索按钮
+	var SearchBtn = __webpack_require__(232);
 
 
 	var UserList = React.createClass({displayName: "UserList",
 	    getInitialState:function () {
-	        return{
-	            FriendsDate:{}
+	        return {
+	            FriendsDate: [],
+	            TempFriendList:[]
 	        }
+
 	    },
 	    render:function () {
 	        var Items = [];
@@ -40218,11 +40227,22 @@
 	                Items.push(React.createElement(Item, {key: this.state.FriendsDate[i].id, BaseDate: this.state.FriendsDate[i]}));
 	            }
 	        }
+	        for(var i in this.state.TempFriendList){
+	            Items.unshift(React.createElement(Item, {key: this.state.TempFriendList[i].id, BaseDate: this.state.TempFriendList[i]}));
+	        }
 	        return(
 	            React.createElement("ul", {className: "list"}, 
 	                Items
 	            )
 	        )
+	    },
+	    HandleAddTempFriend:function (obj) {
+	        var TempArray = this.state.TempFriendList;
+	        TempArray.unshift(obj);
+	        this.setState({
+	            TempFriendList:TempArray
+	        });
+	        TempArray = null;
 	    },
 	    componentDidMount:function () {
 	        Jquery.ajax({
@@ -40240,7 +40260,11 @@
 	                }
 	                this.setState({
 	                    FriendsDate:data.FriendList
-	                })
+	                });
+	                ReactDOM.render(
+	                    React.createElement(SearchBtn, {username: this.props.username, addTemFriend: this.HandleAddTempFriend}),
+	                    document.getElementById("search-btn")
+	                )
 	            }.bind(this)
 	        });
 	    }
@@ -40257,21 +40281,34 @@
 
 	var UserListItem = React.createClass({displayName: "UserListItem",
 	    render:function () {
-	        return(
-	            React.createElement("li", {className: "item"}, 
-	                React.createElement("img", {src: this.props.BaseDate.ImageLink, alt: "", className: "user-photo fl"}), 
-	                React.createElement("div", {className: "info"}, 
-	                    React.createElement("p", {className: "name"}, this.props.BaseDate.username), 
-	                    React.createElement("div", {className: "message"}, this.props.BaseDate.LastMessage), 
-	                    React.createElement("span", {className: "time"}, this.props.BaseDate.rangTiem), 
-	                    React.createElement("div", {className: "online-tag"}, 
+	        if(this.props.BaseDate.temp){
+	            return(
+	                React.createElement("li", {className: "item"}, 
+	                    React.createElement("img", {src: this.props.BaseDate.UserPhoto, alt: "", className: "user-photo fl"}), 
+	                    React.createElement("div", {className: "info"}, 
+	                        React.createElement("p", {className: "name"}, this.props.BaseDate.username), 
+	                        React.createElement("div", {className: "message"}, "等待对方确认")
+	                    )
+	                )
+	            )
+	        }else {
+	            return(
+	                React.createElement("li", {className: "item"}, 
+	                    React.createElement("img", {src: this.props.BaseDate.UserPhoto, alt: "", className: "user-photo fl"}), 
+	                    React.createElement("div", {className: "info"}, 
+	                        React.createElement("p", {className: "name"}, this.props.BaseDate.username), 
+	                        React.createElement("div", {className: "message"}, this.props.BaseDate.LastMessage), 
+	                        React.createElement("span", {className: "time"}, this.props.BaseDate.rangTiem), 
+	                        React.createElement("div", {className: "online-tag"}, 
 	                        React.createElement("span", {className: this.props.BaseDate.OnlineTag}
 
+	                        )
 	                        )
 	                    )
 	                )
 	            )
-	        )
+	        }
+
 	    }
 	});
 
@@ -40316,7 +40353,7 @@
 	    HandleClick:function () {
 	        if(this.props.username){
 	            ReactDOM.render(
-	                React.createElement(SearchPage, {title: "搜索好友"}),
+	                React.createElement(SearchPage, {addTemFriend: this.props.addTemFriend, title: "搜索好友", username: this.props.username}),
 	                document.getElementById("other-thing")
 	            );
 	        }else {
@@ -40336,7 +40373,8 @@
 	var Jquery = __webpack_require__(174);
 	//引入时钟模块
 	var Clock = __webpack_require__(175);
-
+	//引入搜索结果页面
+	var Result = __webpack_require__(234);
 
 	var SearchPage = React.createClass({displayName: "SearchPage",
 	    getInitialState:function () {
@@ -40392,39 +40430,189 @@
 	    },
 	    HandleSubmit:function (event) {
 	        event.preventDefault();
-	        if(!this.state.username && !this.state.ID){
+	        if(this.state.username == this.props.username){
 	            this.setState({
-	                status:"用户名或者用户ID至少填写一个。",
+	                status:"所搜索用户名为当前用户，请重试",
+	                username:"",
+	                ID:"",
+	                formTips:"form-tips"+" "+"warning"
+	            });
+	        }else if(!this.state.username || !this.state.ID){
+	            this.setState({
+	                status:"用户名和用户ID均要填写。",
 	                formTips:"form-tips"+" "+"warning"
 	            });
 	            return;
-	        }
-	        if(this.state.flage){
+	        }else {
 	            this.setState({
-	                flage:false
+	                status:"数据加载中。。。请稍后。",
+	                formTips:"form-tips"+" "+""
 	            });
-	            Jquery.ajax({
-	                type:"POST",
-	                url:"/users/login",
-	                data:{
-	                    username:this.state.username,
-	                    password:this.state.password
-	                },
-	                success:function (code) {
-
-	                    this.setState({
-	                        flage:true
-	                    })
-	                }.bind(this)
-	            })
+	            if(this.state.flage){
+	                this.setState({
+	                    flage:false
+	                });
+	                Jquery.ajax({
+	                    type:"POST",
+	                    url:"/users/search",
+	                    data:{
+	                        username:this.state.username,
+	                        ID:this.state.ID
+	                    },
+	                    success:function (code) {
+	                        if(code == "1"){
+	                            this.setState({
+	                                status:"搜索失败，请稍后重试。",
+	                                formTips:"form-tips"+" "+"error"
+	                            });
+	                        }else if(code == "2"){
+	                            this.setState({
+	                                status:"搜索用户不存在，请确认后重试。",
+	                                formTips:"form-tips"+" "+"warning"
+	                            })
+	                        }else {
+	                            ReactDOM.render(
+	                                React.createElement(Result, {addTemFriend: this.props.addTemFriend, title: "搜索结果", ResultDate: code}),
+	                                document.getElementById("other-thing")
+	                            );
+	                        }
+	                        this.setState({
+	                            flage:true
+	                        });
+	                    }.bind(this)
+	                })
+	            }
 	        }
-
 	    }
 	});
 	module.exports = SearchPage;
 
 /***/ },
 /* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	//引入时钟模块
+	var Clock = __webpack_require__(175);
+	//jquery模块引入
+	var Jquery = __webpack_require__(174);
+
+
+
+	var Result = React.createClass({displayName: "Result",
+	    getInitialState:function () {
+	        return{
+	            flage:true,
+	            addText:"",
+	            status:"点击“请求添加该用户”按钮，添加好友。",
+	            formTips:"form-tips"
+	        }
+	    },
+	    render:function () {
+	        return(
+	            React.createElement("div", null, 
+	                React.createElement("div", {className: "item-title"}, 
+	                    this.props.title, 
+	                    React.createElement("div", {className: "form-close", onClick: this.HandleClose}, 
+	                        React.createElement("span", {className: "fa fa-times"})
+	                    )
+	                ), 
+	                React.createElement("hr", null), 
+	                React.createElement("div", {className: "content"}, 
+	                    React.createElement("div", {className: this.state.formTips}, this.state.status), 
+	                    React.createElement("img", {src: this.props.ResultDate.userPhoto, alt: "", className: "db Result-img"}), 
+	                    React.createElement("p", {className: "Result-p"}, 
+	                        React.createElement("span", null, "用户名："), 
+	                        this.props.ResultDate.username
+	                    ), 
+	                    React.createElement("p", {className: "Result-p"}, 
+	                        React.createElement("span", null, "ID："), 
+	                        this.props.ResultDate.ID
+	                    ), 
+	                    React.createElement("p", {className: "Result-p"}, 
+	                        React.createElement("span", null, "个性签名："), 
+	                        this.props.ResultDate.userText
+	                    ), 
+	                    React.createElement("p", {className: "Result-p"}, 
+	                        React.createElement("span", null, "性别："), 
+	                        this.props.ResultDate.sexual
+	                    ), 
+	                    React.createElement("p", {className: "Result-p"}, 
+	                        React.createElement("span", null, "年龄："), 
+	                        this.props.ResultDate.age
+	                    ), 
+	                    React.createElement("a", {href: "#", className: "add-btn", onClick: this.HandleClick}, this.state.addText)
+	                )
+	            )
+	        )
+	    },
+	    HandleClose:function () {
+	        ReactDOM.render(
+	            React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
+	            document.getElementById("other-thing")
+	        );
+	    },
+	    HandleClick:function (event) {
+	        event.preventDefault();
+	        if(this.props.ResultDate.isYouFriend){
+	            alert("该用户已经是您的好友了。");
+	        }else {
+	            if(this.state.flage) {
+	                this.setState({
+	                    flage: false,
+	                    addText:"请求已发送，等待对方确认"
+	                });
+	                Jquery.ajax({
+	                    url:"/users/addFriend",
+	                    type:"POST",
+	                    data:{
+	                        id:this.props.ResultDate.ID,
+	                        username:this.props.ResultDate.username,
+	                        UserPhoto:this.props.ResultDate.userPhoto,
+	                        temp:true
+	                    },
+	                    success:function (code) {
+	                        if(code == "1"){
+	                            this.setState({
+	                                status:"添加好友失败，可能是数据库问题，请稍后重试。",
+	                                formTips:"form-tips"+" "+"error",
+	                                addText:"请求添加该用户"
+	                            });
+	                        }else if(code == "2"){
+	                            this.setState({
+	                                status:"添加好友请求已发送，等待对方回应。",
+	                                formTips:"form-tips"+" "+""
+	                            });
+	                        }
+	                        this.props.addTemFriend({
+	                            id:this.props.ResultDate.ID,
+	                            username:this.props.ResultDate.username,
+	                            UserPhoto:this.props.ResultDate.userPhoto,
+	                            temp:true
+	                        });
+	                    }.bind(this)
+	                })
+	            }
+	        }
+	    },
+	    componentDidMount:function () {
+	        if(this.props.ResultDate.isYouFriend){
+	            this.setState({
+	                addText:"该用户为您的好友"
+	            })
+	        }else {
+	            this.setState({
+	                addText:"请求添加该用户"
+	            })
+	        }
+	    }
+	});
+
+	module.exports = Result;
+
+/***/ },
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);

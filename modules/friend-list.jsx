@@ -6,13 +6,17 @@ var Item = require("./friend-list-item");
 var Jquery = require("jquery");
 //未登录时朋友列表处显示的信息。
 var FriendListBase = require("./friend-list-base");
+//引入搜索按钮
+var SearchBtn = require("./search-btn");
 
 
 var UserList = React.createClass({
     getInitialState:function () {
-        return{
-            FriendsDate:{}
+        return {
+            FriendsDate: [],
+            TempFriendList:[]
         }
+
     },
     render:function () {
         var Items = [];
@@ -23,11 +27,22 @@ var UserList = React.createClass({
                 Items.push(<Item key={this.state.FriendsDate[i].id} BaseDate={this.state.FriendsDate[i]}/>);
             }
         }
+        for(var i in this.state.TempFriendList){
+            Items.unshift(<Item key = {this.state.TempFriendList[i].id} BaseDate={this.state.TempFriendList[i]}/>);
+        }
         return(
             <ul className="list">
                 {Items}
             </ul>
         )
+    },
+    HandleAddTempFriend:function (obj) {
+        var TempArray = this.state.TempFriendList;
+        TempArray.unshift(obj);
+        this.setState({
+            TempFriendList:TempArray
+        });
+        TempArray = null;
     },
     componentDidMount:function () {
         Jquery.ajax({
@@ -45,7 +60,11 @@ var UserList = React.createClass({
                 }
                 this.setState({
                     FriendsDate:data.FriendList
-                })
+                });
+                ReactDOM.render(
+                    <SearchBtn username={this.props.username} addTemFriend = {this.HandleAddTempFriend} />,
+                    document.getElementById("search-btn")
+                )
             }.bind(this)
         });
     }

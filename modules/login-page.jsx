@@ -9,8 +9,6 @@ var UserInfo = require("./user-info");
 var io = require("socket.io-client");
 //引入用户朋友列表
 var FriendList = require("./friend-list");
-//引入搜索按钮
-var SearchBtn = require("./search-btn");
 
 
 var LoginPage = React.createClass({
@@ -101,7 +99,8 @@ var LoginPage = React.createClass({
                             break;
                         case "2":this.setState({
                             status:"该用户不存在，请注册。",
-                            formTips:"form-tips"+" "+"info"
+                            formTips:"form-tips"+" "+"info",
+                            flage:false
                         });
                             break;
                         case "3":this.setState({
@@ -122,10 +121,6 @@ var LoginPage = React.createClass({
                                     <FriendList username={this.state.username}/>,
                                     document.getElementById("user-list")
                                 );
-                                ReactDOM.render(
-                                    <SearchBtn username={this.state.username}/>,
-                                    document.getElementById("search-btn")
-                                )
                             }.bind(this),1000);
                             break;
                         case "4":this.setState({
@@ -152,17 +147,10 @@ var LoginPage = React.createClass({
                                     <FriendList username={this.state.username}/>,
                                     document.getElementById("user-list")
                                 );
-                                ReactDOM.render(
-                                    <SearchBtn username={this.state.username}/>,
-                                    document.getElementById("search-btn")
-                                )
                             }.bind(this),1000);
                             break;
                         default:break;
                     }
-                    this.setState({
-                        flage:true
-                    })
                 }.bind(this)
             })
         }

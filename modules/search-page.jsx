@@ -3,7 +3,8 @@ var ReactDOM = require("react-dom");
 var Jquery = require("jquery");
 //引入时钟模块
 var Clock = require("./clock");
-
+//引入搜索结果页面
+var Result = require("./search-matching-result");
 
 var SearchPage = React.createClass({
     getInitialState:function () {
@@ -59,33 +60,59 @@ var SearchPage = React.createClass({
     },
     HandleSubmit:function (event) {
         event.preventDefault();
-        if(!this.state.username && !this.state.ID){
+        if(this.state.username == this.props.username){
             this.setState({
-                status:"用户名或者用户ID至少填写一个。",
+                status:"所搜索用户名为当前用户，请重试",
+                username:"",
+                ID:"",
+                formTips:"form-tips"+" "+"warning"
+            });
+        }else if(!this.state.username || !this.state.ID){
+            this.setState({
+                status:"用户名和用户ID均要填写。",
                 formTips:"form-tips"+" "+"warning"
             });
             return;
-        }
-        if(this.state.flage){
+        }else {
             this.setState({
-                flage:false
+                status:"数据加载中。。。请稍后。",
+                formTips:"form-tips"+" "+""
             });
-            Jquery.ajax({
-                type:"POST",
-                url:"/users/login",
-                data:{
-                    username:this.state.username,
-                    password:this.state.password
-                },
-                success:function (code) {
-
-                    this.setState({
-                        flage:true
-                    })
-                }.bind(this)
-            })
+            if(this.state.flage){
+                this.setState({
+                    flage:false
+                });
+                Jquery.ajax({
+                    type:"POST",
+                    url:"/users/search",
+                    data:{
+                        username:this.state.username,
+                        ID:this.state.ID
+                    },
+                    success:function (code) {
+                        if(code == "1"){
+                            this.setState({
+                                status:"搜索失败，请稍后重试。",
+                                formTips:"form-tips"+" "+"error"
+                            });
+                        }else if(code == "2"){
+                            this.setState({
+                                status:"搜索用户不存在，请确认后重试。",
+                                formTips:"form-tips"+" "+"warning"
+                            })
+                        }else {
+                            ReactDOM.render(
+                                <Result addTemFriend={this.props.addTemFriend} title="搜索结果" ResultDate = {code}/>,
+                                document.getElementById("other-thing")
+                            );
+                        }
+                        this.setState({
+                            flage:true
+                        });
+                    }.bind(this)
+                })
+            }
         }
-
     }
 });
 module.exports = SearchPage;

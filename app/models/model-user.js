@@ -22,16 +22,49 @@ var UserSchema = new mongoose.Schema({
         type:String,
         default:""
     },
-    FriendList:{
-        type:Array,
-        default:[{
-            id:0,
-            username:"小艾",
-            ImageLink:"/images/user-photo-1.png",
-            LastMessage:"",
-            rangTiem:"",
-            OnlineTag:true
-        }]
-    }
+    FriendList:[{
+        id:Number,
+        username:String,
+        UserPhoto:String,
+        LastMessage:String,
+        rangTiem:String,
+        OnlineTag:Boolean
+    }],
+    TempFriendList:[{
+        id:Number,
+        temp:Boolean,
+        username:String,
+        UserPhoto:String
+    }],
+    requireAddFriendList:[{
+        id:Number
+    }]
 });
+UserSchema.methods.addFriend = function (obj,fn) {
+    this.FriendList.push(obj);
+    this.save(function (err) {
+        if(err){
+            fn(err);
+            console.log("save error:",err);
+        }
+    })
+};
+UserSchema.methods.addTempFriend = function (obj,fn) {
+    this.TempFriendList.push(obj);
+    this.save(function (err) {
+        if(err){
+            fn(err);
+            console.log("save error:",err);
+        }
+    })
+};
+UserSchema.methods.addFriendOfRequire = function (obj,fn) {
+    this.requireAddFriendList.push(obj);
+    this.save(function (err) {
+        if(err){
+            fn(err);
+            console.log("save error:",err);
+        }
+    })
+};
 var Users = mongoose.model("Users",UserSchema);
