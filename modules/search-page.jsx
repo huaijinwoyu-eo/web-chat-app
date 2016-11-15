@@ -72,7 +72,6 @@ var SearchPage = React.createClass({
                 status:"用户名和用户ID均要填写。",
                 formTips:"form-tips"+" "+"warning"
             });
-            return;
         }else {
             this.setState({
                 status:"数据加载中。。。请稍后。",
@@ -86,6 +85,7 @@ var SearchPage = React.createClass({
                     type:"POST",
                     url:"/users/search",
                     data:{
+                        baseUsername:this.props.username,
                         username:this.state.username,
                         ID:this.state.ID
                     },
@@ -93,22 +93,24 @@ var SearchPage = React.createClass({
                         if(code == "1"){
                             this.setState({
                                 status:"搜索失败，请稍后重试。",
-                                formTips:"form-tips"+" "+"error"
+                                formTips:"form-tips"+" "+"error",
+                                flage:true
                             });
-                        }else if(code == "2"){
+                        }else if(code == "err"){
                             this.setState({
-                                status:"搜索用户不存在，请确认后重试。",
-                                formTips:"form-tips"+" "+"warning"
+                                status:"搜索用户不存在，请确认消息后重试。",
+                                formTips:"form-tips"+" "+"error",
+                                flage:true
                             })
                         }else {
                             ReactDOM.render(
-                                <Result addTemFriend={this.props.addTemFriend} title="搜索结果" ResultDate = {code}/>,
+                                <Result addTemFriend={this.props.addTemFriend} title="搜索结果" ResultDate = {code} searchObj = {{
+                                    username:this.state.username,
+                                    ID:this.state.ID
+                                }} username={this.props.username}/>,
                                 document.getElementById("other-thing")
                             );
                         }
-                        this.setState({
-                            flage:true
-                        });
                     }.bind(this)
                 })
             }

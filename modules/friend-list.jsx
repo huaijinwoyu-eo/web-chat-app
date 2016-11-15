@@ -59,7 +59,8 @@ var UserList = React.createClass({
                     )
                 }
                 this.setState({
-                    FriendsDate:data.FriendList
+                    FriendsDate:data.FriendList,
+                    TempFriendList:data.TempFriendList
                 });
                 ReactDOM.render(
                     <SearchBtn username={this.props.username} addTemFriend = {this.HandleAddTempFriend} />,

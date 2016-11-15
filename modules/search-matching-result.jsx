@@ -13,7 +13,13 @@ var Result = React.createClass({
             flage:true,
             addText:"",
             status:"点击“请求添加该用户”按钮，添加好友。",
-            formTips:"form-tips"
+            formTips:"form-tips",
+            username:"",
+            ID:"",
+            userText:"",
+            UserPhoto:"",
+            sexual:"",
+            age:""
         }
     },
     render:function () {
@@ -28,28 +34,28 @@ var Result = React.createClass({
                 <hr/>
                 <div className="content">
                     <div className={this.state.formTips}>{this.state.status}</div>
-                    <img src={this.props.ResultDate.userPhoto} alt="" className="db Result-img"/>
+                    <img src={this.state.UserPhoto} alt="" className="db Result-img"/>
                     <p className="Result-p">
                         <span>用户名：</span>
-                        {this.props.ResultDate.username}
+                        {this.state.username}
                     </p>
                     <p className="Result-p">
                         <span>ID：</span>
-                        {this.props.ResultDate.ID}
+                        {this.state.ID}
                     </p>
                     <p className="Result-p">
                         <span>个性签名：</span>
-                        {this.props.ResultDate.userText}
+                        {this.state.userText}
                     </p>
                     <p className="Result-p">
                         <span>性别：</span>
-                        {this.props.ResultDate.sexual}
+                        {this.state.sexual}
                     </p>
                     <p className="Result-p">
                         <span>年龄：</span>
-                        {this.props.ResultDate.age}
+                        {this.state.age}
                     </p>
-                    <a href="#" className="add-btn" onClick={this.HandleClick}>{this.state.addText}</a>
+                    <a href="#" id="add-btn" className="add-btn" onClick={this.HandleClick}>{this.state.addText}</a>
                 </div>
             </div>
         )
@@ -62,21 +68,23 @@ var Result = React.createClass({
     },
     HandleClick:function (event) {
         event.preventDefault();
-        if(this.props.ResultDate.isYouFriend){
+        if(this.props.ResultDate=="3"){
             alert("该用户已经是您的好友了。");
         }else {
-            if(this.state.flage) {
+            if(this.state.flage && this.state.addText == "请求添加该用户") {
                 this.setState({
                     flage: false,
-                    addText:"请求已发送，等待对方确认"
+                    addText:"请求已发送，等待对方确认",
+                    formTips:"form-tips"+" "+"success"
                 });
                 Jquery.ajax({
                     url:"/users/addFriend",
                     type:"POST",
                     data:{
-                        id:this.props.ResultDate.ID,
-                        username:this.props.ResultDate.username,
-                        UserPhoto:this.props.ResultDate.userPhoto,
+                        baseUsername:this.props.username,
+                        id:this.state.ID,
+                        username:this.state.username,
+                        UserPhoto:this.state.UserPhoto,
                         temp:true
                     },
                     success:function (code) {
@@ -84,35 +92,74 @@ var Result = React.createClass({
                             this.setState({
                                 status:"添加好友失败，可能是数据库问题，请稍后重试。",
                                 formTips:"form-tips"+" "+"error",
-                                addText:"请求添加该用户"
+                                addText:"请求添加该用户",
+                                flage:true
                             });
                         }else if(code == "2"){
                             this.setState({
                                 status:"添加好友请求已发送，等待对方回应。",
-                                formTips:"form-tips"+" "+""
+                                formTips:"form-tips"+" "+"success"
+                            });
+                            this.props.addTemFriend({
+                                id:this.state.ID,
+                                username:this.state.username,
+                                UserPhoto:this.state.UserPhoto,
+                                temp:true
                             });
                         }
-                        this.props.addTemFriend({
-                            id:this.props.ResultDate.ID,
-                            username:this.props.ResultDate.username,
-                            UserPhoto:this.props.ResultDate.userPhoto,
-                            temp:true
-                        });
                     }.bind(this)
                 })
             }
         }
     },
     componentDidMount:function () {
-        if(this.props.ResultDate.isYouFriend){
+        if(this.props.ResultDate == "2"){
             this.setState({
-                addText:"该用户为您的好友"
+                addText:"请求已发送",
+                status:"添加请求已发送，无需再次请求。"
+            })
+        }else if(this.props.ResultDate == "3"){
+            this.setState({
+                addText:"该用户已经为您的好友",
+                status:"该用户已经为您的好友。"
             })
         }else {
             this.setState({
                 addText:"请求添加该用户"
             })
         }
+        Jquery.ajax({
+            type:"POST",
+            url:"/users/getSearchDate",
+            data:{
+                username:this.props.searchObj.username,
+                ID:this.props.searchObj.ID
+            },
+            success:function (data) {
+                if(data == "1"){
+                    this.setState({
+                        status:"数据库操作失误，请稍后重试。",
+                        formTips:"form-tips"+" "+"error"
+                    });
+                }else if(data == "err"){
+                    this.setState({
+                        status:"搜索用户不存在，请确认消息后重试。",
+                        formTips:"form-tips"+" "+"error"
+                    });
+                    document.getElementById("add-btn").style.display = "none";
+                }else {
+                    this.setState({
+                        username:data.username,
+                        ID:data.ID,
+                        userText:data.username,
+                        UserPhoto:data.UserPhoto,
+                        sexual:data.sexual,
+                        age:data.age
+                    })
+                }
+            }.bind(this)
+        });
+
     }
 });
 

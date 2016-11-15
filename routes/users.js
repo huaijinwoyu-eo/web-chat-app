@@ -68,7 +68,6 @@ router.get("/signOut",function (req, res, next) {
     req.session.username = null;
     res.send(req.session.username);
 });
-
 //用户详细信息
 router.post("/details",function (req, res, next) {
     User.findOne({username:req.body.username},function (err, doc) {
@@ -161,52 +160,76 @@ router.post("/getFriendList",function (req, res, next) {
 });
 //用户搜索功能
 router.post("/search",function (req, res, next) {
+    User.findOne({username:req.body.baseUsername},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("1");
+        }
+        for(var i = 0; i<doc.TempFriendList.length; i++){
+            if(doc.TempFriendList[i].id == req.body.ID){
+                if(req.body.username != doc.TempFriendList[i].username){
+                    res.send("err");
+                }else {
+                    res.send("2");//已经请求添加过了，
+                }
+                return false;
+                break;
+            }
+        }
+        for(var i = 0; i<doc.FriendList.length; i++){
+            if(doc.FriendList[i].id == req.body.ID){
+                if(req.body.username != doc.FriendList[i].username){
+                    res.send("err");
+                }else {
+                    res.send("3");//已经是你的好友了。
+                }
+                return false;
+                break;
+            }
+        }
+        res.send("4");//目前还不是你的好友。
+    })
+});
+//获取搜索用户信息。
+router.post("/getSearchDate",function (req, res, next) {
     User.findOne({id:req.body.ID},function (err, doc) {
         if(err){
             console.log(err);
             res.send("1");
-        }
-        if(doc.username !== req.body.username){
-            res.send("2");
-        }else {
-            for(var i = 0; i<doc.FriendList.length; i++){
-                if(doc.FriendList[i].id == req.body.ID){
-                    res.send({
-                        isYouFriend:true,
-                        username:this.username,
-                        ID:this.id,
-                        userText:this.UserText,
-                        userPhoto:this.UserPhoto,
-                        sexual:this.sexual,
-                        age:this.age
-                    });
-                    break;
-                }
+        }else if (doc){
+            if(req.body.username != doc.username){
+                res.send("err");
+            }else {
+                res.send({
+                    username:doc.username,
+                    ID:doc.id,
+                    userText:doc.UserText,
+                    UserPhoto:doc.UserPhoto,
+                    sexual:doc.sexual,
+                    age:doc.age
+                })
             }
-            res.send({
-                isYouFriend:false,
-                username:doc.username,
-                ID:doc.id,
-                userText:doc.UserText,
-                userPhoto:doc.UserPhoto,
-                sexual:doc.sexual,
-                age:doc.age
-            });
+        }else {
+            res.send("err");
         }
-    });
+    })
 });
 //请求添加好友
 router.post("/addFriend",function (req, res, next){
-    User.findOne({id:req.body.ID},function (err,doc) {
+    User.findOne({username:req.body.baseUsername},function (err,doc) {
         if(err){
             console.log(err);
             res.send("1");
         }else {
-            doc.addTempFriend(req.body,function (err) {
-                if(err){
-                    console.log(err);
-                    res.send("1");
-                }
+            doc.addTempFriend({
+                id:req.body.id,
+                temp:req.body.temp,
+                username:req.body.username,
+                UserPhoto:req.body.UserPhoto
+            });
+            doc.save(function (err, doc) {
+                if(err) return console.log(err);
+                console.log("save success");
             });
             res.send("2");
         }

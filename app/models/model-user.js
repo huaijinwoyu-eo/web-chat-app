@@ -40,31 +40,13 @@ var UserSchema = new mongoose.Schema({
         id:Number
     }]
 });
-UserSchema.methods.addFriend = function (obj,fn) {
+UserSchema.methods.addFriend = function (obj) {
     this.FriendList.push(obj);
-    this.save(function (err) {
-        if(err){
-            fn(err);
-            console.log("save error:",err);
-        }
-    })
 };
-UserSchema.methods.addTempFriend = function (obj,fn) {
+UserSchema.methods.addTempFriend = function (obj) {
     this.TempFriendList.push(obj);
-    this.save(function (err) {
-        if(err){
-            fn(err);
-            console.log("save error:",err);
-        }
-    })
 };
-UserSchema.methods.addFriendOfRequire = function (obj,fn) {
+UserSchema.methods.addFriendOfRequire = function (obj) {
     this.requireAddFriendList.push(obj);
-    this.save(function (err) {
-        if(err){
-            fn(err);
-            console.log("save error:",err);
-        }
-    })
 };
 var Users = mongoose.model("Users",UserSchema);
