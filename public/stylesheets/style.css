@@ -13,7 +13,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-left: -683px;
+    margin-left: -647px;
     margin-top: -365px;
     background: #eff3f7;
 }
@@ -559,7 +559,6 @@ a.upload-wrap input{
     right: -8px;
     background: #e83b33;
     color: #ffffff;
-    height: 20px;
     width: 20px;
     -webkit-border-radius:100%;
     -moz-border-radius:100%;
@@ -567,9 +566,8 @@ a.upload-wrap input{
     font-size: 12px;
     line-height: 20px;
     text-align: center;
-    display: none;
 }
-.list-btn:hover{
+.list-btn:hover,.list-btn.cur{
     background: #ffffff;
     color: #0f75bd;
 }

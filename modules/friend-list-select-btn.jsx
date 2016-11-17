@@ -7,7 +7,7 @@ var SelectList = React.createClass({
     render:function () {
         return(
             <div>
-                <a href="#" className="list-btn" onClick={this.props.ShowFriendList}>朋友列表</a>
+                <a href="#" className="list-btn cur" onClick={this.props.ShowFriendList}>朋友列表</a>
                 <a href="#" className="list-btn" onClick={this.props.ShowHasRequirList}>已请求列表</a>
                 <a href="#" className="list-btn" onClick={this.props.ShowAddingYou}>
                     待确认列表
@@ -17,11 +17,10 @@ var SelectList = React.createClass({
         )
     },
     componentDidMount:function () {
-        if(this.props.AddingNumber){
-            Jquery(".list-btn .num").show();
-        }else {
-            Jquery(".list-btn .num").hide();
-        }
+        Jquery("#list-select .list-btn").on("click",function () {
+            Jquery("#list-select .list-btn.cur").removeClass("cur");
+            Jquery(this).addClass("cur");
+        })
     }
 });
 

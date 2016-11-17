@@ -12,7 +12,7 @@ var socket = require("../client-io/init");
 var HasRequire = React.createClass({
     getInitialState:function () {
         return{
-            TempFriendList:[]
+            TempFriendList:this.props.TempFriendList
         }
     },
     render:function () {
@@ -27,24 +27,7 @@ var HasRequire = React.createClass({
         )
     },
     componentDidMount:function () {
-        Jquery.ajax({
-            type:"POST",
-            url:"/users/getHasRequire",
-            data:{
-                username:this.props.username
-            },
-            success:function (data) {
-                if(data=="err"){
-                    ReactDOM.render(
-                        <FriendListBase Text="列表读取失败，请稍后刷新页面重试。"/>,
-                        document.getElementById("user-list")
-                    )
-                }
-                this.setState({
-                    TempFriendList:data.TempFriendList
-                });
-            }.bind(this)
-        });
+
     }
 });
 

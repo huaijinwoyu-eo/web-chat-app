@@ -12,7 +12,7 @@ var socket = require("../client-io/init");
 var YouFriend = React.createClass({
     getInitialState:function () {
         return{
-            FriendsDate: []
+            FriendsDate:this.props.FriendsDate
         }
     },
     render:function () {
@@ -31,24 +31,7 @@ var YouFriend = React.createClass({
         )
     },
     componentDidMount:function () {
-        Jquery.ajax({
-            type:"POST",
-            url:"/users/getYouFriend",
-            data:{
-                username:this.props.username
-            },
-            success:function (data) {
-                if(data=="err"){
-                    ReactDOM.render(
-                        <FriendListBase Text="列表读取失败，请稍后刷新页面重试。"/>,
-                        document.getElementById("user-list")
-                    )
-                }
-                this.setState({
-                    FriendsDate:data.FriendList
-                });
-            }.bind(this)
-        });
+
     }
 });
 

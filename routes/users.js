@@ -146,30 +146,20 @@ router.post("/upText",function (req, res, next) {
     })
 });
 //获取好友列表
-router.post("/getYouFriend",function (req, res, next) {
+router.post("/getFriends",function (req, res, next) {
     User.findOne({username:req.body.username},function (err, doc) {
         if(err){
             console.log(err);
             res.send("err");
         }
         res.send({
-            FriendList:doc.FriendList
+            FriendList:doc.FriendList,
+            TempFriendList:doc.TempFriendList,
+            requireAddFriendList:doc.requireAddFriendList
         });
     })
 });
-//获取请求列表
-router.post("/getHasRequire",function (req, res, next) {
-    User.findOne({username:req.body.username},function (err, doc) {
-        if(err){
-            console.log(err);
-            res.send("err");
-        }
-        res.send({
-            TempFriendList:doc.TempFriendList
-        });
-    })
-});
-//获取添加列表
+//动态获取addyouList接口
 router.post("/getAddingYou",function (req, res, next) {
     User.findOne({username:req.body.username},function (err, doc) {
         if(err){
@@ -181,6 +171,8 @@ router.post("/getAddingYou",function (req, res, next) {
         });
     })
 });
+
+
 //用户搜索功能
 router.post("/search",function (req, res, next) {
     User.findOne({username:req.body.baseUsername},function (err, doc) {

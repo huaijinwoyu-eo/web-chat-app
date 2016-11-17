@@ -14,7 +14,7 @@ var socket = require("../client-io/init");
 var AddingYou = React.createClass({
     getInitialState:function () {
         return {
-            requireAddFriendList:[]
+            requireAddFriendList:this.props.requireAddFriendList
         }
 
     },
@@ -30,44 +30,7 @@ var AddingYou = React.createClass({
         )
     },
     componentDidMount:function () {
-        socket.on("someOne is adding you",function () {
-            Jquery.ajax({
-                type:"POST",
-                url:"/users/getAddingYou",
-                data:{
-                    username:this.props.username
-                },
-                success:function (data) {
-                    if(data=="err"){
-                        ReactDOM.render(
-                            <FriendListBase Text="列表读取失败，请稍后刷新页面重试。"/>,
-                            document.getElementById("user-list")
-                        )
-                    }
-                    this.setState({
-                        requireAddFriendList:data.requireAddFriendList
-                    });
-                }.bind(this)
-            });
-        }.bind(this));
-        Jquery.ajax({
-            type:"POST",
-            url:"/users/getAddingYou",
-            data:{
-                username:this.props.username
-            },
-            success:function (data) {
-                if(data=="err"){
-                    ReactDOM.render(
-                        <FriendListBase Text="列表读取失败，请稍后刷新页面重试。"/>,
-                        document.getElementById("user-list")
-                    )
-                }
-                this.setState({
-                    requireAddFriendList:data.requireAddFriendList
-                });
-            }.bind(this)
-        });
+
     }
 });
 

@@ -40243,79 +40243,176 @@
 	        return{
 	            isYourFriend:true,
 	            isHasRequir:false,
-	            isAddingYou:false
+	            isAddingYou:false,
+	            title:"朋友列表",
+	            AddingNumber:"",
+	            FriendsDate:[],
+	            TempFriendList:[],
+	            requireAddFriendList:[]
 	        }
 	    },
 	    render:function () {
 	        if(this.state.isYourFriend){
 	            return(
-	                React.createElement("ul", {className: "list"}, 
-	                    React.createElement(YouFriend, {username: this.props.username})
+	                React.createElement("div", null, 
+	                    React.createElement("div", {className: "item-title"}, 
+	                        this.state.title, 
+	                        React.createElement("div", {className: "fr btn"}, "匹配")
+	                    ), 
+	                    React.createElement("hr", null), 
+	                    React.createElement("ul", {className: "list"}, 
+	                        React.createElement(YouFriend, {FriendsDate: this.state.FriendsDate})
+	                    )
 	                )
 	            )
 	        }else if(this.state.isHasRequir){
 	            return(
-	                React.createElement("ul", {className: "list"}, 
-	                    React.createElement(HasRequire, {username: this.props.username})
+	                React.createElement("div", null, 
+	                    React.createElement("div", {className: "item-title"}, 
+	                        this.state.title, 
+	                        React.createElement("div", {className: "fr btn"}, "匹配")
+	                    ), 
+	                    React.createElement("hr", null), 
+	                    React.createElement("ul", {className: "list"}, 
+	                        React.createElement(HasRequire, {TempFriendList: this.state.TempFriendList})
+	                    )
 	                )
 	            )
 	        }else if(this.state.isAddingYou){
 	            return(
-	                React.createElement("ul", {className: "list"}, 
-	                    React.createElement(AddingYou, {username: this.props.username})
+	                React.createElement("div", null, 
+	                    React.createElement("div", {className: "item-title"}, 
+	                        this.state.title, 
+	                        React.createElement("div", {className: "fr btn"}, "匹配")
+	                    ), 
+	                    React.createElement("hr", null), 
+	                    React.createElement("ul", {className: "list"}, 
+	                        React.createElement(AddingYou, {requireAddFriendList: this.state.requireAddFriendList, username: this.props.username})
+	                    )
 	                )
 	            )
 	        }
 	    },
 	    HandleAddTempFriend:function (obj) {
+	        var tempArray = this.state.TempFriendList;
+	        tempArray.push(obj);
 	        this.setState({
-	            isYourFriend:false,
-	            isHasRequir:true,
-	            isAddingYou:false
-	        });
-	        socket.emit("adding you",{
-	            username:obj.username,
-	            baseUsername:this.props.username
-	        });
+	            TempFriendList:tempArray,
+	            title:"已请求列表",
+	        },function () {
+	            Jquery("#list-select .list-btn").eq(1).trigger("click");
+	            this.setState({
+	                isYourFriend:false,
+	                isHasRequir:true,
+	                isAddingYou:false,
+	            });
+	            socket.emit("adding you",{
+	                username:obj.username,
+	                baseUsername:this.props.username
+	            });
+	        }.bind(this));
 	    },
 	    HandleShowFriendList:function (event) {
 	        event.preventDefault();
 	        this.setState({
-	            isYourFriend:true,
-	            isHasRequir:false,
-	            isAddingYou:false
-	        })
+	            title:"朋友列表"
+	        },function () {
+	            this.setState({
+	                isYourFriend:true,
+	                isHasRequir:false,
+	                isAddingYou:false,
+	            });
+	        }.bind(this))
 	    },
 	    HandleShowHasRequirList:function (event) {
 	        event.preventDefault();
 	        this.setState({
-	            isYourFriend:false,
-	            isHasRequir:true,
-	            isAddingYou:false
-	        })
+	            title:"已请求列表"
+	        },function () {
+	            this.setState({
+	                isYourFriend:false,
+	                isHasRequir:true,
+	                isAddingYou:false,
+	            });
+	        }.bind(this))
 	    },
 	    HandleShowAddingYou:function (event) {
 	        event.preventDefault();
 	        this.setState({
-	            isYourFriend:false,
-	            isHasRequir:false,
-	            isAddingYou:true
-	        })
+	            title:"待确认列表",
+	            AddingNumber:""
+	        },function () {
+	            ReactDOM.render(
+	                React.createElement(FriendListSelect, {AddingNumber: this.state.AddingNumber, ClearAddingNumber: this.HandleClearAddingNumber, ShowFriendList: this.HandleShowFriendList, ShowHasRequirList: this.HandleShowHasRequirList, ShowAddingYou: this.HandleShowAddingYou}),
+	                document.getElementById("list-select")
+	            );
+	            Jquery("#list-select .list-btn").eq(2).trigger("click");
+	            this.setState({
+	                isYourFriend:false,
+	                isHasRequir:false,
+	                isAddingYou:true,
+	            });
+	        }.bind(this))
 	    },
 	    componentDidMount:function () {
+	        Jquery.ajax({
+	            type:"POST",
+	            url:"/users/getFriends",
+	            data:{
+	                username:this.props.username
+	            },
+	            success:function (data) {
+	                if(data=="err"){
+	                    ReactDOM.render(
+	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
+	                        document.getElementById("user-list")
+	                    )
+	                }
+	                this.setState({
+	                    FriendsDate:data.FriendList,
+	                    TempFriendList:data.TempFriendList,
+	                    requireAddFriendList:data.requireAddFriendList
+	                });
+	            }.bind(this)
+	        });
 	        ReactDOM.render(
-	            React.createElement(FriendListSelect, {ShowFriendList: this.HandleShowFriendList, ShowHasRequirList: this.HandleShowHasRequirList, ShowAddingYou: this.HandleShowAddingYou}),
+	            React.createElement(FriendListSelect, {ClearAddingNumber: this.HandleClearAddingNumber, ShowFriendList: this.HandleShowFriendList, ShowHasRequirList: this.HandleShowHasRequirList, ShowAddingYou: this.HandleShowAddingYou}),
 	            document.getElementById("list-select")
 	        );
 	        ReactDOM.render(
 	            React.createElement(SearchBtn, {username: this.props.username, addTemFriend: this.HandleAddTempFriend}),
 	            document.getElementById("search-btn")
 	        );
-	        socket.on("someOne is adding you",function (count) {
-	            ReactDOM.render(
-	                React.createElement(FriendListSelect, {AddingNumber: count, ShowFriendList: this.HandleShowFriendList, ShowHasRequirList: this.HandleShowHasRequirList, ShowAddingYou: this.HandleShowAddingYou}),
-	                document.getElementById("list-select")
-	            );
+	        socket.on("AddingNumber",function (count) {
+	            console.log("addingnumber");
+	            console.log(count);
+	            this.setState({
+	                AddingNumber:count
+	            },function () {
+	                ReactDOM.render(
+	                    React.createElement(FriendListSelect, {AddingNumber: this.state.AddingNumber, ClearAddingNumber: this.HandleClearAddingNumber, ShowFriendList: this.HandleShowFriendList, ShowHasRequirList: this.HandleShowHasRequirList, ShowAddingYou: this.HandleShowAddingYou}),
+	                    document.getElementById("list-select")
+	                );
+	                Jquery.ajax({
+	                    type:"POST",
+	                    url:"/users/getAddingYou",
+	                    data:{
+	                        username:this.props.username
+	                    },
+	                    success:function (data) {
+	                        if(data=="err"){
+	                            ReactDOM.render(
+	                                React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
+	                                document.getElementById("user-list")
+	                            )
+	                        }
+	                        this.setState({
+	                            requireAddFriendList:data.requireAddFriendList
+	                        });
+	                    }.bind(this)
+	                });
+
+	            }.bind(this))
 	        }.bind(this));
 	    }
 	});
@@ -40745,7 +40842,7 @@
 	var YouFriend = React.createClass({displayName: "YouFriend",
 	    getInitialState:function () {
 	        return{
-	            FriendsDate: []
+	            FriendsDate:this.props.FriendsDate
 	        }
 	    },
 	    render:function () {
@@ -40764,24 +40861,7 @@
 	        )
 	    },
 	    componentDidMount:function () {
-	        Jquery.ajax({
-	            type:"POST",
-	            url:"/users/getYouFriend",
-	            data:{
-	                username:this.props.username
-	            },
-	            success:function (data) {
-	                if(data=="err"){
-	                    ReactDOM.render(
-	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
-	                        document.getElementById("user-list")
-	                    )
-	                }
-	                this.setState({
-	                    FriendsDate:data.FriendList
-	                });
-	            }.bind(this)
-	        });
+
 	    }
 	});
 
@@ -40805,7 +40885,7 @@
 	var HasRequire = React.createClass({displayName: "HasRequire",
 	    getInitialState:function () {
 	        return{
-	            TempFriendList:[]
+	            TempFriendList:this.props.TempFriendList
 	        }
 	    },
 	    render:function () {
@@ -40820,24 +40900,7 @@
 	        )
 	    },
 	    componentDidMount:function () {
-	        Jquery.ajax({
-	            type:"POST",
-	            url:"/users/getHasRequire",
-	            data:{
-	                username:this.props.username
-	            },
-	            success:function (data) {
-	                if(data=="err"){
-	                    ReactDOM.render(
-	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
-	                        document.getElementById("user-list")
-	                    )
-	                }
-	                this.setState({
-	                    TempFriendList:data.TempFriendList
-	                });
-	            }.bind(this)
-	        });
+
 	    }
 	});
 
@@ -40863,7 +40926,7 @@
 	var AddingYou = React.createClass({displayName: "AddingYou",
 	    getInitialState:function () {
 	        return {
-	            requireAddFriendList:[]
+	            requireAddFriendList:this.props.requireAddFriendList
 	        }
 
 	    },
@@ -40879,44 +40942,7 @@
 	        )
 	    },
 	    componentDidMount:function () {
-	        socket.on("someOne is adding you",function () {
-	            Jquery.ajax({
-	                type:"POST",
-	                url:"/users/getAddingYou",
-	                data:{
-	                    username:this.props.username
-	                },
-	                success:function (data) {
-	                    if(data=="err"){
-	                        ReactDOM.render(
-	                            React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
-	                            document.getElementById("user-list")
-	                        )
-	                    }
-	                    this.setState({
-	                        requireAddFriendList:data.requireAddFriendList
-	                    });
-	                }.bind(this)
-	            });
-	        }.bind(this));
-	        Jquery.ajax({
-	            type:"POST",
-	            url:"/users/getAddingYou",
-	            data:{
-	                username:this.props.username
-	            },
-	            success:function (data) {
-	                if(data=="err"){
-	                    ReactDOM.render(
-	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
-	                        document.getElementById("user-list")
-	                    )
-	                }
-	                this.setState({
-	                    requireAddFriendList:data.requireAddFriendList
-	                });
-	            }.bind(this)
-	        });
+
 	    }
 	});
 
@@ -40935,7 +40961,7 @@
 	    render:function () {
 	        return(
 	            React.createElement("div", null, 
-	                React.createElement("a", {href: "#", className: "list-btn", onClick: this.props.ShowFriendList}, "朋友列表"), 
+	                React.createElement("a", {href: "#", className: "list-btn cur", onClick: this.props.ShowFriendList}, "朋友列表"), 
 	                React.createElement("a", {href: "#", className: "list-btn", onClick: this.props.ShowHasRequirList}, "已请求列表"), 
 	                React.createElement("a", {href: "#", className: "list-btn", onClick: this.props.ShowAddingYou}, 
 	                    "待确认列表", 
@@ -40945,11 +40971,10 @@
 	        )
 	    },
 	    componentDidMount:function () {
-	        if(this.props.AddingNumber){
-	            Jquery(".list-btn .num").show();
-	        }else {
-	            Jquery(".list-btn .num").hide();
-	        }
+	        Jquery("#list-select .list-btn").on("click",function () {
+	            Jquery("#list-select .list-btn.cur").removeClass("cur");
+	            Jquery(this).addClass("cur");
+	        })
 	    }
 	});
 

@@ -43,9 +43,10 @@ io.on('connection', function(socket){
                              if(err) return console.log(err);
                              //如果用户登录，提示刷新。
                              if(doc.socket_id){
-                                 io.sockets.sockets[doc.socket_id].emit("someOne is adding you",doc.requireAddFriendList.length);
+                                 io.sockets.sockets[doc.socket_id].emit("AddingNumber",doc.requireAddFriendList.length);
+                                 io.sockets.sockets[doc.socket_id].emit("someOne is adding you");
                              }
-                         });
+                         }.bind(doc));
                      }
                  });
              }
