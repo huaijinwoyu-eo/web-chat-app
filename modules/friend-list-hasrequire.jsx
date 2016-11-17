@@ -2,52 +2,34 @@ var React = require("react");
 var ReactDOM = require("react-dom");
 //朋友列表基本单元
 var Item = require("./friend-list-item");
-//引入jquery
+//引入Jquery
 var Jquery = require("jquery");
 //未登录时朋友列表处显示的信息。
 var FriendListBase = require("./friend-list-base");
-//引入搜索按钮
-var SearchBtn = require("./search-btn");
+//引入socket
+var socket = require("../client-io/init");
 
-
-var UserList = React.createClass({
+var HasRequire = React.createClass({
     getInitialState:function () {
-        return {
-            FriendsDate: [],
+        return{
             TempFriendList:[]
         }
-
     },
     render:function () {
         var Items = [];
-        for(var i in this.state.FriendsDate){
-            if(this.state.FriendsDate[i].OnlineTag){
-                Items.unshift(<Item key={this.state.FriendsDate[i].id} BaseDate = {this.state.FriendsDate[i]}/>);
-            }else {
-                Items.push(<Item key={this.state.FriendsDate[i].id} BaseDate={this.state.FriendsDate[i]}/>);
-            }
-        }
         for(var i in this.state.TempFriendList){
             Items.unshift(<Item key = {this.state.TempFriendList[i].id} BaseDate={this.state.TempFriendList[i]}/>);
         }
         return(
-            <ul className="list">
+            <div className="">
                 {Items}
-            </ul>
+            </div>
         )
-    },
-    HandleAddTempFriend:function (obj) {
-        var TempArray = this.state.TempFriendList;
-        TempArray.unshift(obj);
-        this.setState({
-            TempFriendList:TempArray
-        });
-        TempArray = null;
     },
     componentDidMount:function () {
         Jquery.ajax({
             type:"POST",
-            url:"/users/getFriendList",
+            url:"/users/getHasRequire",
             data:{
                 username:this.props.username
             },
@@ -59,16 +41,11 @@ var UserList = React.createClass({
                     )
                 }
                 this.setState({
-                    FriendsDate:data.FriendList,
                     TempFriendList:data.TempFriendList
                 });
-                ReactDOM.render(
-                    <SearchBtn username={this.props.username} addTemFriend = {this.HandleAddTempFriend} />,
-                    document.getElementById("search-btn")
-                )
             }.bind(this)
         });
     }
 });
 
-module.exports = UserList;
+module.exports = HasRequire;

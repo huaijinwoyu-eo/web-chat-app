@@ -6,9 +6,9 @@ var Clock = require("./clock");
 //引入用户信息页面
 var UserInfo = require("./user-info");
 //引入socket.io-client模块
-var io = require("socket.io-client");
+var socket = require("../client-io/init");
 //引入用户朋友列表
-var FriendList = require("./friend-list");
+var FriendList = require("./friend-list-friend");
 
 
 var LoginPage = React.createClass({
@@ -107,7 +107,7 @@ var LoginPage = React.createClass({
                             status:"用户登录成功。",
                             formTips:"form-tips"+" "+"success"
                         });
-                            var socket = io();
+                            socket.emit("login",this.state.username);
                             setTimeout(function () {
                                 ReactDOM.render(
                                     <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
@@ -133,7 +133,7 @@ var LoginPage = React.createClass({
                             status:"用户登录成功。",
                             formTips:"form-tips"+" "+"success"
                         });
-                            var socket = io();
+                            socket.emit("login",this.state.username);
                             setTimeout(function () {
                                 ReactDOM.render(
                                     <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,

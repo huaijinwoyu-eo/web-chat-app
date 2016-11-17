@@ -8,6 +8,10 @@ db.on("error",console.error.bind(console,"connection error"));
 
 var UserSchema = new mongoose.Schema({
     id:Number,
+    socket_id:{
+        type:String,
+        default:""
+    },
     username:String,
     password:String,
     sexual:String,
@@ -37,7 +41,10 @@ var UserSchema = new mongoose.Schema({
         UserPhoto:String
     }],
     requireAddFriendList:[{
-        id:Number
+        id:Number,
+        username:String,
+        UserPhoto:String,
+        isAdd:Boolean
     }]
 });
 UserSchema.methods.addFriend = function (obj) {

@@ -7,7 +7,7 @@ var UserInfo = require("./user-info");
 //引入时钟模块
 var Clock = require("./clock");
 //引入用户朋友列表
-var FriendList = require("./friend-list");
+var FriendList = require("./friend-list-friend");
 //未登录时朋友列表处显示的信息。
 var FriendListBase = require("./friend-list-base");
 //登录按钮

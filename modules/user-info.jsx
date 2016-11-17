@@ -6,6 +6,8 @@ var Jquery = require("jquery");
 var UserDetails = require("./user-details-page");
 //引用用户图片上传
 var UserImageU = require("./user-image-upload");
+//socket
+var socket = require("../client-io/init");
 var UserInfo = React.createClass({
     getInitialState: function () {
         return {
@@ -57,6 +59,7 @@ var UserInfo = React.createClass({
         }
     },
     componentDidMount: function () {
+        socket.emit("login",this.props.username);
         Jquery.ajax({
             type:"POST",
             url:"/users/getInfo",
@@ -93,6 +96,7 @@ var UserInfo = React.createClass({
         })
     },
     HandleLogout: function () {
+        socket.emit("disconnect");
         Jquery.ajax({
             type: "GET",
             url: "/users/signOut",

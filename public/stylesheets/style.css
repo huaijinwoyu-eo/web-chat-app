@@ -172,6 +172,44 @@ canvas.user-photo{
     padding: 0 20px;
     height: 70px;
     cursor: pointer;
+    position: relative;
+}
+.friend-list .list li .btns{
+    position: absolute;
+    margin-top: 15px;
+    top: 0;
+    right: 0;
+    width: 140px;
+}
+.friend-list .list .btns a{
+    display: block;
+    float: left;
+    height: 25px;
+    padding: 0 10px;
+    margin-left: 10px;
+    border: 2px solid;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 25px;
+    text-align: center;
+    background: #ffffff;
+}
+.friend-list .list .btns a.accept{
+    border-color: #318a1d;
+    color: #318a1d;
+}
+.friend-list .list .btns a.accept:hover{
+    background: #318a1d;
+    color: #ffffff;
+
+}
+.friend-list .list .btns a.deny{
+    border-color: #e8535b;
+    color: #e8535b;
+}
+.friend-list .list .btns a.deny:hover{
+    background: #e8535b;
+    color: #ffffff;
 }
 .friend-list .list li:hover,.friend-list .list li.cur{
     background: #f5f6f8;
@@ -496,8 +534,45 @@ a.upload-wrap input{
     background: #ffffff;
     color: #0f75bd;
 }
-
-
+/*列表切换按钮 add 2016-11-17*/
+#list-select{
+    height: 60px;
+    width: 330px;
+}
+.list-btn{
+    float: left;
+    display: block;
+    background: #0f75bd none repeat scroll 0 0;
+    border: 1px solid #0f75bd;
+    border-radius: 10px;
+    color: #ffffff;
+    height: 35px;
+    line-height: 35px;
+    margin-left: 10px;
+    margin-top: 10px;
+    padding: 0 15px;
+    position: relative;
+}
+.list-btn .num{
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background: #e83b33;
+    color: #ffffff;
+    height: 20px;
+    width: 20px;
+    -webkit-border-radius:100%;
+    -moz-border-radius:100%;
+    border-radius:100%;
+    font-size: 12px;
+    line-height: 20px;
+    text-align: center;
+    display: none;
+}
+.list-btn:hover{
+    background: #ffffff;
+    color: #0f75bd;
+}
 
 
 

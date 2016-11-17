@@ -145,16 +145,39 @@ router.post("/upText",function (req, res, next) {
         }
     })
 });
-//获取用户好友列表
-router.post("/getFriendList",function (req, res, next) {
+//获取好友列表
+router.post("/getYouFriend",function (req, res, next) {
     User.findOne({username:req.body.username},function (err, doc) {
         if(err){
             console.log(err);
             res.send("err");
         }
         res.send({
-            FriendList:doc.FriendList,
+            FriendList:doc.FriendList
+        });
+    })
+});
+//获取请求列表
+router.post("/getHasRequire",function (req, res, next) {
+    User.findOne({username:req.body.username},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("err");
+        }
+        res.send({
             TempFriendList:doc.TempFriendList
+        });
+    })
+});
+//获取添加列表
+router.post("/getAddingYou",function (req, res, next) {
+    User.findOne({username:req.body.username},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("err");
+        }
+        res.send({
+            requireAddFriendList:doc.requireAddFriendList
         });
     })
 });

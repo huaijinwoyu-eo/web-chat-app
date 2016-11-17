@@ -13,7 +13,24 @@ var UserListItem = React.createClass({
                     </div>
                 </li>
             )
-        }else {
+        }else if(this.props.BaseDate.isAdd){
+            return(
+                <li className="item">
+                    <img src={this.props.BaseDate.UserPhoto} alt="" className="user-photo fl"/>
+                    <div className="info">
+                        <p className="name">{this.props.BaseDate.username}</p>
+                    </div>
+                    <div className="btns">
+                        <a href="#" className="accept">
+                            添加
+                        </a>
+                        <a href="#" className="deny">
+                            拒绝
+                        </a>
+                    </div>
+                </li>
+            )
+        } else {
             return(
                 <li className="item">
                     <img src={this.props.BaseDate.UserPhoto} alt="" className="user-photo fl"/>

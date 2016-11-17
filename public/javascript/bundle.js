@@ -53,11 +53,11 @@
 	//引入时钟模块
 	var Clock = __webpack_require__(175);
 	//引入用户朋友列表
-	var FriendList = __webpack_require__(229);
+	var FriendList = __webpack_require__(230);
 	//未登录时朋友列表处显示的信息。
-	var FriendListBase = __webpack_require__(231);
+	var FriendListBase = __webpack_require__(232);
 	//登录按钮
-	var SearchBtn = __webpack_require__(232);
+	var SearchBtn = __webpack_require__(233);
 
 
 
@@ -21472,7 +21472,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	var LoginPage = __webpack_require__(173);
-	var RegisterPage = __webpack_require__(235);
+	var RegisterPage = __webpack_require__(240);
 	var Login = React.createClass({displayName: "Login",
 	    render:function(){
 	        return(
@@ -21510,9 +21510,9 @@
 	//引入用户信息页面
 	var UserInfo = __webpack_require__(176);
 	//引入socket.io-client模块
-	var io = __webpack_require__(179);
+	var socket = __webpack_require__(179);
 	//引入用户朋友列表
-	var FriendList = __webpack_require__(229);
+	var FriendList = __webpack_require__(230);
 
 
 	var LoginPage = React.createClass({displayName: "LoginPage",
@@ -21611,7 +21611,7 @@
 	                            status:"用户登录成功。",
 	                            formTips:"form-tips"+" "+"success"
 	                        });
-	                            var socket = io();
+	                            socket.emit("login",this.state.username);
 	                            setTimeout(function () {
 	                                ReactDOM.render(
 	                                    React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
@@ -21637,7 +21637,7 @@
 	                            status:"用户登录成功。",
 	                            formTips:"form-tips"+" "+"success"
 	                        });
-	                            var socket = io();
+	                            socket.emit("login",this.state.username);
 	                            setTimeout(function () {
 	                                ReactDOM.render(
 	                                    React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
@@ -32040,6 +32040,8 @@
 	var UserDetails = __webpack_require__(177);
 	//引用用户图片上传
 	var UserImageU = __webpack_require__(178);
+	//socket
+	var socket = __webpack_require__(179);
 	var UserInfo = React.createClass({displayName: "UserInfo",
 	    getInitialState: function () {
 	        return {
@@ -32091,6 +32093,7 @@
 	        }
 	    },
 	    componentDidMount: function () {
+	        socket.emit("login",this.props.username);
 	        Jquery.ajax({
 	            type:"POST",
 	            url:"/users/getInfo",
@@ -32127,6 +32130,7 @@
 	        })
 	    },
 	    HandleLogout: function () {
+	        socket.emit("disconnect");
 	        Jquery.ajax({
 	            type: "GET",
 	            url: "/users/signOut",
@@ -32555,15 +32559,27 @@
 /* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * Created by xiaoxiaotong on 2016/11/17.
+	 */
+	var io = __webpack_require__(180);
+	var socket = io();
+
+	module.exports = socket;
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
 	
 	/**
 	 * Module dependencies.
 	 */
 
-	var url = __webpack_require__(180);
-	var parser = __webpack_require__(185);
-	var Manager = __webpack_require__(193);
-	var debug = __webpack_require__(182)('socket.io-client');
+	var url = __webpack_require__(181);
+	var parser = __webpack_require__(186);
+	var Manager = __webpack_require__(194);
+	var debug = __webpack_require__(183)('socket.io-client');
 
 	/**
 	 * Module exports.
@@ -32662,12 +32678,12 @@
 	 * @api public
 	 */
 
-	exports.Manager = __webpack_require__(193);
-	exports.Socket = __webpack_require__(221);
+	exports.Manager = __webpack_require__(194);
+	exports.Socket = __webpack_require__(222);
 
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -32675,8 +32691,8 @@
 	 * Module dependencies.
 	 */
 
-	var parseuri = __webpack_require__(181);
-	var debug = __webpack_require__(182)('socket.io-client:url');
+	var parseuri = __webpack_require__(182);
+	var debug = __webpack_require__(183)('socket.io-client:url');
 
 	/**
 	 * Module exports.
@@ -32749,7 +32765,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports) {
 
 	/**
@@ -32794,7 +32810,7 @@
 
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -32804,7 +32820,7 @@
 	 * Expose `debug()` as the module.
 	 */
 
-	exports = module.exports = __webpack_require__(183);
+	exports = module.exports = __webpack_require__(184);
 	exports.log = log;
 	exports.formatArgs = formatArgs;
 	exports.save = save;
@@ -32968,7 +32984,7 @@
 
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -32984,7 +33000,7 @@
 	exports.disable = disable;
 	exports.enable = enable;
 	exports.enabled = enabled;
-	exports.humanize = __webpack_require__(184);
+	exports.humanize = __webpack_require__(185);
 
 	/**
 	 * The currently active debug mode names, and names to skip.
@@ -33171,7 +33187,7 @@
 
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports) {
 
 	/**
@@ -33302,7 +33318,7 @@
 
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -33310,11 +33326,11 @@
 	 * Module dependencies.
 	 */
 
-	var debug = __webpack_require__(182)('socket.io-parser');
-	var json = __webpack_require__(186);
-	var Emitter = __webpack_require__(189);
-	var binary = __webpack_require__(190);
-	var isBuf = __webpack_require__(192);
+	var debug = __webpack_require__(183)('socket.io-parser');
+	var json = __webpack_require__(187);
+	var Emitter = __webpack_require__(190);
+	var binary = __webpack_require__(191);
+	var isBuf = __webpack_require__(193);
 
 	/**
 	 * Protocol version.
@@ -33712,14 +33728,14 @@
 
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! JSON v3.3.2 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
 	;(function () {
 	  // Detect the `define` function exposed by asynchronous module loaders. The
 	  // strict `define` check is necessary for compatibility with `r.js`.
-	  var isLoader = "function" === "function" && __webpack_require__(188);
+	  var isLoader = "function" === "function" && __webpack_require__(189);
 
 	  // A set of types used to distinguish objects from primitives.
 	  var objectTypes = {
@@ -34618,10 +34634,10 @@
 	  }
 	}).call(this);
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(187)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(188)(module), (function() { return this; }())))
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -34637,7 +34653,7 @@
 
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {module.exports = __webpack_amd_options__;
@@ -34645,7 +34661,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports) {
 
 	
@@ -34815,7 +34831,7 @@
 
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/*global Blob,File*/
@@ -34824,8 +34840,8 @@
 	 * Module requirements
 	 */
 
-	var isArray = __webpack_require__(191);
-	var isBuf = __webpack_require__(192);
+	var isArray = __webpack_require__(192);
+	var isBuf = __webpack_require__(193);
 
 	/**
 	 * Replaces every Buffer | ArrayBuffer in packet with a numbered placeholder.
@@ -34963,7 +34979,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -34972,7 +34988,7 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -34992,7 +35008,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -35000,15 +35016,15 @@
 	 * Module dependencies.
 	 */
 
-	var eio = __webpack_require__(194);
-	var Socket = __webpack_require__(221);
-	var Emitter = __webpack_require__(222);
-	var parser = __webpack_require__(185);
-	var on = __webpack_require__(224);
-	var bind = __webpack_require__(225);
-	var debug = __webpack_require__(182)('socket.io-client:manager');
-	var indexOf = __webpack_require__(219);
-	var Backoff = __webpack_require__(228);
+	var eio = __webpack_require__(195);
+	var Socket = __webpack_require__(222);
+	var Emitter = __webpack_require__(223);
+	var parser = __webpack_require__(186);
+	var on = __webpack_require__(225);
+	var bind = __webpack_require__(226);
+	var debug = __webpack_require__(183)('socket.io-client:manager');
+	var indexOf = __webpack_require__(220);
+	var Backoff = __webpack_require__(229);
 
 	/**
 	 * IE6+ hasOwnProperty
@@ -35558,19 +35574,19 @@
 
 
 /***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	module.exports = __webpack_require__(195);
-
-
-/***/ },
 /* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
 	module.exports = __webpack_require__(196);
+
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	module.exports = __webpack_require__(197);
 
 	/**
 	 * Exports parser
@@ -35578,25 +35594,25 @@
 	 * @api public
 	 *
 	 */
-	module.exports.parser = __webpack_require__(203);
+	module.exports.parser = __webpack_require__(204);
 
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module dependencies.
 	 */
 
-	var transports = __webpack_require__(197);
-	var Emitter = __webpack_require__(212);
-	var debug = __webpack_require__(182)('engine.io-client:socket');
-	var index = __webpack_require__(219);
-	var parser = __webpack_require__(203);
-	var parseuri = __webpack_require__(181);
-	var parsejson = __webpack_require__(220);
-	var parseqs = __webpack_require__(213);
+	var transports = __webpack_require__(198);
+	var Emitter = __webpack_require__(213);
+	var debug = __webpack_require__(183)('engine.io-client:socket');
+	var index = __webpack_require__(220);
+	var parser = __webpack_require__(204);
+	var parseuri = __webpack_require__(182);
+	var parsejson = __webpack_require__(221);
+	var parseqs = __webpack_require__(214);
 
 	/**
 	 * Module exports.
@@ -35723,9 +35739,9 @@
 	 */
 
 	Socket.Socket = Socket;
-	Socket.Transport = __webpack_require__(202);
-	Socket.transports = __webpack_require__(197);
-	Socket.parser = __webpack_require__(203);
+	Socket.Transport = __webpack_require__(203);
+	Socket.transports = __webpack_require__(198);
+	Socket.parser = __webpack_require__(204);
 
 	/**
 	 * Creates transport of the given type.
@@ -36320,17 +36336,17 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module dependencies
 	 */
 
-	var XMLHttpRequest = __webpack_require__(198);
-	var XHR = __webpack_require__(200);
-	var JSONP = __webpack_require__(216);
-	var websocket = __webpack_require__(217);
+	var XMLHttpRequest = __webpack_require__(199);
+	var XHR = __webpack_require__(201);
+	var JSONP = __webpack_require__(217);
+	var websocket = __webpack_require__(218);
 
 	/**
 	 * Export transports.
@@ -36380,12 +36396,12 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {// browser shim for xmlhttprequest module
 
-	var hasCORS = __webpack_require__(199);
+	var hasCORS = __webpack_require__(200);
 
 	module.exports = function (opts) {
 	  var xdomain = opts.xdomain;
@@ -36424,7 +36440,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports) {
 
 	
@@ -36447,18 +36463,18 @@
 
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module requirements.
 	 */
 
-	var XMLHttpRequest = __webpack_require__(198);
-	var Polling = __webpack_require__(201);
-	var Emitter = __webpack_require__(212);
-	var inherit = __webpack_require__(214);
-	var debug = __webpack_require__(182)('engine.io-client:polling-xhr');
+	var XMLHttpRequest = __webpack_require__(199);
+	var Polling = __webpack_require__(202);
+	var Emitter = __webpack_require__(213);
+	var inherit = __webpack_require__(215);
+	var debug = __webpack_require__(183)('engine.io-client:polling-xhr');
 
 	/**
 	 * Module exports.
@@ -36871,19 +36887,19 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies.
 	 */
 
-	var Transport = __webpack_require__(202);
-	var parseqs = __webpack_require__(213);
-	var parser = __webpack_require__(203);
-	var inherit = __webpack_require__(214);
-	var yeast = __webpack_require__(215);
-	var debug = __webpack_require__(182)('engine.io-client:polling');
+	var Transport = __webpack_require__(203);
+	var parseqs = __webpack_require__(214);
+	var parser = __webpack_require__(204);
+	var inherit = __webpack_require__(215);
+	var yeast = __webpack_require__(216);
+	var debug = __webpack_require__(183)('engine.io-client:polling');
 
 	/**
 	 * Module exports.
@@ -36896,7 +36912,7 @@
 	 */
 
 	var hasXHR2 = (function () {
-	  var XMLHttpRequest = __webpack_require__(198);
+	  var XMLHttpRequest = __webpack_require__(199);
 	  var xhr = new XMLHttpRequest({ xdomain: false });
 	  return null != xhr.responseType;
 	})();
@@ -37122,15 +37138,15 @@
 
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies.
 	 */
 
-	var parser = __webpack_require__(203);
-	var Emitter = __webpack_require__(212);
+	var parser = __webpack_require__(204);
+	var Emitter = __webpack_require__(213);
 
 	/**
 	 * Module exports.
@@ -37283,22 +37299,22 @@
 
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module dependencies.
 	 */
 
-	var keys = __webpack_require__(204);
-	var hasBinary = __webpack_require__(205);
-	var sliceBuffer = __webpack_require__(207);
-	var after = __webpack_require__(208);
-	var utf8 = __webpack_require__(209);
+	var keys = __webpack_require__(205);
+	var hasBinary = __webpack_require__(206);
+	var sliceBuffer = __webpack_require__(208);
+	var after = __webpack_require__(209);
+	var utf8 = __webpack_require__(210);
 
 	var base64encoder;
 	if (global && global.ArrayBuffer) {
-	  base64encoder = __webpack_require__(210);
+	  base64encoder = __webpack_require__(211);
 	}
 
 	/**
@@ -37356,7 +37372,7 @@
 	 * Create a blob api even for blob builder when vendor prefixes exist
 	 */
 
-	var Blob = __webpack_require__(211);
+	var Blob = __webpack_require__(212);
 
 	/**
 	 * Encodes a packet.
@@ -37899,7 +37915,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports) {
 
 	
@@ -37924,7 +37940,7 @@
 
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -37932,7 +37948,7 @@
 	 * Module requirements.
 	 */
 
-	var isArray = __webpack_require__(206);
+	var isArray = __webpack_require__(207);
 
 	/**
 	 * Module exports.
@@ -37989,7 +38005,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -37998,7 +38014,7 @@
 
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports) {
 
 	/**
@@ -38033,7 +38049,7 @@
 
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports) {
 
 	module.exports = after
@@ -38067,7 +38083,7 @@
 
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/*! https://mths.be/wtf8 v1.0.0 by @mathias */
@@ -38303,10 +38319,10 @@
 
 	}(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(187)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(188)(module), (function() { return this; }())))
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports) {
 
 	/*
@@ -38379,7 +38395,7 @@
 
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -38482,7 +38498,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 212 */
+/* 213 */
 /***/ function(module, exports) {
 
 	
@@ -38652,7 +38668,7 @@
 
 
 /***/ },
-/* 213 */
+/* 214 */
 /***/ function(module, exports) {
 
 	/**
@@ -38695,7 +38711,7 @@
 
 
 /***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports) {
 
 	
@@ -38707,7 +38723,7 @@
 	};
 
 /***/ },
-/* 215 */
+/* 216 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38781,7 +38797,7 @@
 
 
 /***/ },
-/* 216 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -38789,8 +38805,8 @@
 	 * Module requirements.
 	 */
 
-	var Polling = __webpack_require__(201);
-	var inherit = __webpack_require__(214);
+	var Polling = __webpack_require__(202);
+	var inherit = __webpack_require__(215);
 
 	/**
 	 * Module exports.
@@ -39019,19 +39035,19 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 217 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * Module dependencies.
 	 */
 
-	var Transport = __webpack_require__(202);
-	var parser = __webpack_require__(203);
-	var parseqs = __webpack_require__(213);
-	var inherit = __webpack_require__(214);
-	var yeast = __webpack_require__(215);
-	var debug = __webpack_require__(182)('engine.io-client:websocket');
+	var Transport = __webpack_require__(203);
+	var parser = __webpack_require__(204);
+	var parseqs = __webpack_require__(214);
+	var inherit = __webpack_require__(215);
+	var yeast = __webpack_require__(216);
+	var debug = __webpack_require__(183)('engine.io-client:websocket');
 	var BrowserWebSocket = global.WebSocket || global.MozWebSocket;
 
 	/**
@@ -39043,7 +39059,7 @@
 	var WebSocket = BrowserWebSocket;
 	if (!WebSocket && typeof window === 'undefined') {
 	  try {
-	    WebSocket = __webpack_require__(218);
+	    WebSocket = __webpack_require__(219);
 	  } catch (e) { }
 	}
 
@@ -39300,13 +39316,13 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 218 */
+/* 219 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 219 */
+/* 220 */
 /***/ function(module, exports) {
 
 	
@@ -39321,7 +39337,7 @@
 	};
 
 /***/ },
-/* 220 */
+/* 221 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
@@ -39359,7 +39375,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 221 */
+/* 222 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -39367,13 +39383,13 @@
 	 * Module dependencies.
 	 */
 
-	var parser = __webpack_require__(185);
-	var Emitter = __webpack_require__(222);
-	var toArray = __webpack_require__(223);
-	var on = __webpack_require__(224);
-	var bind = __webpack_require__(225);
-	var debug = __webpack_require__(182)('socket.io-client:socket');
-	var hasBin = __webpack_require__(226);
+	var parser = __webpack_require__(186);
+	var Emitter = __webpack_require__(223);
+	var toArray = __webpack_require__(224);
+	var on = __webpack_require__(225);
+	var bind = __webpack_require__(226);
+	var debug = __webpack_require__(183)('socket.io-client:socket');
+	var hasBin = __webpack_require__(227);
 
 	/**
 	 * Module exports.
@@ -39784,7 +39800,7 @@
 
 
 /***/ },
-/* 222 */
+/* 223 */
 /***/ function(module, exports) {
 
 	
@@ -39951,7 +39967,7 @@
 
 
 /***/ },
-/* 223 */
+/* 224 */
 /***/ function(module, exports) {
 
 	module.exports = toArray
@@ -39970,7 +39986,7 @@
 
 
 /***/ },
-/* 224 */
+/* 225 */
 /***/ function(module, exports) {
 
 	
@@ -40000,7 +40016,7 @@
 
 
 /***/ },
-/* 225 */
+/* 226 */
 /***/ function(module, exports) {
 
 	/**
@@ -40029,7 +40045,7 @@
 
 
 /***/ },
-/* 226 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -40037,7 +40053,7 @@
 	 * Module requirements.
 	 */
 
-	var isArray = __webpack_require__(227);
+	var isArray = __webpack_require__(228);
 
 	/**
 	 * Module exports.
@@ -40095,7 +40111,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 227 */
+/* 228 */
 /***/ function(module, exports) {
 
 	module.exports = Array.isArray || function (arr) {
@@ -40104,7 +40120,7 @@
 
 
 /***/ },
-/* 228 */
+/* 229 */
 /***/ function(module, exports) {
 
 	
@@ -40195,86 +40211,119 @@
 
 
 /***/ },
-/* 229 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	//朋友列表基本单元
-	var Item = __webpack_require__(230);
+	var Item = __webpack_require__(231);
 	//引入jquery
 	var Jquery = __webpack_require__(174);
 	//未登录时朋友列表处显示的信息。
-	var FriendListBase = __webpack_require__(231);
+	var FriendListBase = __webpack_require__(232);
 	//引入搜索按钮
-	var SearchBtn = __webpack_require__(232);
+	var SearchBtn = __webpack_require__(233);
+	//引入socket
+	var socket = __webpack_require__(179);
+
+	//朋友列表
+	var YouFriend = __webpack_require__(236);
+	//已经请求列表
+	var HasRequire = __webpack_require__(237);
+	//待确认列表
+	var AddingYou = __webpack_require__(238);
+
+	//列表切换按钮
+	var FriendListSelect = __webpack_require__(239);
 
 
 	var UserList = React.createClass({displayName: "UserList",
 	    getInitialState:function () {
-	        return {
-	            FriendsDate: [],
-	            TempFriendList:[]
+	        return{
+	            isYourFriend:true,
+	            isHasRequir:false,
+	            isAddingYou:false
 	        }
-
 	    },
 	    render:function () {
-	        var Items = [];
-	        for(var i in this.state.FriendsDate){
-	            if(this.state.FriendsDate[i].OnlineTag){
-	                Items.unshift(React.createElement(Item, {key: this.state.FriendsDate[i].id, BaseDate: this.state.FriendsDate[i]}));
-	            }else {
-	                Items.push(React.createElement(Item, {key: this.state.FriendsDate[i].id, BaseDate: this.state.FriendsDate[i]}));
-	            }
-	        }
-	        for(var i in this.state.TempFriendList){
-	            Items.unshift(React.createElement(Item, {key: this.state.TempFriendList[i].id, BaseDate: this.state.TempFriendList[i]}));
-	        }
-	        return(
-	            React.createElement("ul", {className: "list"}, 
-	                Items
+	        if(this.state.isYourFriend){
+	            return(
+	                React.createElement("ul", {className: "list"}, 
+	                    React.createElement(YouFriend, {username: this.props.username})
+	                )
 	            )
-	        )
+	        }else if(this.state.isHasRequir){
+	            return(
+	                React.createElement("ul", {className: "list"}, 
+	                    React.createElement(HasRequire, {username: this.props.username})
+	                )
+	            )
+	        }else if(this.state.isAddingYou){
+	            return(
+	                React.createElement("ul", {className: "list"}, 
+	                    React.createElement(AddingYou, {username: this.props.username})
+	                )
+	            )
+	        }
 	    },
 	    HandleAddTempFriend:function (obj) {
-	        var TempArray = this.state.TempFriendList;
-	        TempArray.unshift(obj);
 	        this.setState({
-	            TempFriendList:TempArray
+	            isYourFriend:false,
+	            isHasRequir:true,
+	            isAddingYou:false
 	        });
-	        TempArray = null;
+	        socket.emit("adding you",{
+	            username:obj.username,
+	            baseUsername:this.props.username
+	        });
+	    },
+	    HandleShowFriendList:function (event) {
+	        event.preventDefault();
+	        this.setState({
+	            isYourFriend:true,
+	            isHasRequir:false,
+	            isAddingYou:false
+	        })
+	    },
+	    HandleShowHasRequirList:function (event) {
+	        event.preventDefault();
+	        this.setState({
+	            isYourFriend:false,
+	            isHasRequir:true,
+	            isAddingYou:false
+	        })
+	    },
+	    HandleShowAddingYou:function (event) {
+	        event.preventDefault();
+	        this.setState({
+	            isYourFriend:false,
+	            isHasRequir:false,
+	            isAddingYou:true
+	        })
 	    },
 	    componentDidMount:function () {
-	        Jquery.ajax({
-	            type:"POST",
-	            url:"/users/getFriendList",
-	            data:{
-	                username:this.props.username
-	            },
-	            success:function (data) {
-	                if(data=="err"){
-	                    ReactDOM.render(
-	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
-	                        document.getElementById("user-list")
-	                    )
-	                }
-	                this.setState({
-	                    FriendsDate:data.FriendList,
-	                    TempFriendList:data.TempFriendList
-	                });
-	                ReactDOM.render(
-	                    React.createElement(SearchBtn, {username: this.props.username, addTemFriend: this.HandleAddTempFriend}),
-	                    document.getElementById("search-btn")
-	                )
-	            }.bind(this)
-	        });
+	        ReactDOM.render(
+	            React.createElement(FriendListSelect, {ShowFriendList: this.HandleShowFriendList, ShowHasRequirList: this.HandleShowHasRequirList, ShowAddingYou: this.HandleShowAddingYou}),
+	            document.getElementById("list-select")
+	        );
+	        ReactDOM.render(
+	            React.createElement(SearchBtn, {username: this.props.username, addTemFriend: this.HandleAddTempFriend}),
+	            document.getElementById("search-btn")
+	        );
+	        socket.on("someOne is adding you",function (count) {
+	            ReactDOM.render(
+	                React.createElement(FriendListSelect, {AddingNumber: count, ShowFriendList: this.HandleShowFriendList, ShowHasRequirList: this.HandleShowHasRequirList, ShowAddingYou: this.HandleShowAddingYou}),
+	                document.getElementById("list-select")
+	            );
+	        }.bind(this));
 	    }
 	});
 
 	module.exports = UserList;
 
 /***/ },
-/* 230 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -40292,7 +40341,24 @@
 	                    )
 	                )
 	            )
-	        }else {
+	        }else if(this.props.BaseDate.isAdd){
+	            return(
+	                React.createElement("li", {className: "item"}, 
+	                    React.createElement("img", {src: this.props.BaseDate.UserPhoto, alt: "", className: "user-photo fl"}), 
+	                    React.createElement("div", {className: "info"}, 
+	                        React.createElement("p", {className: "name"}, this.props.BaseDate.username)
+	                    ), 
+	                    React.createElement("div", {className: "btns"}, 
+	                        React.createElement("a", {href: "#", className: "accept"}, 
+	                            "添加"
+	                        ), 
+	                        React.createElement("a", {href: "#", className: "deny"}, 
+	                            "拒绝"
+	                        )
+	                    )
+	                )
+	            )
+	        } else {
 	            return(
 	                React.createElement("li", {className: "item"}, 
 	                    React.createElement("img", {src: this.props.BaseDate.UserPhoto, alt: "", className: "user-photo fl"}), 
@@ -40316,7 +40382,7 @@
 	module.exports = UserListItem;
 
 /***/ },
-/* 231 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -40335,13 +40401,13 @@
 	module.exports = FriendListBase;
 
 /***/ },
-/* 232 */
+/* 233 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	//引入搜索页面
-	var SearchPage = __webpack_require__(233);
+	var SearchPage = __webpack_require__(234);
 
 
 
@@ -40366,7 +40432,7 @@
 	module.exports = SearchBtn;
 
 /***/ },
-/* 233 */
+/* 234 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -40375,7 +40441,7 @@
 	//引入时钟模块
 	var Clock = __webpack_require__(175);
 	//引入搜索结果页面
-	var Result = __webpack_require__(234);
+	var Result = __webpack_require__(235);
 
 	var SearchPage = React.createClass({displayName: "SearchPage",
 	    getInitialState:function () {
@@ -40491,7 +40557,7 @@
 	module.exports = SearchPage;
 
 /***/ },
-/* 234 */
+/* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -40662,7 +40728,236 @@
 	module.exports = Result;
 
 /***/ },
-/* 235 */
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	//朋友列表基本单元
+	var Item = __webpack_require__(231);
+	//引入Jquery
+	var Jquery = __webpack_require__(174);
+	//未登录时朋友列表处显示的信息。
+	var FriendListBase = __webpack_require__(232);
+	//引入socket
+	var socket = __webpack_require__(179);
+
+	var YouFriend = React.createClass({displayName: "YouFriend",
+	    getInitialState:function () {
+	        return{
+	            FriendsDate: []
+	        }
+	    },
+	    render:function () {
+	        var Items = [];
+	        for(var i in this.state.FriendsDate){
+	            if(this.state.FriendsDate[i].OnlineTag){
+	                Items.unshift(React.createElement(Item, {key: this.state.FriendsDate[i].id, BaseDate: this.state.FriendsDate[i]}));
+	            }else {
+	                Items.push(React.createElement(Item, {key: this.state.FriendsDate[i].id, BaseDate: this.state.FriendsDate[i]}));
+	            }
+	        }
+	        return(
+	            React.createElement("div", {className: ""}, 
+	                Items
+	            )
+	        )
+	    },
+	    componentDidMount:function () {
+	        Jquery.ajax({
+	            type:"POST",
+	            url:"/users/getYouFriend",
+	            data:{
+	                username:this.props.username
+	            },
+	            success:function (data) {
+	                if(data=="err"){
+	                    ReactDOM.render(
+	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
+	                        document.getElementById("user-list")
+	                    )
+	                }
+	                this.setState({
+	                    FriendsDate:data.FriendList
+	                });
+	            }.bind(this)
+	        });
+	    }
+	});
+
+	module.exports = YouFriend;
+
+/***/ },
+/* 237 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	//朋友列表基本单元
+	var Item = __webpack_require__(231);
+	//引入Jquery
+	var Jquery = __webpack_require__(174);
+	//未登录时朋友列表处显示的信息。
+	var FriendListBase = __webpack_require__(232);
+	//引入socket
+	var socket = __webpack_require__(179);
+
+	var HasRequire = React.createClass({displayName: "HasRequire",
+	    getInitialState:function () {
+	        return{
+	            TempFriendList:[]
+	        }
+	    },
+	    render:function () {
+	        var Items = [];
+	        for(var i in this.state.TempFriendList){
+	            Items.unshift(React.createElement(Item, {key: this.state.TempFriendList[i].id, BaseDate: this.state.TempFriendList[i]}));
+	        }
+	        return(
+	            React.createElement("div", {className: ""}, 
+	                Items
+	            )
+	        )
+	    },
+	    componentDidMount:function () {
+	        Jquery.ajax({
+	            type:"POST",
+	            url:"/users/getHasRequire",
+	            data:{
+	                username:this.props.username
+	            },
+	            success:function (data) {
+	                if(data=="err"){
+	                    ReactDOM.render(
+	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
+	                        document.getElementById("user-list")
+	                    )
+	                }
+	                this.setState({
+	                    TempFriendList:data.TempFriendList
+	                });
+	            }.bind(this)
+	        });
+	    }
+	});
+
+	module.exports = HasRequire;
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	//朋友列表基本单元
+	var Item = __webpack_require__(231);
+	//引入jquery
+	var Jquery = __webpack_require__(174);
+	//未登录时朋友列表处显示的信息。
+	var FriendListBase = __webpack_require__(232);
+	//引入socket
+	var socket = __webpack_require__(179);
+
+
+
+	var AddingYou = React.createClass({displayName: "AddingYou",
+	    getInitialState:function () {
+	        return {
+	            requireAddFriendList:[]
+	        }
+
+	    },
+	    render:function () {
+	        var Items = [];
+	        for(var i in this.state.requireAddFriendList){
+	            Items.unshift(React.createElement(Item, {key: this.state.requireAddFriendList[i].id, BaseDate: this.state.requireAddFriendList[i]}));
+	        }
+	        return(
+	            React.createElement("div", {className: ""}, 
+	                Items
+	            )
+	        )
+	    },
+	    componentDidMount:function () {
+	        socket.on("someOne is adding you",function () {
+	            Jquery.ajax({
+	                type:"POST",
+	                url:"/users/getAddingYou",
+	                data:{
+	                    username:this.props.username
+	                },
+	                success:function (data) {
+	                    if(data=="err"){
+	                        ReactDOM.render(
+	                            React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
+	                            document.getElementById("user-list")
+	                        )
+	                    }
+	                    this.setState({
+	                        requireAddFriendList:data.requireAddFriendList
+	                    });
+	                }.bind(this)
+	            });
+	        }.bind(this));
+	        Jquery.ajax({
+	            type:"POST",
+	            url:"/users/getAddingYou",
+	            data:{
+	                username:this.props.username
+	            },
+	            success:function (data) {
+	                if(data=="err"){
+	                    ReactDOM.render(
+	                        React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
+	                        document.getElementById("user-list")
+	                    )
+	                }
+	                this.setState({
+	                    requireAddFriendList:data.requireAddFriendList
+	                });
+	            }.bind(this)
+	        });
+	    }
+	});
+
+	module.exports = AddingYou;
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
+	//引入Jquery
+	var Jquery = __webpack_require__(174);
+
+	var SelectList = React.createClass({displayName: "SelectList",
+	    render:function () {
+	        return(
+	            React.createElement("div", null, 
+	                React.createElement("a", {href: "#", className: "list-btn", onClick: this.props.ShowFriendList}, "朋友列表"), 
+	                React.createElement("a", {href: "#", className: "list-btn", onClick: this.props.ShowHasRequirList}, "已请求列表"), 
+	                React.createElement("a", {href: "#", className: "list-btn", onClick: this.props.ShowAddingYou}, 
+	                    "待确认列表", 
+	                    React.createElement("i", {className: "num"}, this.props.AddingNumber)
+	                )
+	            )
+	        )
+	    },
+	    componentDidMount:function () {
+	        if(this.props.AddingNumber){
+	            Jquery(".list-btn .num").show();
+	        }else {
+	            Jquery(".list-btn .num").hide();
+	        }
+	    }
+	});
+
+
+	module.exports = SelectList;
+
+/***/ },
+/* 240 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
