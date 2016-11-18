@@ -6,8 +6,11 @@ var Jquery = require("jquery");
 var SelectList = React.createClass({
     render:function () {
         return(
-            <div>
-                <a href="#" className="list-btn cur" onClick={this.props.ShowFriendList}>朋友列表</a>
+            <div id="list-select">
+                <a href="#" className="list-btn cur" onClick={this.props.ShowFriendList}>
+                    朋友列表
+                    <i className="num">{this.props.AddedNumber}</i>
+                </a>
                 <a href="#" className="list-btn" onClick={this.props.ShowHasRequirList}>已请求列表</a>
                 <a href="#" className="list-btn" onClick={this.props.ShowAddingYou}>
                     待确认列表

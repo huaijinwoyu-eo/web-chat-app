@@ -171,6 +171,19 @@ router.post("/getAddingYou",function (req, res, next) {
         });
     })
 });
+//动态获取好友列表
+router.post("/getYouFriend",function (req, res, next) {
+    User.findOne({username:req.body.username},function (err, doc) {
+        if(err){
+            console.log(err);
+            res.send("err");
+        }
+        res.send({
+            FriendsDate:doc.FriendList
+        })
+    })
+});
+
 
 
 //用户搜索功能

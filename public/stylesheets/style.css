@@ -144,6 +144,15 @@ canvas.user-photo{
     -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
 }
+#user-list .YouFriend{
+
+}
+#user-list .HasRequire{
+
+}
+#user-list .AddingYou{
+
+}
 .friend-list{
     float: left;
     width: 275px;
@@ -179,7 +188,8 @@ canvas.user-photo{
     margin-top: 15px;
     top: 0;
     right: 0;
-    width: 140px;
+    display: inline-block;
+    min-width: 80px;
 }
 .friend-list .list .btns a{
     display: block;
@@ -187,12 +197,16 @@ canvas.user-photo{
     height: 25px;
     padding: 0 10px;
     margin-left: 10px;
-    border: 2px solid;
+    margin-right: 10px;
+    border: 1px solid;
     font-size: 14px;
-    font-weight: bold;
+    /*font-weight: bold;*/
     line-height: 25px;
     text-align: center;
     background: #ffffff;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 .friend-list .list .btns a.accept{
     border-color: #318a1d;
@@ -535,9 +549,17 @@ a.upload-wrap input{
     color: #0f75bd;
 }
 /*列表切换按钮 add 2016-11-17*/
+#user-list{
+    position: relative;
+    overflow: visible;
+}
 #list-select{
+    position: absolute;
     height: 60px;
     width: 330px;
+    z-index: 10;
+    top: -80px;
+    left: -30px;
 }
 .list-btn{
     float: left;

@@ -18,6 +18,7 @@ var UserSchema = new mongoose.Schema({
     age:String,
     educational_background:String,
     profession:String,
+    OnlineTag:Boolean,
     UserPhoto:{
         type:String,
         default:"/images/user-photo-1.png"
@@ -30,9 +31,9 @@ var UserSchema = new mongoose.Schema({
         id:Number,
         username:String,
         UserPhoto:String,
-        LastMessage:String,
-        rangTiem:String,
-        OnlineTag:Boolean
+        UserText:String,
+        OnlineTag:Boolean,
+        New:Boolean
     }],
     TempFriendList:[{
         id:Number,
