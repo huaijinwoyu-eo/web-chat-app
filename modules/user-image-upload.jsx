@@ -8,7 +8,7 @@ var UserImage = React.createClass({
         return{
             status:this.props.status || "请点击“选择图片”按钮，选择图片，修改并上传。",
             targetImage:"",
-            flage:true,
+            flage:false,
             formTips:"form-tips"
         }
     },
@@ -58,9 +58,6 @@ var UserImage = React.createClass({
     HandleSubmit:function (event) {
         event.preventDefault();
         if(this.state.flage){
-            this.setState({
-                flage:false
-            });
             Jquery.ajax({
                 type:"POST",
                 url:"/users/uploadImage",
@@ -178,7 +175,10 @@ var UserImage = React.createClass({
             event.preventDefault();
             isMouseDown = false;
             isRect = true;
-        };
+            this.setState({
+                flage:true
+            })
+        }.bind(this);
         canvas.onmouseout = function (event) {
             event.preventDefault();
             if(isMouseDown){

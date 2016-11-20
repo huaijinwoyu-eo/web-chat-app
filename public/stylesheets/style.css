@@ -183,6 +183,17 @@ canvas.user-photo{
     cursor: pointer;
     position: relative;
 }
+.friend-list .list li .unreadcount{
+    position: absolute;
+    width: 20px;
+    background: #3198db;
+    color: #ffffff;
+    line-height: 20px;
+    text-align: center;
+    top: 10px;
+    left: 70px;
+    z-index: 10;
+}
 .friend-list .list li .btns{
     position: absolute;
     margin-top: 15px;
@@ -194,7 +205,6 @@ canvas.user-photo{
 .friend-list .list .btns a{
     display: block;
     float: left;
-    height: 25px;
     padding: 0 10px;
     margin-left: 10px;
     margin-right: 10px;
@@ -225,8 +235,19 @@ canvas.user-photo{
     background: #e8535b;
     color: #ffffff;
 }
+.friend-list .list li.new{
+    background: #cdccf8;
+    position: relative;
+}
+.friend-list .list li.new::before{
+    content: '对方已确认，点击"确认"按钮结束。';
+    position: absolute;
+    font-size: 12px;
+    left: 70px;
+    top: 47px;
+}
 .friend-list .list li:hover,.friend-list .list li.cur{
-    background: #f5f6f8;
+    background: #cdccf8;
 }
 .friend-list .list .info{
     margin-left: 50px;
@@ -293,18 +314,27 @@ canvas.user-photo{
     color: #16315c;
     display: inline-block;
 }
-.chat-form .item-title .online-tag{
-    display: inline-block;
-    height: 15px;
-    width: 15px;
-    background: #51dacf;
-    -webkit-border-radius:100%;
-    -moz-border-radius:100%;
-    border-radius:100%;
-    position: relative;
-    top: 2px;
-    left: 25px;
-}
+/*.chat-form .item-title .online-tag{*/
+    /*display: inline-block;*/
+    /*height: 15px;*/
+    /*width: 15px;*/
+    /*overflow: hidden;*/
+    /*-webkit-border-radius:100%;*/
+    /*-moz-border-radius:100%;*/
+    /*border-radius:100%;*/
+    /*position: relative;*/
+    /*top: 2px;*/
+    /*left: 25px;*/
+/*}*/
+/*.chat-form .item-title .online-tag span{*/
+    /*display: block;*/
+    /*height: 100%;*/
+    /*width:100%;*/
+    /*background: #d4e1ea;*/
+/*}*/
+/*.chat-form .item-title .online-tag span.true{*/
+    /*background: #51dacf;*/
+/*}*/
 .chat-form .message-list{
     height: 480px;
     overflow-x: hidden;
@@ -344,7 +374,7 @@ canvas.user-photo{
     display: inline-block;
     -webkit-border-radius: 20px;
     -moz-border-radius: 20px;
-    border-radius: 20px;
+    border-radius: 10px;
 
 }
 .chat-form .message-item.my .message{
@@ -361,7 +391,7 @@ canvas.user-photo{
     display: inline-block;
     -webkit-border-radius: 20px;
     -moz-border-radius: 20px;
-    border-radius: 20px;
+    border-radius: 10px;
 }
 .other-thing{
     float: right;

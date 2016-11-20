@@ -30,7 +30,7 @@ ReactDOM.render(
 );
 if(content !== "") {
     ReactDOM.render(
-        <UserInfo username={content}/>,
+        <UserInfo username={content} fromLogin={false}/>,
         document.getElementById("user-info")
     );
     ReactDOM.render(

@@ -12,6 +12,7 @@ var UserSchema = new mongoose.Schema({
         type:String,
         default:""
     },
+    loginTime:Number,
     username:String,
     password:String,
     sexual:String,
@@ -46,6 +47,10 @@ var UserSchema = new mongoose.Schema({
         username:String,
         UserPhoto:String,
         isAdd:Boolean
+    }],
+    UnreadMessage:[{
+        username:String,
+        Message:String
     }]
 });
 UserSchema.methods.addFriend = function (obj) {

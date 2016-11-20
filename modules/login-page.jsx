@@ -94,60 +94,62 @@ var LoginPage = React.createClass({
                     switch (code){
                         case "1":this.setState({
                             status:"用户登录失败，请稍后重试。",
-                            formTips:"form-tips"+" "+"error"
+                            formTips:"form-tips"+" "+"error",
+                            flage:true
                         });
                             break;
                         case "2":this.setState({
                             status:"该用户不存在，请注册。",
                             formTips:"form-tips"+" "+"info",
-                            flage:false
+                            flage:true
                         });
                             break;
-                        case "3":this.setState({
-                            status:"用户登录成功。",
-                            formTips:"form-tips"+" "+"success"
-                        });
-                            socket.emit("login",this.state.username);
-                            setTimeout(function () {
-                                ReactDOM.render(
-                                    <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
-                                    document.getElementById("other-thing")
-                                );
-                                ReactDOM.render(
-                                    <UserInfo username={this.state.username} hasInput="完善信息"/>,
-                                    document.getElementById("user-info")
-                                );
-                                ReactDOM.render(
-                                    <FriendList username={this.state.username}/>,
-                                    document.getElementById("user-list")
-                                );
-                            }.bind(this),1000);
+                        case "3":
+                            this.setState({
+                                status:"用户登录成功。",
+                                formTips:"form-tips"+" "+"success"
+                            },function () {
+                                socket.emit("login",this.state.username);
+                            }.bind(this));
+                            ReactDOM.render(
+                                <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
+                                document.getElementById("other-thing")
+                            );
+                            ReactDOM.render(
+                                <UserInfo username={this.state.username} hasInput="完善信息" fromLogin = {true}/>,
+                                document.getElementById("user-info")
+                            );
+                            ReactDOM.render(
+                                <FriendList username={this.state.username}/>,
+                                document.getElementById("user-list")
+                            );
                             break;
                         case "4":this.setState({
                             status:"密码错误，请重新输入。",
                             password:"",
-                            formTips:"form-tips"+" "+"warning"
+                            formTips:"form-tips"+" "+"warning",
+                            flage:true
                         });
                             break;
-                        case "5":this.setState({
-                            status:"用户登录成功。",
-                            formTips:"form-tips"+" "+"success"
-                        });
-                            socket.emit("login",this.state.username);
-                            setTimeout(function () {
-                                ReactDOM.render(
-                                    <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
-                                    document.getElementById("other-thing")
-                                );
-                                ReactDOM.render(
-                                    <UserInfo username={this.state.username} hasInput="修改信息"/>,
-                                    document.getElementById("user-info")
-                                );
-                                ReactDOM.render(
-                                    <FriendList username={this.state.username}/>,
-                                    document.getElementById("user-list")
-                                );
-                            }.bind(this),1000);
+                        case "5":
+                            this.setState({
+                                status:"用户登录成功。",
+                                formTips:"form-tips"+" "+"success"
+                            },function () {
+                                socket.emit("login",this.state.username);
+                            }.bind(this));
+                            ReactDOM.render(
+                                <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,
+                                document.getElementById("other-thing")
+                            );
+                            ReactDOM.render(
+                                <UserInfo username={this.state.username} hasInput="修改信息"/>,
+                                document.getElementById("user-info")
+                            );
+                            ReactDOM.render(
+                                <FriendList username={this.state.username}/>,
+                                document.getElementById("user-list")
+                            );
                             break;
                         default:break;
                     }

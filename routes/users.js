@@ -155,7 +155,8 @@ router.post("/getFriends",function (req, res, next) {
         res.send({
             FriendList:doc.FriendList,
             TempFriendList:doc.TempFriendList,
-            requireAddFriendList:doc.requireAddFriendList
+            requireAddFriendList:doc.requireAddFriendList,
+            UnreadMessage:doc.UnreadMessage
         });
     })
 });

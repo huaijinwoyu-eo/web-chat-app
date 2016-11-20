@@ -58,8 +58,10 @@ var UserInfo = React.createClass({
             });
         }
     },
-    componentDidMount: function () {
-        socket.emit("login",this.props.username);
+    componentWillMount:function () {
+        if(!this.props.fromLogin){
+            socket.emit("login",this.props.username);
+        }
         Jquery.ajax({
             type:"POST",
             url:"/users/getInfo",
@@ -80,6 +82,9 @@ var UserInfo = React.createClass({
                     this.setState({
                         thisText:"完善信息"
                     })
+                }
+                if(localStorage.UserPhoto != data.UserPhoto || !localStorage.UserPhoto){
+                    localStorage.UserPhoto = data.UserPhoto;
                 }
             }.bind(this)
         })

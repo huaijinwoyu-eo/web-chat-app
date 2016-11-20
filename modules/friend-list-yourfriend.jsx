@@ -9,15 +9,16 @@ var YouFriend = React.createClass({
         var ItemOnline = [];
         var ItemNotOnline = [];
         for(var i in this.props.FriendsDate){
-            if(!this.props.FriendsDate[i].OnlineTag && this.props.FriendsDate[i].New){
-                ItemsNew.push(<Item key = {this.props.FriendsDate[i].id} BaseDate={this.props.FriendsDate[i]}/>);
+            if(this.props.FriendsDate[i].New){
+                ItemsNew.push(<Item key = {this.props.FriendsDate[i].id} RemoveNewTag={this.props.RemoveNewTag} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
             }else if(this.props.FriendsDate[i].OnlineTag && !this.props.FriendsDate[i].New){
-                ItemOnline.push(<Item key = {this.props.FriendsDate[i].id} BaseDate={this.props.FriendsDate[i]}/>);
+                ItemOnline.push(<Item key = {this.props.FriendsDate[i].id} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
             }else if(!this.props.FriendsDate[i].OnlineTag && !this.props.FriendsDate[i].New){
-                ItemNotOnline.push(<Item key = {this.props.FriendsDate[i].id} BaseDate={this.props.FriendsDate[i]}/>);
+                ItemNotOnline.push(<Item key = {this.props.FriendsDate[i].id} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
             }
         }
         var Items = ItemsNew.concat(ItemOnline).concat(ItemNotOnline);
+        // console.log(this.props.FriendsDate);
         return(
             <div className="YouFriend">
                 {Items}

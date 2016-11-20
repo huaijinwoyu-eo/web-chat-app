@@ -14,7 +14,7 @@ var ListAll = React.createClass({
     render:function () {
         if(this.props.isYourFriend=="1"){
             return(
-                <YouFriend FriendsDate={this.props.FriendsDate}/>
+                <YouFriend FriendsDate={this.props.FriendsDate} username={this.props.username} RemoveNewTag={this.props.RemoveNewTag}/>
             )
         }else if(this.props.isHasRequir == "1"){
             return(

@@ -14,6 +14,8 @@ var ListAll = require('./friend-list-all');
 
 //列表切换按钮
 var FriendListSelect = require("./friend-list-select-btn");
+//聊天面板
+var ChatPanelOnline = require("./chat-panel-online");
 
 
 var UserList = React.createClass({
@@ -40,7 +42,7 @@ var UserList = React.createClass({
                 </div>
                 <hr/>
                 <ul className="list">
-                    <ListAll isYourFriend={this.state.isYourFriend} isHasRequir={this.state.isHasRequir} isAddingYou={this.isAddingYou} FriendsDate={this.state.FriendsDate} TempFriendList={this.state.TempFriendList} requireAddFriendList={this.state.requireAddFriendList} username={this.props.username}/>
+                    <ListAll isYourFriend={this.state.isYourFriend} isHasRequir={this.state.isHasRequir} isAddingYou={this.isAddingYou} FriendsDate={this.state.FriendsDate} TempFriendList={this.state.TempFriendList} requireAddFriendList={this.state.requireAddFriendList} username={this.props.username} RemoveNewTag={this.HandleRemoveNewTag}/>
                 </ul>
             </div>
         )
@@ -90,7 +92,27 @@ var UserList = React.createClass({
             isAddingYou:"1",
         });
     },
-    componentDidMount:function () {
+    //去除new tag标识
+    HandleRemoveNewTag:function (data) {
+        var temp = this.state.FriendsDate;
+        for(var i in temp){
+            if(temp[i].username == data){
+                temp[i].New = false;
+                var tempNew = temp;
+                break;
+            }
+        }
+        var count = this.state.AddedNumber -1;
+        this.setState({
+            FriendsDate:tempNew,
+            AddedNumber:count
+        },function () {
+            temp = null;
+            tempNew = null;
+            count = null;
+        });
+    },
+    componentWillMount:function () {
         Jquery.ajax({
             type:"POST",
             url:"/users/getFriends",
@@ -104,13 +126,43 @@ var UserList = React.createClass({
                         document.getElementById("user-list")
                     )
                 }
+                var count = 0;
+                for(var i in data.FriendList){
+                    if(data.FriendList[i].New){
+                        count++;
+                    }
+                }
                 this.setState({
+                    AddingNumber:data.requireAddFriendList.length,
+                    AddedNumber:count,
                     FriendsDate:data.FriendList,
                     TempFriendList:data.TempFriendList,
-                    requireAddFriendList:data.requireAddFriendList
-                });
+                    requireAddFriendList:data.requireAddFriendList,
+                },function () {
+                    var temp = this.state.FriendsDate;
+                    for(var i=0; i<data.UnreadMessage.length; i++){
+                        for(var j=0; j<temp.length; j++){
+                            temp[j].UnreadMessage = [];
+                            temp[j].hasMessage = false;
+                            if(temp[j].username == data.UnreadMessage[i].username){
+                                temp[j].hasMessage = false;
+                                temp[j].UnreadMessage.push(data.UnreadMessage[i]);
+                            }else {
+                                break;
+                            }
+                        }
+                    }
+                    this.setState({
+                        FriendsDate:temp
+                    },function () {
+                        temp = null;
+                        count = null;
+                    });
+                }.bind(this,data));
             }.bind(this)
         });
+    },
+    componentDidMount:function () {
         ReactDOM.render(
             <SearchBtn username={this.props.username} addTemFriend = {this.HandleAddTempFriend} />,
             document.getElementById("search-btn")
@@ -131,20 +183,72 @@ var UserList = React.createClass({
                             document.getElementById("user-list")
                         )
                     }
+                    var temp ;
+                    temp = this.state.AddedNumber;
+                    if(text == "others"){
+                        temp += 1;
+                    }else {
+
+                    }
                     this.setState({
                         FriendsDate:data.FriendList,
                         TempFriendList:data.TempFriendList,
                         requireAddFriendList:data.requireAddFriendList,
-                        AddedNumber:text,
+                        AddedNumber:temp,
                         isYourFriend:"1",
                         isHasRequir:"0",
                         isAddingYou:"0",
-                        title:"朋友列表"
+                        title:"朋友列表",
                     },function () {
+                        temp = null;
                         Jquery("#list-select .list-btn").eq(0).trigger("click");
                     });
                 }.bind(this)
             });
+        }.bind(this));
+        //有人已经拒绝添加你了
+        socket.on("Deny you",function (text) {
+            console.log("deny you");
+            Jquery.ajax({
+                type:"POST",
+                url:"/users/getFriends",
+                data:{
+                    username:this.props.username
+                },
+                success:function (data) {
+                    if(data=="err"){
+                        ReactDOM.render(
+                            <FriendListBase Text="列表读取失败，请稍后刷新页面重试。"/>,
+                            document.getElementById("user-list")
+                        )
+                    }
+                    var temp ;
+                    temp = this.state.AddedNumber;
+                    if(text == "others"){
+                        temp += 1;
+                    }else {
+
+                    }
+                    this.setState({
+                        FriendsDate:data.FriendList,
+                        TempFriendList:data.TempFriendList,
+                        requireAddFriendList:data.requireAddFriendList,
+                        AddedNumber:temp,
+                        isYourFriend:"1",
+                        isHasRequir:"0",
+                        isAddingYou:"0",
+                        title:"朋友列表",
+                    },function () {
+                        temp = null;
+                        Jquery("#list-select .list-btn").eq(0).trigger("click");
+                    });
+                }.bind(this)
+            });
+            if(text){
+                alert('抱歉，'+'”'+text+'“'+'，已经拒绝你的添加请求。');
+            }else {
+
+            }
         }.bind(this));
         //有人添加你，相关操作。
         socket.on("AddingNumber",function (count) {
@@ -170,7 +274,7 @@ var UserList = React.createClass({
                 }.bind(this)
             });
         }.bind(this));
-    //    有人上线，相关操作
+        //有人上线，相关操作
         socket.on("someone is online",function () {
             Jquery.ajax({
                 type:"POST",
@@ -196,6 +300,55 @@ var UserList = React.createClass({
                     });
                 }.bind(this)
             })
+        }.bind(this));
+        //有人下线，相关操作。
+        socket.on("someone is leaved",function () {
+            Jquery.ajax({
+                type:"POST",
+                url:"/users/getYouFriend",
+                data:{
+                    username:this.props.username
+                },
+                success:function (data) {
+                    if(data == "err"){
+                        ReactDOM.render(
+                            <FriendListBase Text="列表读取失败，请稍后刷新页面重试。"/>,
+                            document.getElementById("user-list")
+                        )
+                    }
+                    this.setState({
+                        FriendsDate:data.FriendsDate,
+                        isYourFriend:"1",
+                        isHasRequir:"0",
+                        isAddingYou:"0",
+                        title:"朋友列表"
+                    },function () {
+                        Jquery("#list-select .list-btn").eq(0).trigger("click");
+                    });
+                }.bind(this)
+            })
+        }.bind(this));
+        //有人给你发送新消息
+        socket.on("New Message",function (data) {
+            console.log("new message");
+            var temp = this.state.FriendsDate;
+            for(var i=0; i<temp.length; i++){
+                temp[i].UnreadMessage = [];
+                temp[i].hasMessage = false;
+                temp[i].clearMessageTag = function () {
+                    this.hasMessage = false;
+                }.bind(this);
+                if(temp[i].username == data.username){
+                    temp[i].hasMessage = true;
+                    temp[i].UnreadMessage.push(data);
+                    break;
+                }
+            }
+            this.setState({
+                FriendsDate:temp
+            },function () {
+                temp = null;
+            });
         }.bind(this))
     }
 });
