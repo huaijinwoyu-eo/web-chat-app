@@ -77,6 +77,9 @@ var UserImage = React.createClass({
                             formTips:"form-tips"+" "+"success"
                         });
                             this.props.InnerUp(this.state.targetImage);
+                            if(localStorage.UserPhoto != this.state.targetImage || !localStorage.UserPhoto){
+                                localStorage.UserPhoto = this.state.targetImage
+                            }
                             setTimeout(function () {
                                 ReactDOM.render(
                                     <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,

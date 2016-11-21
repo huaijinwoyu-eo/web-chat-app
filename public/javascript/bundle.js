@@ -58,6 +58,8 @@
 	var FriendListBase = __webpack_require__(231);
 	//登录按钮
 	var SearchBtn = __webpack_require__(232);
+	//聊天部分基本信息提示
+	var ChatBase = __webpack_require__(241);
 
 
 
@@ -83,6 +85,10 @@
 	        React.createElement(FriendList, {username: content}),
 	        document.getElementById("user-list")
 	    );
+	    ReactDOM.render(
+	        React.createElement(ChatBase, {Text: "双击朋友列表，可以打开聊天界面进行聊天。"}),
+	        document.getElementById("chat-form")
+	    )
 	}else {
 	    ReactDOM.render(
 	        React.createElement(LoginRegister, null),
@@ -96,6 +102,10 @@
 	        React.createElement(SearchBtn, {username: null}),
 	        document.getElementById("search-btn")
 	    );
+	    ReactDOM.render(
+	        React.createElement(ChatBase, {Text: "请登录。"}),
+	        document.getElementById("chat-form")
+	    )
 	}
 
 /***/ },
@@ -21472,7 +21482,7 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	var LoginPage = __webpack_require__(173);
-	var RegisterPage = __webpack_require__(244);
+	var RegisterPage = __webpack_require__(245);
 	var Login = React.createClass({displayName: "Login",
 	    render:function(){
 	        return(
@@ -21513,6 +21523,8 @@
 	var socket = __webpack_require__(179);
 	//引入用户朋友列表
 	var FriendList = __webpack_require__(230);
+	//聊天部分基本信息提示
+	var ChatBase = __webpack_require__(241);
 
 
 	var LoginPage = React.createClass({displayName: "LoginPage",
@@ -21627,6 +21639,10 @@
 	                                React.createElement(FriendList, {username: this.state.username}),
 	                                document.getElementById("user-list")
 	                            );
+	                            ReactDOM.render(
+	                                React.createElement(ChatBase, {Text: "双击朋友列表，可以打开聊天界面进行聊天。"}),
+	                                document.getElementById("chat-form")
+	                            );
 	                            break;
 	                        case "4":this.setState({
 	                            status:"密码错误，请重新输入。",
@@ -21653,6 +21669,10 @@
 	                            ReactDOM.render(
 	                                React.createElement(FriendList, {username: this.state.username}),
 	                                document.getElementById("user-list")
+	                            );
+	                            ReactDOM.render(
+	                                React.createElement(ChatBase, {Text: "双击朋友列表，可以打开聊天界面进行聊天。"}),
+	                                document.getElementById("chat-form")
 	                            );
 	                            break;
 	                        default:break;
@@ -32400,6 +32420,9 @@
 	                            formTips:"form-tips"+" "+"success"
 	                        });
 	                            this.props.InnerUp(this.state.targetImage);
+	                            if(localStorage.UserPhoto != this.state.targetImage || !localStorage.UserPhoto){
+	                                localStorage.UserPhoto = this.state.targetImage
+	                            }
 	                            setTimeout(function () {
 	                                ReactDOM.render(
 	                                    React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
@@ -40236,7 +40259,7 @@
 	var ListAll = __webpack_require__(235);
 
 	//列表切换按钮
-	var FriendListSelect = __webpack_require__(243);
+	var FriendListSelect = __webpack_require__(244);
 	//聊天面板
 	var ChatPanelOnline = __webpack_require__(238);
 
@@ -40355,33 +40378,27 @@
 	                        count++;
 	                    }
 	                }
+	                console.log(data);
+	                var temp = data.FriendList;
+	                for(var i=0; i<data.UnreadMessage.length; i++){
+	                    for(var j=0; j<temp.length; j++){
+	                        if(temp[j].username == data.UnreadMessage[i].username){
+	                            temp[j].UnreadMessage.push(data.UnreadMessage[i]);
+	                        }else {
+	                            break;
+	                        }
+	                    }
+	                }
 	                this.setState({
 	                    AddingNumber:data.requireAddFriendList.length,
 	                    AddedNumber:count,
-	                    FriendsDate:data.FriendList,
+	                    FriendsDate:temp,
 	                    TempFriendList:data.TempFriendList,
 	                    requireAddFriendList:data.requireAddFriendList,
 	                },function () {
-	                    var temp = this.state.FriendsDate;
-	                    for(var i=0; i<data.UnreadMessage.length; i++){
-	                        for(var j=0; j<temp.length; j++){
-	                            temp[j].UnreadMessage = [];
-	                            temp[j].hasMessage = false;
-	                            if(temp[j].username == data.UnreadMessage[i].username){
-	                                temp[j].hasMessage = false;
-	                                temp[j].UnreadMessage.push(data.UnreadMessage[i]);
-	                            }else {
-	                                break;
-	                            }
-	                        }
-	                    }
-	                    this.setState({
-	                        FriendsDate:temp
-	                    },function () {
-	                        temp = null;
-	                        count = null;
-	                    });
-	                }.bind(this,data));
+	                    temp = null;
+	                    count = null;
+	                }.bind(this));
 	            }.bind(this)
 	        });
 	    },
@@ -40551,28 +40568,7 @@
 	                }.bind(this)
 	            })
 	        }.bind(this));
-	        //有人给你发送新消息
-	        socket.on("New Message",function (data) {
-	            console.log("new message");
-	            var temp = this.state.FriendsDate;
-	            for(var i=0; i<temp.length; i++){
-	                temp[i].UnreadMessage = [];
-	                temp[i].hasMessage = false;
-	                temp[i].clearMessageTag = function () {
-	                    this.hasMessage = false;
-	                }.bind(this);
-	                if(temp[i].username == data.username){
-	                    temp[i].hasMessage = true;
-	                    temp[i].UnreadMessage.push(data);
-	                    break;
-	                }
-	            }
-	            this.setState({
-	                FriendsDate:temp
-	            },function () {
-	                temp = null;
-	            });
-	        }.bind(this))
+
 	    }
 	});
 
@@ -40935,9 +40931,9 @@
 	//朋友列表
 	var YouFriend = __webpack_require__(236);
 	//已经请求列表
-	var HasRequire = __webpack_require__(241);
+	var HasRequire = __webpack_require__(242);
 	//待确认列表
-	var AddingYou = __webpack_require__(242);
+	var AddingYou = __webpack_require__(243);
 
 
 	var ListAll = React.createClass({displayName: "ListAll",
@@ -40973,7 +40969,7 @@
 	        var ItemsNew = [];
 	        var ItemOnline = [];
 	        var ItemNotOnline = [];
-	        for(var i in this.props.FriendsDate){
+	        for(var i=0; i<this.props.FriendsDate.length; i++){
 	            if(this.props.FriendsDate[i].New){
 	                ItemsNew.push(React.createElement(Item, {key: this.props.FriendsDate[i].id, RemoveNewTag: this.props.RemoveNewTag, BaseDate: this.props.FriendsDate[i], username: this.props.username}));
 	            }else if(this.props.FriendsDate[i].OnlineTag && !this.props.FriendsDate[i].New){
@@ -40983,7 +40979,6 @@
 	            }
 	        }
 	        var Items = ItemsNew.concat(ItemOnline).concat(ItemNotOnline);
-	        // console.log(this.props.FriendsDate);
 	        return(
 	            React.createElement("div", {className: "YouFriend"}, 
 	                Items
@@ -41008,6 +41003,12 @@
 	var ChatPanelOnline = __webpack_require__(238);
 
 	var UserListItem = React.createClass({displayName: "UserListItem",
+	    getInitialState:function () {
+	        return{
+	            isOpened:this.props.BaseDate.isOpened,
+	            UnreadMessage:this.props.BaseDate.UnreadMessage
+	        }
+	    },
 	    render:function () {
 	        if(this.props.BaseDate.temp){
 	            return(
@@ -41060,7 +41061,7 @@
 	            return(
 	                React.createElement("li", {className: "item", onDoubleClick: this.HandleOpenChatForm}, 
 	                    React.createElement("img", {src: this.props.BaseDate.UserPhoto, alt: "", className: "user-photo fl"}), 
-	                    React.createElement("div", {className: "unreadcount"}, this.props.BaseDate.hasMessage ? this.props.BaseDate.UnreadMessage.length : " "), 
+	                    React.createElement("div", {className: "unreadcount"}, this.state.UnreadMessage.length), 
 	                    React.createElement("div", {className: "info"}, 
 	                        React.createElement("p", {className: "name"}, this.props.BaseDate.username), 
 	                        React.createElement("div", {className: "message"}, this.props.BaseDate.UserText), 
@@ -41098,18 +41099,42 @@
 	    },
 	    HandleOpenChatForm:function (event) {
 	        event.preventDefault();
-	        if(this.props.BaseDate.UnreadMessage){
+	        this.setState({
+	            isOpened:true
+	        },function () {
 	            ReactDOM.render(
-	                React.createElement(ChatPanelOnline, {username: this.props.BaseDate.username, baseUsername: this.props.username, UnreadMessage: this.props.BaseDate.UnreadMessage, UserPhoto: this.props.BaseDate.UserPhoto}),
+	                React.createElement(ChatPanelOnline, {ChangeIsOpen: this.HandelChangeIsOpen, ClearUnreadMessage: this.HandelClearUnreadMessage, username: this.props.BaseDate.username, baseUsername: this.props.username, isOpened: this.state.isOpened, UnreadMessage: this.state.UnreadMessage, UserPhoto: this.props.BaseDate.UserPhoto}),
 	                document.getElementById("chat-form")
 	            );
-	        }else {
-	            ReactDOM.render(
-	                React.createElement(ChatPanelOnline, {username: this.props.BaseDate.username, baseUsername: this.props.username, UserPhoto: this.props.BaseDate.UserPhoto}),
-	                document.getElementById("chat-form")
-	            );
+	        });
+	    },
+	    /*改变聊天窗口是否打开的标识符。*/
+	    HandelChangeIsOpen:function () {
+	        this.setState({
+	            isOpened:false
+	        });
+	    },
+	    /*去除未读信息*/
+	    HandelClearUnreadMessage:function () {
+	        this.setState({
+	            UnreadMessage:[]
+	        })
+	    },
+	    componentDidMount:function () {
+	        console.log(this.state.isOpened);
+	        if(!this.state.isOpened){
+	            socket.on("New Message",function (data) {
+	                if(data.username == this.props.BaseDate.username){
+	                    var temp = this.state.UnreadMessage;
+	                    temp.push(data);
+	                    this.setState({
+	                        UnreadMessage:temp
+	                    },function () {
+	                        temp = null;
+	                    });
+	                }
+	            }.bind(this));
 	        }
-
 	    }
 	});
 
@@ -41127,7 +41152,8 @@
 	var ChatItemMy = __webpack_require__(240);
 	//引入socket
 	var socket = __webpack_require__(179);
-
+	//聊天部分基本信息提示
+	var ChatBase = __webpack_require__(241);
 
 
 
@@ -41135,7 +41161,9 @@
 	    getInitialState:function () {
 	        return{
 	            MessageList:[],
-	            MessageText:""
+	            MessageText:"",
+	            isOpen:this.props.isOpened,
+	            UnreadMessage:this.props.UnreadMessage
 	        }
 	    },
 	    render:function () {
@@ -41144,6 +41172,11 @@
 	                React.createElement("div", {className: "item-title"}, 
 	                    React.createElement("div", {className: "name"}, 
 	                        this.props.username
+	                    ), 
+	                    React.createElement("div", {className: "form-close"}, 
+	                        React.createElement("span", {className: "fa fa-times", onClick: this.HandleClose}
+
+	                        )
 	                    )
 	                ), 
 	                React.createElement("hr", null), 
@@ -41152,10 +41185,18 @@
 	                ), 
 	                React.createElement("div", {className: "message-send"}, 
 	                    React.createElement("input", {type: "text", placeholder: "Type you message.", onChange: this.HandleChange, value: this.state.MessageText}), 
-	                    React.createElement("input", {type: "submit", className: "fr"})
+	                    React.createElement("input", {type: "submit", className: "fr", value: " "})
 	                )
 	            )
 	        )
+	    },
+	    HandleClose:function (event) {
+	        event.preventDefault();
+	        this.props.ChangeIsOpen();
+	        ReactDOM.render(
+	            React.createElement(ChatBase, {Text: "双击朋友列表，可以打开聊天界面进行聊天。"}),
+	            document.getElementById("chat-form")
+	        );
 	    },
 	    HandleChange:function (event) {
 	        event.preventDefault();
@@ -41164,41 +41205,48 @@
 	        });
 	    },
 	    HandleSendMessage:function (event) {
-	        var Temp = this.state.MessageList;
-	        Temp.push(React.createElement(ChatItemMy, {key: new Date(), Message: this.state.MessageText, UserPhoto: localStorage.UserPhoto}));
-	        this.setState({
-	            MessageList:Temp
-	        });
+	        event.preventDefault();
 	        socket.emit("sendMessage",{
 	            username:this.props.username,//想要发送给谁，那个用户的用户名。
 	            baseUsername:this.props.baseUsername,//当前用户的 用户名
 	            Message:this.state.MessageText
-	        })
+	        });
+	        var Temp = this.state.MessageList;
+	        Temp.push(React.createElement(ChatItemMy, {key: (new Date()).getTime(), Message: this.state.MessageText, UserPhoto: localStorage.UserPhoto}));
+	        this.setState({
+	            MessageList:Temp
+	        },function () {
+	            this.setState({
+	                MessageText:""
+	            });
+	            Temp = null;
+	        });
 	    },
 	    componentWillMount:function () {
 	        var temp = this.state.MessageList;
 	        if(this.props.UnreadMessage){
 	            for(var i=0; i<this.props.UnreadMessage.length; i++){
-	                temp.push(React.createElement(ChatItemOther, {key: new Date(), Message: this.props.UnreadMessage[i].Message, UserPhoto: this.props.UserPhoto}));
+	                temp.push(React.createElement(ChatItemOther, {key: temp.length+1, Message: this.props.UnreadMessage[i].Message, UserPhoto: this.props.UserPhoto}));
 	            }
 	            this.setState({
-	                MessageList:temp
+	                MessageList:temp,
 	            },function () {
 	                temp = null;
-	            });
+	            }.bind(this));
 	        }
 	    },
-	    componentWillReceiveProps:function () {
-	        var temp = this.state.MessageList;
-	        if(this.props.UnreadMessage){
-	            for(var i=0; i<this.props.UnreadMessage.length; i++){
-	                temp.push(React.createElement(ChatItemOther, {key: new Date(), Message: this.props.UnreadMessage[i].Message, UserPhoto: this.props.UserPhoto}));
-	            }
-	            this.setState({
-	                MessageList:temp
-	            },function () {
-	                temp = null;
-	            });
+	    componentDidMount:function () {
+	        this.props.ClearUnreadMessage();
+	        if(this.state.isOpen){
+	            socket.on("New Message",function (data) {
+	                var temp = this.state.MessageList;
+	                temp.push(React.createElement(ChatItemOther, {key: temp.length+1, Message: data.Message, UserPhoto: this.props.UserPhoto}));
+	                this.setState({
+	                    MessageList:temp
+	                },function () {
+	                    temp = null;
+	                })
+	            }.bind(this));
 	        }
 	    }
 	});
@@ -41259,6 +41307,25 @@
 
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
+
+	var ChatBase = React.createClass({displayName: "ChatBase",
+	    render:function () {
+	        return(
+	            React.createElement("div", {className: "chat-base"}, 
+	                React.createElement("p", null, this.props.Text)
+	            )
+	        )
+	    }
+	});
+
+	module.exports = ChatBase;
+
+/***/ },
+/* 242 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var ReactDOM = __webpack_require__(34);
 	//朋友列表基本单元
 	var Item = __webpack_require__(237);
 
@@ -41279,7 +41346,7 @@
 	module.exports = HasRequire;
 
 /***/ },
-/* 242 */
+/* 243 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41306,7 +41373,7 @@
 	module.exports = AddingYou;
 
 /***/ },
-/* 243 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
@@ -41342,7 +41409,7 @@
 	module.exports = SelectList;
 
 /***/ },
-/* 244 */
+/* 245 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);

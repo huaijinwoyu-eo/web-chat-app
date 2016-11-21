@@ -34,7 +34,12 @@ var UserSchema = new mongoose.Schema({
         UserPhoto:String,
         UserText:String,
         OnlineTag:Boolean,
-        New:Boolean
+        New:Boolean,
+        UnreadMessage:[],
+        isOpened:{
+            type:Boolean,
+            default:false
+        }
     }],
     TempFriendList:[{
         id:Number,

@@ -8,6 +8,12 @@ var Jquery = require("jquery");
 var ChatPanelOnline = require("./chat-panel-online");
 
 var UserListItem = React.createClass({
+    getInitialState:function () {
+        return{
+            isOpened:this.props.BaseDate.isOpened,
+            UnreadMessage:this.props.BaseDate.UnreadMessage
+        }
+    },
     render:function () {
         if(this.props.BaseDate.temp){
             return(
@@ -60,7 +66,7 @@ var UserListItem = React.createClass({
             return(
                 <li className="item" onDoubleClick={this.HandleOpenChatForm}>
                     <img src={this.props.BaseDate.UserPhoto} alt="" className="user-photo fl"/>
-                    <div className="unreadcount">{this.props.BaseDate.hasMessage ? this.props.BaseDate.UnreadMessage.length : " "}</div>
+                    <div className="unreadcount">{!this.state.isOpened ? this.state.UnreadMessage.length : ""}</div>
                     <div className="info">
                         <p className="name">{this.props.BaseDate.username}</p>
                         <div className="message">{this.props.BaseDate.UserText}</div>
@@ -98,18 +104,46 @@ var UserListItem = React.createClass({
     },
     HandleOpenChatForm:function (event) {
         event.preventDefault();
-        if(this.props.BaseDate.UnreadMessage){
-            ReactDOM.render(
-                <ChatPanelOnline username={this.props.BaseDate.username} baseUsername={this.props.username} UnreadMessage={this.props.BaseDate.UnreadMessage} UserPhoto={this.props.BaseDate.UserPhoto}/>,
-                document.getElementById("chat-form")
-            );
-        }else {
-            ReactDOM.render(
-                <ChatPanelOnline username={this.props.BaseDate.username} baseUsername={this.props.username} UserPhoto={this.props.BaseDate.UserPhoto}/>,
-                document.getElementById("chat-form")
-            );
+        /*如果有未读信息，就删除掉。*/
+        if(this.state.UnreadMessage.length > 0){
+            socket.emit("ClearUnreadMessage",this.props.username);
         }
-
+        this.setState({
+            isOpened:true
+        },function () {
+            ReactDOM.render(
+                <ChatPanelOnline ChangeIsOpen={this.HandelChangeIsOpen} ClearUnreadMessage={this.HandelClearUnreadMessage} username={this.props.BaseDate.username} baseUsername={this.props.username} isOpened={this.state.isOpened} UnreadMessage={this.state.UnreadMessage} UserPhoto={this.props.BaseDate.UserPhoto}/>,
+                document.getElementById("chat-form")
+            );
+        });
+    },
+    /*改变聊天窗口是否打开的标识符。*/
+    HandelChangeIsOpen:function () {
+        this.setState({
+            isOpened:false
+        });
+    },
+    /*去除未读信息*/
+    HandelClearUnreadMessage:function () {
+        this.setState({
+            UnreadMessage:[]
+        })
+    },
+    componentWillMount:function () {
+        console.log(this.state.isOpened);
+        if(!this.state.isOpened){
+            socket.on("New Message",function (data) {
+                if(data.username == this.props.BaseDate.username){
+                    var temp = this.state.UnreadMessage;
+                    temp.push(data);
+                    this.setState({
+                        UnreadMessage:temp
+                    },function () {
+                        temp = null;
+                    });
+                }
+            }.bind(this));
+        }
     }
 });
 

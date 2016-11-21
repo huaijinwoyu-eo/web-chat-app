@@ -6,7 +6,8 @@ var ChatItemOther = require("./chat-item-other");
 var ChatItemMy = require("./chat-item-my");
 //引入socket
 var socket = require("../client-io/init");
-
+//聊天部分基本信息提示
+var ChatBase = require("./chat-panel-base");
 
 
 
@@ -14,7 +15,9 @@ var ChatPanel = React.createClass({
     getInitialState:function () {
         return{
             MessageList:[],
-            MessageText:""
+            MessageText:"",
+            isOpen:this.props.isOpened,
+            UnreadMessage:this.props.UnreadMessage
         }
     },
     render:function () {
@@ -24,6 +27,11 @@ var ChatPanel = React.createClass({
                     <div className="name">
                         {this.props.username}
                     </div>
+                    <div className="form-close">
+                        <span className="fa fa-times" onClick={this.HandleClose}>
+
+                        </span>
+                    </div>
                 </div>
                 <hr/>
                 <div className="message-list">
@@ -31,10 +39,18 @@ var ChatPanel = React.createClass({
                 </div>
                 <div className="message-send">
                     <input type="text" placeholder="Type you message." onChange={this.HandleChange} value={this.state.MessageText}/>
-                    <input type="submit" className="fr" />
+                    <input type="submit" className="fr" value={" "}/>
                 </div>
             </form>
         )
+    },
+    HandleClose:function (event) {
+        event.preventDefault();
+        this.props.ChangeIsOpen();
+        ReactDOM.render(
+            <ChatBase Text="双击朋友列表，可以打开聊天界面进行聊天。"/>,
+            document.getElementById("chat-form")
+        );
     },
     HandleChange:function (event) {
         event.preventDefault();
@@ -43,41 +59,48 @@ var ChatPanel = React.createClass({
         });
     },
     HandleSendMessage:function (event) {
-        var Temp = this.state.MessageList;
-        Temp.push(<ChatItemMy key={new Date()} Message={this.state.MessageText} UserPhoto={localStorage.UserPhoto}/>);
-        this.setState({
-            MessageList:Temp
-        });
+        event.preventDefault();
         socket.emit("sendMessage",{
             username:this.props.username,//想要发送给谁，那个用户的用户名。
             baseUsername:this.props.baseUsername,//当前用户的 用户名
             Message:this.state.MessageText
-        })
+        });
+        var Temp = this.state.MessageList;
+        Temp.push(<ChatItemMy key={(new Date()).getTime()} Message={this.state.MessageText} UserPhoto={localStorage.UserPhoto}/>);
+        this.setState({
+            MessageList:Temp
+        },function () {
+            this.setState({
+                MessageText:""
+            });
+            Temp = null;
+        });
     },
     componentWillMount:function () {
         var temp = this.state.MessageList;
         if(this.props.UnreadMessage){
             for(var i=0; i<this.props.UnreadMessage.length; i++){
-                temp.push(<ChatItemOther key={new Date()} Message={this.props.UnreadMessage[i].Message} UserPhoto={this.props.UserPhoto}/>);
+                temp.push(<ChatItemOther key={temp.length+1} Message={this.props.UnreadMessage[i].Message} UserPhoto={this.props.UserPhoto}/>);
             }
             this.setState({
-                MessageList:temp
+                MessageList:temp,
             },function () {
                 temp = null;
-            });
+            }.bind(this));
         }
     },
-    componentWillReceiveProps:function () {
-        var temp = this.state.MessageList;
-        if(this.props.UnreadMessage){
-            for(var i=0; i<this.props.UnreadMessage.length; i++){
-                temp.push(<ChatItemOther key={new Date()} Message={this.props.UnreadMessage[i].Message} UserPhoto={this.props.UserPhoto}/>);
-            }
-            this.setState({
-                MessageList:temp
-            },function () {
-                temp = null;
-            });
+    componentDidMount:function () {
+        this.props.ClearUnreadMessage();
+        if(this.state.isOpen){
+            socket.on("New Message",function (data) {
+                var temp = this.state.MessageList;
+                temp.push(<ChatItemOther key={temp.length+1} Message={data.Message} UserPhoto={this.props.UserPhoto}/>);
+                this.setState({
+                    MessageList:temp
+                },function () {
+                    temp = null;
+                })
+            }.bind(this));
         }
     }
 });

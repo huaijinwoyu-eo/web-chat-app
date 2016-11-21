@@ -293,6 +293,12 @@ canvas.user-photo{
 .friend-list .list .info .online-tag span.true{
     background: #51dacf;
 }
+.chat-base{
+    color: #cccccc;
+    font-size: 25px;
+    padding: 200px 15px 0;
+    text-align: center;
+}
 .chat-form{
     float: left;
     height: 640px;

@@ -9,6 +9,8 @@ var UserInfo = require("./user-info");
 var socket = require("../client-io/init");
 //引入用户朋友列表
 var FriendList = require("./friend-list-friend");
+//聊天部分基本信息提示
+var ChatBase = require("./chat-panel-base");
 
 
 var LoginPage = React.createClass({
@@ -123,6 +125,10 @@ var LoginPage = React.createClass({
                                 <FriendList username={this.state.username}/>,
                                 document.getElementById("user-list")
                             );
+                            ReactDOM.render(
+                                <ChatBase Text="双击朋友列表，可以打开聊天界面进行聊天。"/>,
+                                document.getElementById("chat-form")
+                            );
                             break;
                         case "4":this.setState({
                             status:"密码错误，请重新输入。",
@@ -149,6 +155,10 @@ var LoginPage = React.createClass({
                             ReactDOM.render(
                                 <FriendList username={this.state.username}/>,
                                 document.getElementById("user-list")
+                            );
+                            ReactDOM.render(
+                                <ChatBase Text="双击朋友列表，可以打开聊天界面进行聊天。"/>,
+                                document.getElementById("chat-form")
                             );
                             break;
                         default:break;

@@ -221,7 +221,7 @@ io.on('connection', function(socket){
                 return false;
             }else if(doc){
                 if(doc.OnlineTag){
-                    if(doc.OnlineTag && doc.socket_id){
+                    if(doc.socket_id){
                         io.sockets.sockets[doc.socket_id].emit("New Message",{
                             username:data.baseUsername,
                             Message:data.Message
@@ -241,10 +241,12 @@ io.on('connection', function(socket){
 
             }
         })
-    })
-
-
-
+    });
+    /*用户已经知道有未读信息，查看后删除*/
+    //用户username指的是当前用户，的用户名。
+    socket.on("ClearUnreadMessage",function (username) {
+        Users.findOne({})
+    });
     socket.on("disconnect",function () {
         Users.findOne({socket_id:socket.id},function (err, doc) {
             if(err){

@@ -132,33 +132,27 @@ var UserList = React.createClass({
                         count++;
                     }
                 }
+                console.log(data);
+                var temp = data.FriendList;
+                for(var i=0; i<data.UnreadMessage.length; i++){
+                    for(var j=0; j<temp.length; j++){
+                        if(temp[j].username == data.UnreadMessage[i].username){
+                            temp[j].UnreadMessage.push(data.UnreadMessage[i]);
+                        }else {
+                            break;
+                        }
+                    }
+                }
                 this.setState({
                     AddingNumber:data.requireAddFriendList.length,
                     AddedNumber:count,
-                    FriendsDate:data.FriendList,
+                    FriendsDate:temp,
                     TempFriendList:data.TempFriendList,
                     requireAddFriendList:data.requireAddFriendList,
                 },function () {
-                    var temp = this.state.FriendsDate;
-                    for(var i=0; i<data.UnreadMessage.length; i++){
-                        for(var j=0; j<temp.length; j++){
-                            temp[j].UnreadMessage = [];
-                            temp[j].hasMessage = false;
-                            if(temp[j].username == data.UnreadMessage[i].username){
-                                temp[j].hasMessage = false;
-                                temp[j].UnreadMessage.push(data.UnreadMessage[i]);
-                            }else {
-                                break;
-                            }
-                        }
-                    }
-                    this.setState({
-                        FriendsDate:temp
-                    },function () {
-                        temp = null;
-                        count = null;
-                    });
-                }.bind(this,data));
+                    temp = null;
+                    count = null;
+                }.bind(this));
             }.bind(this)
         });
     },
@@ -328,28 +322,7 @@ var UserList = React.createClass({
                 }.bind(this)
             })
         }.bind(this));
-        //有人给你发送新消息
-        socket.on("New Message",function (data) {
-            console.log("new message");
-            var temp = this.state.FriendsDate;
-            for(var i=0; i<temp.length; i++){
-                temp[i].UnreadMessage = [];
-                temp[i].hasMessage = false;
-                temp[i].clearMessageTag = function () {
-                    this.hasMessage = false;
-                }.bind(this);
-                if(temp[i].username == data.username){
-                    temp[i].hasMessage = true;
-                    temp[i].UnreadMessage.push(data);
-                    break;
-                }
-            }
-            this.setState({
-                FriendsDate:temp
-            },function () {
-                temp = null;
-            });
-        }.bind(this))
+
     }
 });
 

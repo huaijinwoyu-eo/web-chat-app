@@ -106,6 +106,20 @@ router.post("/uploadImage",function (req, res, next) {
                 res.send("1");
                 return
             }
+            for(var i=0; i<doc.FriendList.length; i++){
+                User.findOne({username:doc.FriendList[i].username},function (err, obj) {
+                    if(err){
+                        console.log(err);
+                    }else if(obj){
+                        for(var j=0; j<obj.FriendList.length; j++){
+                            if(obj.FriendList[j].username == doc.username){
+                                obj.FriendList[j].UserPhoto = req.body.targetImage;
+                                break;
+                            }
+                        }
+                    }
+                }.bind(doc))
+            }
             res.send("2");
         })
     })
@@ -138,9 +152,24 @@ router.post("/upText",function (req, res, next) {
                 if(err){
                     console.log(err);
                     res.send("1");
-                }else{
-                    res.send("2");
+                    return;
                 }
+                for(var i=0; i<doc.FriendList.length; i++){
+                    User.findOne({username:doc.FriendList[i].username},function (err, obj) {
+                        if(err){
+                            console.log(err);
+                        }else if(obj){
+                            for(var j=0; j<obj.FriendList.length; j++){
+                                if(obj.FriendList[j].username == doc.username){
+                                    obj.FriendList[j].UserText = req.body.userText;
+                                    break;
+                                }
+                            }
+                        }
+                    }.bind(doc))
+                }
+                res.send("2");
+
             })
         }
     })

@@ -8,7 +8,7 @@ var YouFriend = React.createClass({
         var ItemsNew = [];
         var ItemOnline = [];
         var ItemNotOnline = [];
-        for(var i in this.props.FriendsDate){
+        for(var i=0; i<this.props.FriendsDate.length; i++){
             if(this.props.FriendsDate[i].New){
                 ItemsNew.push(<Item key = {this.props.FriendsDate[i].id} RemoveNewTag={this.props.RemoveNewTag} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
             }else if(this.props.FriendsDate[i].OnlineTag && !this.props.FriendsDate[i].New){
@@ -18,7 +18,6 @@ var YouFriend = React.createClass({
             }
         }
         var Items = ItemsNew.concat(ItemOnline).concat(ItemNotOnline);
-        // console.log(this.props.FriendsDate);
         return(
             <div className="YouFriend">
                 {Items}
