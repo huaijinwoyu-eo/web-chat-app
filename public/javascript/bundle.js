@@ -40516,6 +40516,7 @@
 	        }.bind(this));
 	        //有人上线，相关操作
 	        socket.on("someone is online",function () {
+	            console.log("some is online");
 	            Jquery.ajax({
 	                type:"POST",
 	                url:"/users/getYouFriend",
@@ -40543,6 +40544,7 @@
 	        }.bind(this));
 	        //有人下线，相关操作。
 	        socket.on("someone is leaved",function () {
+	            console.log("some is leaved");
 	            Jquery.ajax({
 	                type:"POST",
 	                url:"/users/getYouFriend",
@@ -41061,7 +41063,7 @@
 	            return(
 	                React.createElement("li", {className: "item", onDoubleClick: this.HandleOpenChatForm}, 
 	                    React.createElement("img", {src: this.props.BaseDate.UserPhoto, alt: "", className: "user-photo fl"}), 
-	                    React.createElement("div", {className: "unreadcount"}, this.state.UnreadMessage.length), 
+	                    React.createElement("div", {className: "unreadcount"}, !this.state.isOpened ? this.state.UnreadMessage.length : ""), 
 	                    React.createElement("div", {className: "info"}, 
 	                        React.createElement("p", {className: "name"}, this.props.BaseDate.username), 
 	                        React.createElement("div", {className: "message"}, this.props.BaseDate.UserText), 
@@ -41099,6 +41101,10 @@
 	    },
 	    HandleOpenChatForm:function (event) {
 	        event.preventDefault();
+	        /*如果有未读信息，就删除掉。*/
+	        if(this.state.UnreadMessage.length > 0){
+	            socket.emit("ClearUnreadMessage",this.props.username);
+	        }
 	        this.setState({
 	            isOpened:true
 	        },function () {
@@ -41121,9 +41127,9 @@
 	        })
 	    },
 	    componentDidMount:function () {
-	        console.log(this.state.isOpened);
 	        if(!this.state.isOpened){
 	            socket.on("New Message",function (data) {
+	                console.log("222");
 	                if(data.username == this.props.BaseDate.username){
 	                    var temp = this.state.UnreadMessage;
 	                    temp.push(data);
@@ -41211,6 +41217,7 @@
 	            baseUsername:this.props.baseUsername,//当前用户的 用户名
 	            Message:this.state.MessageText
 	        });
+	        console.log("emit");
 	        var Temp = this.state.MessageList;
 	        Temp.push(React.createElement(ChatItemMy, {key: (new Date()).getTime(), Message: this.state.MessageText, UserPhoto: localStorage.UserPhoto}));
 	        this.setState({

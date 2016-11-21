@@ -129,10 +129,10 @@ var UserListItem = React.createClass({
             UnreadMessage:[]
         })
     },
-    componentWillMount:function () {
-        console.log(this.state.isOpened);
+    componentDidMount:function () {
         if(!this.state.isOpened){
             socket.on("New Message",function (data) {
+                console.log("222");
                 if(data.username == this.props.BaseDate.username){
                     var temp = this.state.UnreadMessage;
                     temp.push(data);

@@ -270,6 +270,7 @@ var UserList = React.createClass({
         }.bind(this));
         //有人上线，相关操作
         socket.on("someone is online",function () {
+            console.log("some is online");
             Jquery.ajax({
                 type:"POST",
                 url:"/users/getYouFriend",
@@ -297,6 +298,7 @@ var UserList = React.createClass({
         }.bind(this));
         //有人下线，相关操作。
         socket.on("someone is leaved",function () {
+            console.log("some is leaved");
             Jquery.ajax({
                 type:"POST",
                 url:"/users/getYouFriend",

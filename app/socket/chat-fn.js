@@ -18,7 +18,7 @@ io.on('connection', function(socket){
             }else if(doc){
                 doc.socket_id = socket.id;
                 doc.OnlineTag = true;
-                doc.loginTime = socket.handshake.issued;
+                doc.loginTime = (new Date()).getTime();
                 doc.save(function (err) {
                     if(err) return console.log(err);
                     for(var i = 0; i<doc.FriendList.length; i++){
@@ -91,7 +91,9 @@ io.on('connection', function(socket){
                             UserPhoto:doc.TempFriendList[i].UserPhoto,
                             // UserText:"对方同意添加",
                             // OnlineTag:false,
-                            New:true
+                            New:true,
+                            UnreadMessage:[],
+                            isOpened:false
                         });
                         /*如果该项与对应对象名字相同，则删掉。*/
                         doc.TempFriendList.splice(i,1);
@@ -118,7 +120,9 @@ io.on('connection', function(socket){
                                                 UserPhoto:doc.UserPhoto,
                                                 UserText:doc.UserText,
                                                 OnlineTag:doc.OnlineTag,
-                                                New:false
+                                                New:false,
+                                                UnreadMessage:[],
+                                                isOpened:false
                                             });
                                             obj.save(function (err) {
                                                 if(err){
@@ -222,6 +226,7 @@ io.on('connection', function(socket){
             }else if(doc){
                 if(doc.OnlineTag){
                     if(doc.socket_id){
+                        console.log("start");
                         io.sockets.sockets[doc.socket_id].emit("New Message",{
                             username:data.baseUsername,
                             Message:data.Message
@@ -245,7 +250,20 @@ io.on('connection', function(socket){
     /*用户已经知道有未读信息，查看后删除*/
     //用户username指的是当前用户，的用户名。
     socket.on("ClearUnreadMessage",function (username) {
-        Users.findOne({})
+        Users.findOne({username:username},function (err, doc) {
+            if(err){
+                console.log(err);
+            }else if(doc){
+                doc.set({
+                    UnreadMessage:[]
+                });
+                doc.save(function (err) {
+                    if(err){
+                        console.log(err);
+                    }
+                });
+            }
+        })
     });
     socket.on("disconnect",function () {
         Users.findOne({socket_id:socket.id},function (err, doc) {

@@ -114,6 +114,11 @@ router.post("/uploadImage",function (req, res, next) {
                         for(var j=0; j<obj.FriendList.length; j++){
                             if(obj.FriendList[j].username == doc.username){
                                 obj.FriendList[j].UserPhoto = req.body.targetImage;
+                                obj.save(function (err) {
+                                    if(err){
+                                        console.log(err);
+                                    }
+                                });
                                 break;
                             }
                         }
@@ -162,6 +167,11 @@ router.post("/upText",function (req, res, next) {
                             for(var j=0; j<obj.FriendList.length; j++){
                                 if(obj.FriendList[j].username == doc.username){
                                     obj.FriendList[j].UserText = req.body.userText;
+                                    obj.save(function (err) {
+                                        if(err){
+                                            console.log(err);
+                                        }
+                                    });
                                     break;
                                 }
                             }

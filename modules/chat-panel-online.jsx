@@ -65,6 +65,7 @@ var ChatPanel = React.createClass({
             baseUsername:this.props.baseUsername,//当前用户的 用户名
             Message:this.state.MessageText
         });
+        console.log("emit");
         var Temp = this.state.MessageList;
         Temp.push(<ChatItemMy key={(new Date()).getTime()} Message={this.state.MessageText} UserPhoto={localStorage.UserPhoto}/>);
         this.setState({
