@@ -41203,8 +41203,6 @@
 	                    });
 	                }
 	            }.bind(this));
-	        }else {
-	            io.sockets.removeAllListeners("New Message");
 	        }
 	    }
 	});
@@ -41265,7 +41263,7 @@
 	        event.preventDefault();
 	        this.props.ChangeIsOpen();
 	        this.setState({
-	            isOpened:false
+	            isOpen:false
 	        });
 	        ReactDOM.render(
 	            React.createElement(ChatBase, {Text: "双击朋友列表，可以打开聊天界面进行聊天。"}),
@@ -41312,20 +41310,22 @@
 	        }
 	        if(this.state.isOpen){
 	            socket.on("New Message",function (data) {
-	                var temp = this.state.MessageList;
-	                temp.push(React.createElement(ChatItemOther, {key: temp.length+1, Message: data.Message, UserPhoto: this.props.UserPhoto}));
-	                this.setState({
-	                    MessageList:temp
-	                },function () {
-	                    temp = null;
-	                })
+	                if(this.state.isOpen){
+	                    var temp = this.state.MessageList;
+	                    temp.push(React.createElement(ChatItemOther, {key: temp.length+1, Message: data.Message, UserPhoto: this.props.UserPhoto}));
+	                    this.setState({
+	                        MessageList:temp
+	                    },function () {
+	                        temp = null;
+	                    })
+	                }
 	            }.bind(this));
 	        }
 	    },
 	    componentWillUnmount:function () {
-	        socket.on("New Message",function (data) {
-	            console.log("nothing");
-	        }.bind(this));
+	        this.setState({
+	            isOpen:false
+	        });
 	    }
 	});
 

@@ -158,8 +158,6 @@ var UserListItem = React.createClass({
                     });
                 }
             }.bind(this));
-        }else {
-            io.sockets.removeAllListeners("New Message");
         }
     }
 });

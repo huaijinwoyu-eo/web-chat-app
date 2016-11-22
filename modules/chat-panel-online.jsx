@@ -48,7 +48,7 @@ var ChatPanel = React.createClass({
         event.preventDefault();
         this.props.ChangeIsOpen();
         this.setState({
-            isOpened:false
+            isOpen:false
         });
         ReactDOM.render(
             <ChatBase Text="双击朋友列表，可以打开聊天界面进行聊天。"/>,
@@ -95,20 +95,22 @@ var ChatPanel = React.createClass({
         }
         if(this.state.isOpen){
             socket.on("New Message",function (data) {
-                var temp = this.state.MessageList;
-                temp.push(<ChatItemOther key={temp.length+1} Message={data.Message} UserPhoto={this.props.UserPhoto}/>);
-                this.setState({
-                    MessageList:temp
-                },function () {
-                    temp = null;
-                })
+                if(this.state.isOpen){
+                    var temp = this.state.MessageList;
+                    temp.push(<ChatItemOther key={temp.length+1} Message={data.Message} UserPhoto={this.props.UserPhoto}/>);
+                    this.setState({
+                        MessageList:temp
+                    },function () {
+                        temp = null;
+                    })
+                }
             }.bind(this));
         }
     },
     componentWillUnmount:function () {
-        socket.on("New Message",function (data) {
-            console.log("nothing");
-        }.bind(this));
+        this.setState({
+            isOpen:false
+        });
     }
 });
 
