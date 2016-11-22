@@ -3,6 +3,10 @@ var ReactDOM = require("react-dom");
 var Jquery = require("jquery");
 //时钟模块
 var Clock = require("./clock");
+//socket
+var socket = require("../client-io/init");
+
+
 var UserImage = React.createClass({
     getInitialState:function () {
         return{
@@ -80,6 +84,7 @@ var UserImage = React.createClass({
                             if(localStorage.UserPhoto != this.state.targetImage || !localStorage.UserPhoto){
                                 localStorage.UserPhoto = this.state.targetImage
                             }
+                            socket.emit("Updata",this.props.username);
                             setTimeout(function () {
                                 ReactDOM.render(
                                     <Clock title="当前时钟" tipsText="点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"/>,

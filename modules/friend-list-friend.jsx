@@ -163,7 +163,7 @@ var UserList = React.createClass({
         );
         //有人已经确认添加你了
         socket.on("Added you",function (text) {
-            console.log("add you");
+            console.log("add you",text);
             Jquery.ajax({
                 type:"POST",
                 url:"/users/getFriends",
@@ -184,17 +184,31 @@ var UserList = React.createClass({
                     }else {
 
                     }
+
+                    var Temp = data.FriendList;
+                    for(var i=0; i<data.UnreadMessage.length; i++){
+                        for(var j=0; j<Temp.length; j++){
+                            if(Temp[j].username == data.UnreadMessage[i].username){
+                                Temp[j].UnreadMessage.push(data.UnreadMessage[i]);
+                            }else {
+                                break;
+                            }
+                        }
+                    }
+
                     this.setState({
-                        FriendsDate:data.FriendList,
+                        FriendsDate:Temp,
                         TempFriendList:data.TempFriendList,
                         requireAddFriendList:data.requireAddFriendList,
+                        AddingNumber:data.requireAddFriendList.length,
                         AddedNumber:temp,
                         isYourFriend:"1",
                         isHasRequir:"0",
                         isAddingYou:"0",
-                        title:"朋友列表",
+                        title:"朋友列表"
                     },function () {
                         temp = null;
+                        Temp = null;
                         Jquery("#list-select .list-btn").eq(0).trigger("click");
                     });
                 }.bind(this)
@@ -267,6 +281,34 @@ var UserList = React.createClass({
                     });
                 }.bind(this)
             });
+        }.bind(this));
+        //对方更改头像或者更改签名之后通知更新朋友列表，自己的好友列表接受该事件。
+        socket.on("updata you friendList",function () {
+            console.log("someone has change his info");
+            Jquery.ajax({
+                type:"POST",
+                url:"/users/getYouFriend",
+                data:{
+                    username:this.props.username
+                },
+                success:function (data) {
+                    if(data == "err"){
+                        ReactDOM.render(
+                            <FriendListBase Text="列表读取失败，请稍后刷新页面重试。"/>,
+                            document.getElementById("user-list")
+                        )
+                    }
+                    this.setState({
+                        FriendsDate:data.FriendsDate,
+                        isYourFriend:"1",
+                        isHasRequir:"0",
+                        isAddingYou:"0",
+                        title:"朋友列表"
+                    },function () {
+                        Jquery("#list-select .list-btn").eq(0).trigger("click");
+                    });
+                }.bind(this)
+            })
         }.bind(this));
         //有人上线，相关操作
         socket.on("someone is online",function () {

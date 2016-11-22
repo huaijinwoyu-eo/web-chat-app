@@ -91,9 +91,7 @@ io.on('connection', function(socket){
                             UserPhoto:doc.TempFriendList[i].UserPhoto,
                             // UserText:"对方同意添加",
                             // OnlineTag:false,
-                            New:true,
-                            UnreadMessage:[],
-                            isOpened:false
+                            New:true
                         });
                         /*如果该项与对应对象名字相同，则删掉。*/
                         doc.TempFriendList.splice(i,1);
@@ -120,9 +118,7 @@ io.on('connection', function(socket){
                                                 UserPhoto:doc.UserPhoto,
                                                 UserText:doc.UserText,
                                                 OnlineTag:doc.OnlineTag,
-                                                New:false,
-                                                UnreadMessage:[],
-                                                isOpened:false
+                                                New:false
                                             });
                                             obj.save(function (err) {
                                                 if(err){
@@ -247,6 +243,7 @@ io.on('connection', function(socket){
             }
         })
     });
+
     /*用户已经知道有未读信息，查看后删除*/
     //用户username指的是当前用户，的用户名。
     socket.on("ClearUnreadMessage",function (username) {
@@ -265,6 +262,27 @@ io.on('connection', function(socket){
             }
         })
     });
+    /*提示更新好友列表，在更换头像或者更改签名的时候*/
+    socket.on("Updata",function (username) {
+        Users.findOne({username:username},function (err, doc) {
+            if(err){
+                console.log(err);
+            }else if(doc){
+                for(var i=0; i<doc.FriendList.length; i++){
+                    Users.findOne({username:doc.FriendList[i].username},function (err, obj) {
+                        if(err){
+                            console.log(err)
+                        }else if(obj){
+                            if(obj.OnlineTag && obj.socket_id){
+                                io.sockets.sockets[obj.socket_id].emit("updata you friendList");
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    });
+    /*用户下线。*/
     socket.on("disconnect",function () {
         Users.findOne({socket_id:socket.id},function (err, doc) {
             if(err){

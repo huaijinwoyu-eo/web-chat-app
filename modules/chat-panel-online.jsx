@@ -47,6 +47,9 @@ var ChatPanel = React.createClass({
     HandleClose:function (event) {
         event.preventDefault();
         this.props.ChangeIsOpen();
+        this.setState({
+            isOpened:false
+        });
         ReactDOM.render(
             <ChatBase Text="双击朋友列表，可以打开聊天界面进行聊天。"/>,
             document.getElementById("chat-form")
@@ -77,7 +80,8 @@ var ChatPanel = React.createClass({
             Temp = null;
         });
     },
-    componentWillMount:function () {
+    componentDidMount:function () {
+        this.props.ClearUnreadMessage();
         var temp = this.state.MessageList;
         if(this.props.UnreadMessage){
             for(var i=0; i<this.props.UnreadMessage.length; i++){
@@ -89,9 +93,6 @@ var ChatPanel = React.createClass({
                 temp = null;
             }.bind(this));
         }
-    },
-    componentDidMount:function () {
-        this.props.ClearUnreadMessage();
         if(this.state.isOpen){
             socket.on("New Message",function (data) {
                 var temp = this.state.MessageList;
@@ -103,6 +104,11 @@ var ChatPanel = React.createClass({
                 })
             }.bind(this));
         }
+    },
+    componentWillUnmount:function () {
+        socket.on("New Message",function (data) {
+            console.log("nothing");
+        }.bind(this));
     }
 });
 

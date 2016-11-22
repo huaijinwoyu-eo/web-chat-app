@@ -32105,7 +32105,8 @@
 	                    if(code == "1"){
 	                        alert("签名修改失败，请稍后重试。")
 	                    }else if(code=="2"){
-	                        alert("签名修改成功。")
+	                        alert("签名修改成功。");
+	                        socket.emit("Updata",this.props.username);
 	                    }
 	                    this.setState({
 	                        userBeforeText:this.state.userText
@@ -32346,6 +32347,10 @@
 	var Jquery = __webpack_require__(174);
 	//时钟模块
 	var Clock = __webpack_require__(175);
+	//socket
+	var socket = __webpack_require__(179);
+
+
 	var UserImage = React.createClass({displayName: "UserImage",
 	    getInitialState:function () {
 	        return{
@@ -32423,6 +32428,7 @@
 	                            if(localStorage.UserPhoto != this.state.targetImage || !localStorage.UserPhoto){
 	                                localStorage.UserPhoto = this.state.targetImage
 	                            }
+	                            socket.emit("Updata",this.props.username);
 	                            setTimeout(function () {
 	                                ReactDOM.render(
 	                                    React.createElement(Clock, {title: "当前时钟", tipsText: "点击头像可以更换自己喜欢的头像，点击用户名可以退出当前登录。"}),
@@ -40409,7 +40415,7 @@
 	        );
 	        //有人已经确认添加你了
 	        socket.on("Added you",function (text) {
-	            console.log("add you");
+	            console.log("add you",text);
 	            Jquery.ajax({
 	                type:"POST",
 	                url:"/users/getFriends",
@@ -40430,17 +40436,31 @@
 	                    }else {
 
 	                    }
+
+	                    var Temp = data.FriendList;
+	                    for(var i=0; i<data.UnreadMessage.length; i++){
+	                        for(var j=0; j<Temp.length; j++){
+	                            if(Temp[j].username == data.UnreadMessage[i].username){
+	                                Temp[j].UnreadMessage.push(data.UnreadMessage[i]);
+	                            }else {
+	                                break;
+	                            }
+	                        }
+	                    }
+
 	                    this.setState({
-	                        FriendsDate:data.FriendList,
+	                        FriendsDate:Temp,
 	                        TempFriendList:data.TempFriendList,
 	                        requireAddFriendList:data.requireAddFriendList,
+	                        AddingNumber:data.requireAddFriendList.length,
 	                        AddedNumber:temp,
 	                        isYourFriend:"1",
 	                        isHasRequir:"0",
 	                        isAddingYou:"0",
-	                        title:"朋友列表",
+	                        title:"朋友列表"
 	                    },function () {
 	                        temp = null;
+	                        Temp = null;
 	                        Jquery("#list-select .list-btn").eq(0).trigger("click");
 	                    });
 	                }.bind(this)
@@ -40513,6 +40533,34 @@
 	                    });
 	                }.bind(this)
 	            });
+	        }.bind(this));
+	        //对方更改头像或者更改签名之后通知更新朋友列表，自己的好友列表接受该事件。
+	        socket.on("updata you friendList",function () {
+	            console.log("someone has change his info");
+	            Jquery.ajax({
+	                type:"POST",
+	                url:"/users/getYouFriend",
+	                data:{
+	                    username:this.props.username
+	                },
+	                success:function (data) {
+	                    if(data == "err"){
+	                        ReactDOM.render(
+	                            React.createElement(FriendListBase, {Text: "列表读取失败，请稍后刷新页面重试。"}),
+	                            document.getElementById("user-list")
+	                        )
+	                    }
+	                    this.setState({
+	                        FriendsDate:data.FriendsDate,
+	                        isYourFriend:"1",
+	                        isHasRequir:"0",
+	                        isAddingYou:"0",
+	                        title:"朋友列表"
+	                    },function () {
+	                        Jquery("#list-select .list-btn").eq(0).trigger("click");
+	                    });
+	                }.bind(this)
+	            })
 	        }.bind(this));
 	        //有人上线，相关操作
 	        socket.on("someone is online",function () {
@@ -41063,7 +41111,7 @@
 	            return(
 	                React.createElement("li", {className: "item", onDoubleClick: this.HandleOpenChatForm}, 
 	                    React.createElement("img", {src: this.props.BaseDate.UserPhoto, alt: "", className: "user-photo fl"}), 
-	                    React.createElement("div", {className: "unreadcount"}, !this.state.isOpened ? this.state.UnreadMessage.length : ""), 
+	                    React.createElement("div", {className: "unreadcount"}, !this.state.isOpened && this.state.UnreadMessage.length>0 ? this.state.UnreadMessage.length : ""), 
 	                    React.createElement("div", {className: "info"}, 
 	                        React.createElement("p", {className: "name"}, this.props.BaseDate.username), 
 	                        React.createElement("div", {className: "message"}, this.props.BaseDate.UserText), 
@@ -41101,7 +41149,7 @@
 	    },
 	    HandleOpenChatForm:function (event) {
 	        event.preventDefault();
-	        /*如果有未读信息，就删除掉。*/
+	        /*如果有未读信息，就删除掉，对应后的数据库操作。*/
 	        if(this.state.UnreadMessage.length > 0){
 	            socket.emit("ClearUnreadMessage",this.props.username);
 	        }
@@ -41117,7 +41165,8 @@
 	    /*改变聊天窗口是否打开的标识符。*/
 	    HandelChangeIsOpen:function () {
 	        this.setState({
-	            isOpened:false
+	            isOpened:false,
+	            UnreadMessage:[]
 	        });
 	    },
 	    /*去除未读信息*/
@@ -41127,12 +41176,26 @@
 	        })
 	    },
 	    componentDidMount:function () {
-	        if(!this.state.isOpened){
+	        console.log({
+	            "frist":"yes",
+	            "isopened":this.state.isOpened,
+	            "UnreadMessage":this.state.UnreadMessage,
+	            "props":this.props.BaseDate.UnreadMessage
+	        });
+	        /*这里之所以要写成这样，就是因为初次加载临时好友的时候组件已经加载过一次了，此时this.state.isOpened是undefined */
+	        /*如果写成！this.state.isOpened这种写法，socket监听事件会被注册。导致出错。*/
+	        if(this.state.isOpened === false){
 	            socket.on("New Message",function (data) {
-	                console.log("222");
+	                console.log({
+	                    "isopened":this.state.isOpened,
+	                    "UnreadMessage":this.state.UnreadMessage,
+	                    "props":this.props.BaseDate.UnreadMessage
+	                });
 	                if(data.username == this.props.BaseDate.username){
 	                    var temp = this.state.UnreadMessage;
 	                    temp.push(data);
+	                    console.log("temp",temp);
+	                    console.log("UnreadMessage",this.state.UnreadMessage);
 	                    this.setState({
 	                        UnreadMessage:temp
 	                    },function () {
@@ -41140,6 +41203,8 @@
 	                    });
 	                }
 	            }.bind(this));
+	        }else {
+	            io.sockets.removeAllListeners("New Message");
 	        }
 	    }
 	});
@@ -41199,6 +41264,9 @@
 	    HandleClose:function (event) {
 	        event.preventDefault();
 	        this.props.ChangeIsOpen();
+	        this.setState({
+	            isOpened:false
+	        });
 	        ReactDOM.render(
 	            React.createElement(ChatBase, {Text: "双击朋友列表，可以打开聊天界面进行聊天。"}),
 	            document.getElementById("chat-form")
@@ -41229,7 +41297,8 @@
 	            Temp = null;
 	        });
 	    },
-	    componentWillMount:function () {
+	    componentDidMount:function () {
+	        this.props.ClearUnreadMessage();
 	        var temp = this.state.MessageList;
 	        if(this.props.UnreadMessage){
 	            for(var i=0; i<this.props.UnreadMessage.length; i++){
@@ -41241,9 +41310,6 @@
 	                temp = null;
 	            }.bind(this));
 	        }
-	    },
-	    componentDidMount:function () {
-	        this.props.ClearUnreadMessage();
 	        if(this.state.isOpen){
 	            socket.on("New Message",function (data) {
 	                var temp = this.state.MessageList;
@@ -41255,6 +41321,11 @@
 	                })
 	            }.bind(this));
 	        }
+	    },
+	    componentWillUnmount:function () {
+	        socket.on("New Message",function (data) {
+	            console.log("nothing");
+	        }.bind(this));
 	    }
 	});
 

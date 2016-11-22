@@ -49,7 +49,8 @@ var UserInfo = React.createClass({
                     if(code == "1"){
                         alert("签名修改失败，请稍后重试。")
                     }else if(code=="2"){
-                        alert("签名修改成功。")
+                        alert("签名修改成功。");
+                        socket.emit("Updata",this.props.username);
                     }
                     this.setState({
                         userBeforeText:this.state.userText

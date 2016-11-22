@@ -35,7 +35,10 @@ var UserSchema = new mongoose.Schema({
         UserText:String,
         OnlineTag:Boolean,
         New:Boolean,
-        UnreadMessage:[],
+        UnreadMessage:{
+            type:Array,
+            default:[]
+        },
         isOpened:{
             type:Boolean,
             default:false
