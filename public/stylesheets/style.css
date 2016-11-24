@@ -293,11 +293,12 @@ canvas.user-photo{
 .friend-list .list .info .online-tag span.true{
     background: #51dacf;
 }
-.chat-base{
+.chat-form p{
     color: #cccccc;
     font-size: 25px;
     padding: 200px 15px 0;
     text-align: center;
+    line-height: 40px;
 }
 .chat-form{
     float: left;
@@ -309,6 +310,9 @@ canvas.user-photo{
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
+    position: absolute;
+    top: -20px;
+    left: 275px;
 }
 .chat-form hr{
     width: 100%;

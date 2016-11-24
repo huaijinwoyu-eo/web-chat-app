@@ -6,8 +6,6 @@ var ChatItemOther = require("./chat-item-other");
 var ChatItemMy = require("./chat-item-my");
 //引入socket
 var socket = require("../client-io/init");
-//聊天部分基本信息提示
-var ChatBase = require("./chat-panel-base");
 
 
 
@@ -16,51 +14,54 @@ var ChatPanel = React.createClass({
         return{
             MessageList:[],
             MessageText:"",
-            isOpen:this.props.isOpened,
             UnreadMessage:this.props.UnreadMessage
         }
     },
     render:function () {
-        return(
-            <form onSubmit={this.HandleSendMessage}>
-                <div className="item-title">
-                    <div className="name">
-                        {this.props.username}
-                    </div>
-                    <div className="form-close">
+        if(this.props.Text){
+            return(
+                <div className="chat-form">
+                    <p>{this.props.Text}</p>
+                </div>
+            )
+        }else {
+            return(
+                <form onSubmit={this.HandleSendMessage} className="chat-form">
+                    <div className="item-title">
+                        <div className="name">
+                            {this.props.username}
+                        </div>
+                        <div className="form-close">
                         <span className="fa fa-times" onClick={this.HandleClose}>
 
                         </span>
+                        </div>
                     </div>
-                </div>
-                <hr/>
-                <div className="message-list">
-                    {this.state.MessageList}
-                </div>
-                <div className="message-send">
-                    <input type="text" placeholder="Type you message." onChange={this.HandleChange} value={this.state.MessageText}/>
-                    <input type="submit" className="fr" value={" "}/>
-                </div>
-            </form>
-        )
+                    <hr/>
+                    <div className="message-list">
+                        {this.state.MessageList}
+                    </div>
+                    <div className="message-send">
+                        <input type="text" placeholder="Type you message." onChange={this.HandleChange} value={this.state.MessageText}/>
+                        <input type="submit" className="fr" value={" "}/>
+                    </div>
+                </form>
+            )
+        }
+
     },
+    /*关闭聊天窗口*/
     HandleClose:function (event) {
         event.preventDefault();
-        this.props.ChangeIsOpen();
-        this.setState({
-            isOpen:false
-        });
-        ReactDOM.render(
-            <ChatBase Text="双击朋友列表，可以打开聊天界面进行聊天。"/>,
-            document.getElementById("chat-form")
-        );
     },
+    /*text-input数据改变，更新组件的数据。*/
     HandleChange:function (event) {
         event.preventDefault();
         this.setState({
             MessageText:event.target.value
         });
     },
+    /*数据发送函数。*/
     HandleSendMessage:function (event) {
         event.preventDefault();
         socket.emit("sendMessage",{
@@ -80,36 +81,16 @@ var ChatPanel = React.createClass({
             Temp = null;
         });
     },
+    /*组件完成加载之前，获取未读消息数据，进行渲染。*/
     componentDidMount:function () {
-        this.props.ClearUnreadMessage();
         var temp = this.state.MessageList;
-        if(this.props.UnreadMessage){
-            for(var i=0; i<this.props.UnreadMessage.length; i++){
-                temp.push(<ChatItemOther key={temp.length+1} Message={this.props.UnreadMessage[i].Message} UserPhoto={this.props.UserPhoto}/>);
-            }
-            this.setState({
-                MessageList:temp,
-            },function () {
-                temp = null;
-            }.bind(this));
+        for(var i=0; i<this.props.UnreadMessage.length; i++){
+            temp.push(<ChatItemOther key={temp.length+1} Message={this.props.UnreadMessage[i].Message} UserPhoto={this.props.UserPhoto}/>)
         }
-        if(this.state.isOpen){
-            socket.on("New Message",function (data) {
-                if(this.state.isOpen){
-                    var temp = this.state.MessageList;
-                    temp.push(<ChatItemOther key={temp.length+1} Message={data.Message} UserPhoto={this.props.UserPhoto}/>);
-                    this.setState({
-                        MessageList:temp
-                    },function () {
-                        temp = null;
-                    })
-                }
-            }.bind(this));
-        }
-    },
-    componentWillUnmount:function () {
         this.setState({
-            isOpen:false
+            MessageList:temp
+        },function () {
+            temp = null;
         });
     }
 });

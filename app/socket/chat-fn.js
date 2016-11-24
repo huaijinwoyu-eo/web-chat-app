@@ -222,7 +222,6 @@ io.on('connection', function(socket){
             }else if(doc){
                 if(doc.OnlineTag){
                     if(doc.socket_id){
-                        console.log("start");
                         io.sockets.sockets[doc.socket_id].emit("New Message",{
                             username:data.baseUsername,
                             Message:data.Message

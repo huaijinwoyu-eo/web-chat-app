@@ -12,8 +12,6 @@ var FriendList = require("./friend-list-friend");
 var FriendListBase = require("./friend-list-base");
 //登录按钮
 var SearchBtn = require("./search-btn");
-//聊天部分基本信息提示
-var ChatBase = require("./chat-panel-base");
 
 
 
@@ -39,10 +37,6 @@ if(content !== "") {
         <FriendList username={content}/>,
         document.getElementById("user-list")
     );
-    ReactDOM.render(
-        <ChatBase Text="双击朋友列表，可以打开聊天界面进行聊天。"/>,
-        document.getElementById("chat-form")
-    )
 }else {
     ReactDOM.render(
         <LoginRegister/>,
@@ -56,8 +50,4 @@ if(content !== "") {
         <SearchBtn username={null}/>,
         document.getElementById("search-btn")
     );
-    ReactDOM.render(
-        <ChatBase Text="请登录。"/>,
-        document.getElementById("chat-form")
-    )
 }
