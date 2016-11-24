@@ -31,7 +31,7 @@ var YouFriend = React.createClass({
         return(
             <div className="YouFriend">
                 {Items}
-                <ChatPanelOnline UnreadMessage={this.state.UnreadMessage} Text={this.state.Text} username={this.state.username} baseUsername={this.props.username}/>
+                <ChatPanelOnline UnreadMessage={this.state.UnreadMessage} Text={this.state.Text} username={this.state.username} baseUsername={this.props.username} UserPhoto={this.state.UserPhoto}/>
             </div>
         )
     },
@@ -44,15 +44,15 @@ var YouFriend = React.createClass({
             Text:""
         });
     },
-    componentDidMount:function () {
-        if(this.props.FriendsDate.length == 0){
+    componentWillReceiveProps:function (nextprops) {
+        if(nextprops.FriendsDate.length == 0){
             this.setState({
                 Text:"目前您还没有好友，可以点击右上方的搜索按钮进行好友搜索。"
             });
-        }else{
+        }else {
             this.setState({
                 Text:"双击用户列表，可以打开聊天窗口，进行聊天。"
-            })
+            });
         }
     }
 });

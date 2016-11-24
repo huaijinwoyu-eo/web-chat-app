@@ -119,13 +119,12 @@ var UserListItem = React.createClass({
             UnreadMessage:this.state.UnreadMessage,
             username:this.props.BaseDate.username,
             UserPhoto:this.props.BaseDate.UserPhoto
-        },function () {
-            /*改变聊天窗口是否打开的标识符，并且清空未读消息列表。并且要在上层操作进行完之后进行。*/
-            this.setState({
-                UnreadMessage:[],
-                isOpened:true
-            })
-        }.bind(this));
+        });
+        /*改变聊天窗口是否打开的标识符，并且清空未读消息列表。并且要在上层操作进行完之后进行。*/
+        this.setState({
+            UnreadMessage:[],
+            isOpened:true
+        })
     },
     componentDidMount:function () {
         /*这里之所以要写成这样，就是因为初次加载临时好友（addTempFriend）的时候组件已经加载过一次了，此时this.state.isOpened是undefined */
@@ -145,30 +144,18 @@ var UserListItem = React.createClass({
                     }
                 }else {
                     if(data.username == this.props.BaseDate.username){
+                        var Temp = [];
+                        Temp.push(data);
                         this.props.GetMessageData({
-                            UnreadMessage:data,
+                            UnreadMessage:Temp,
                             username:data.username,
                             UserPhoto:this.props.BaseDate.UserPhoto
-                        })
+                        });
+                        Temp = null;
                     }
                 }
             }.bind(this));
         }
-        // if(this.state.isOpened === false){
-        //     socket.on("New Message",function (data) {
-        //         if(data.username == this.props.BaseDate.username){
-        //             var temp = this.state.UnreadMessage;
-        //             temp.push(data);
-        //             this.setState({
-        //                 UnreadMessage:temp
-        //             },function () {
-        //                 temp = null;
-        //             });
-        //         }
-        //     }.bind(this));
-        // }else {
-        //
-        // }
     }
 });
 

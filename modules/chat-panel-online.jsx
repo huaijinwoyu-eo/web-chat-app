@@ -6,7 +6,8 @@ var ChatItemOther = require("./chat-item-other");
 var ChatItemMy = require("./chat-item-my");
 //引入socket
 var socket = require("../client-io/init");
-
+/*jquery*/
+var Jquery = require("jquery");
 
 
 var ChatPanel = React.createClass({
@@ -38,7 +39,7 @@ var ChatPanel = React.createClass({
                         </div>
                     </div>
                     <hr/>
-                    <div className="message-list">
+                    <div className="message-list" id="message-list">
                         {this.state.MessageList}
                     </div>
                     <div className="message-send">
@@ -82,16 +83,22 @@ var ChatPanel = React.createClass({
         });
     },
     /*组件完成加载之前，获取未读消息数据，进行渲染。*/
-    componentDidMount:function () {
+    componentWillReceiveProps:function (nextprops) {
         var temp = this.state.MessageList;
-        for(var i=0; i<this.props.UnreadMessage.length; i++){
-            temp.push(<ChatItemOther key={temp.length+1} Message={this.props.UnreadMessage[i].Message} UserPhoto={this.props.UserPhoto}/>)
+        for(var i=0; i<nextprops.UnreadMessage.length; i++){
+            temp.push(<ChatItemOther key={temp.length+1} Message={nextprops.UnreadMessage[i].Message} UserPhoto={nextprops.UserPhoto}/>)
         }
         this.setState({
             MessageList:temp
         },function () {
             temp = null;
         });
+    },
+    componentDidUpdate:function () {
+        var TargetObj = document.getElementById("message-list");
+        if(TargetObj){
+            TargetObj.scrollTop = TargetObj.scrollHeight;
+        }
     }
 });
 

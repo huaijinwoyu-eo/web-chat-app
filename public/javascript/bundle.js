@@ -41022,7 +41022,7 @@
 	        return(
 	            React.createElement("div", {className: "YouFriend"}, 
 	                Items, 
-	                React.createElement(ChatPanelOnline, {UnreadMessage: this.state.UnreadMessage, Text: this.state.Text, username: this.state.username, baseUsername: this.props.username})
+	                React.createElement(ChatPanelOnline, {UnreadMessage: this.state.UnreadMessage, Text: this.state.Text, username: this.state.username, baseUsername: this.props.username, UserPhoto: this.state.UserPhoto})
 	            )
 	        )
 	    },
@@ -41035,15 +41035,15 @@
 	            Text:""
 	        });
 	    },
-	    componentDidMount:function () {
-	        if(this.props.FriendsDate.length == 0){
+	    componentWillReceiveProps:function (nextprops) {
+	        if(nextprops.FriendsDate.length == 0){
 	            this.setState({
 	                Text:"目前您还没有好友，可以点击右上方的搜索按钮进行好友搜索。"
 	            });
-	        }else{
+	        }else {
 	            this.setState({
 	                Text:"双击用户列表，可以打开聊天窗口，进行聊天。"
-	            })
+	            });
 	        }
 	    }
 	});
@@ -41175,13 +41175,12 @@
 	            UnreadMessage:this.state.UnreadMessage,
 	            username:this.props.BaseDate.username,
 	            UserPhoto:this.props.BaseDate.UserPhoto
-	        },function () {
-	            /*改变聊天窗口是否打开的标识符，并且清空未读消息列表。并且要在上层操作进行完之后进行。*/
-	            this.setState({
-	                UnreadMessage:[],
-	                isOpened:true
-	            })
-	        }.bind(this));
+	        });
+	        /*改变聊天窗口是否打开的标识符，并且清空未读消息列表。并且要在上层操作进行完之后进行。*/
+	        this.setState({
+	            UnreadMessage:[],
+	            isOpened:true
+	        })
 	    },
 	    componentDidMount:function () {
 	        /*这里之所以要写成这样，就是因为初次加载临时好友（addTempFriend）的时候组件已经加载过一次了，此时this.state.isOpened是undefined */
@@ -41201,30 +41200,18 @@
 	                    }
 	                }else {
 	                    if(data.username == this.props.BaseDate.username){
+	                        var Temp = [];
+	                        Temp.push(data);
 	                        this.props.GetMessageData({
-	                            UnreadMessage:data,
+	                            UnreadMessage:Temp,
 	                            username:data.username,
 	                            UserPhoto:this.props.BaseDate.UserPhoto
-	                        })
+	                        });
+	                        Temp = null;
 	                    }
 	                }
 	            }.bind(this));
 	        }
-	        // if(this.state.isOpened === false){
-	        //     socket.on("New Message",function (data) {
-	        //         if(data.username == this.props.BaseDate.username){
-	        //             var temp = this.state.UnreadMessage;
-	        //             temp.push(data);
-	        //             this.setState({
-	        //                 UnreadMessage:temp
-	        //             },function () {
-	        //                 temp = null;
-	        //             });
-	        //         }
-	        //     }.bind(this));
-	        // }else {
-	        //
-	        // }
 	    }
 	});
 
@@ -41242,7 +41229,8 @@
 	var ChatItemMy = __webpack_require__(240);
 	//引入socket
 	var socket = __webpack_require__(179);
-
+	/*jquery*/
+	var Jquery = __webpack_require__(174);
 
 
 	var ChatPanel = React.createClass({displayName: "ChatPanel",
@@ -41274,7 +41262,7 @@
 	                        )
 	                    ), 
 	                    React.createElement("hr", null), 
-	                    React.createElement("div", {className: "message-list"}, 
+	                    React.createElement("div", {className: "message-list", id: "message-list"}, 
 	                        this.state.MessageList
 	                    ), 
 	                    React.createElement("div", {className: "message-send"}, 
@@ -41318,16 +41306,22 @@
 	        });
 	    },
 	    /*组件完成加载之前，获取未读消息数据，进行渲染。*/
-	    componentDidMount:function () {
+	    componentWillReceiveProps:function (nextprops) {
 	        var temp = this.state.MessageList;
-	        for(var i=0; i<this.props.UnreadMessage.length; i++){
-	            temp.push(React.createElement(ChatItemOther, {key: temp.length+1, Message: this.props.UnreadMessage[i].Message, UserPhoto: this.props.UserPhoto}))
+	        for(var i=0; i<nextprops.UnreadMessage.length; i++){
+	            temp.push(React.createElement(ChatItemOther, {key: temp.length+1, Message: nextprops.UnreadMessage[i].Message, UserPhoto: nextprops.UserPhoto}))
 	        }
 	        this.setState({
 	            MessageList:temp
 	        },function () {
 	            temp = null;
 	        });
+	    },
+	    componentDidUpdate:function () {
+	        var TargetObj = document.getElementById("message-list");
+	        if(TargetObj){
+	            TargetObj.scrollTop = TargetObj.scrollHeight;
+	        }
 	    }
 	});
 
@@ -41448,12 +41442,12 @@
 	            React.createElement("div", {id: "list-select"}, 
 	                React.createElement("a", {href: "#", className: "list-btn cur", onClick: this.props.ShowFriendList}, 
 	                    "朋友列表", 
-	                    React.createElement("i", {className: "num"}, this.props.AddedNumber)
+	                    React.createElement("i", {className: "num"}, this.props.AddedNumber>0 ? this.props.AddedNumber : "")
 	                ), 
 	                React.createElement("a", {href: "#", className: "list-btn", onClick: this.props.ShowHasRequirList}, "已请求列表"), 
 	                React.createElement("a", {href: "#", className: "list-btn", onClick: this.props.ShowAddingYou}, 
 	                    "待确认列表", 
-	                    React.createElement("i", {className: "num"}, this.props.AddingNumber)
+	                    React.createElement("i", {className: "num"}, this.props.AddingNumber>0 ? this.props.AddingNumber : "")
 	                )
 	            )
 	        )
