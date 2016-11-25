@@ -123,6 +123,10 @@ var LoginPage = React.createClass({
                                 <FriendList username={this.state.username}/>,
                                 document.getElementById("user-list")
                             );
+                            /*设置聊天消息存储，local storage*/
+                            var s = window.localStorage;
+                            var test = [];
+                            s.setItem(this.state.username,JSON.stringify(test));
                             break;
                         case "4":this.setState({
                             status:"密码错误，请重新输入。",
@@ -150,6 +154,10 @@ var LoginPage = React.createClass({
                                 <FriendList username={this.state.username}/>,
                                 document.getElementById("user-list")
                             );
+                            /*设置聊天消息存储，local storage*/
+                            var s = window.localStorage;
+                            var test = [];
+                            s.setItem(this.state.username,JSON.stringify(test));
                             break;
                         default:break;
                     }

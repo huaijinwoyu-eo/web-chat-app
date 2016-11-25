@@ -12,6 +12,8 @@ var YouFriend = React.createClass({
             username:"",/*发送消息对象的名称，改状态通过friend-list组件来动态获取。*/
             UserPhoto:"",/*对方的头像。*/
             Text:"双击用户列表，可以打开聊天窗口，进行聊天。",/*消息发送窗口不打开时，需要在该区域现实的文字。*/
+            isOpened:false,
+            TheObj:""
         }
     },
     render:function () {
@@ -20,18 +22,18 @@ var YouFriend = React.createClass({
         var ItemNotOnline = [];
         for(var i=0; i<this.props.FriendsDate.length; i++){
             if(this.props.FriendsDate[i].New){
-                ItemsNew.push(<Item key = {this.props.FriendsDate[i].id} GetMessageData={this.HandleGetMessageData} RemoveNewTag={this.props.RemoveNewTag} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
+                ItemsNew.push(<Item key = {this.props.FriendsDate[i].id} isOpened={this.state.isOpened} TheObj={this.state.TheObj} GetMessageData={this.HandleGetMessageData} RemoveNewTag={this.props.RemoveNewTag} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
             }else if(this.props.FriendsDate[i].OnlineTag && !this.props.FriendsDate[i].New){
-                ItemOnline.push(<Item key = {this.props.FriendsDate[i].id} GetMessageData={this.HandleGetMessageData} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
+                ItemOnline.push(<Item key = {this.props.FriendsDate[i].id} isOpened={this.state.isOpened} TheObj={this.state.TheObj}  GetMessageData={this.HandleGetMessageData} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
             }else if(!this.props.FriendsDate[i].OnlineTag && !this.props.FriendsDate[i].New){
-                ItemNotOnline.push(<Item key = {this.props.FriendsDate[i].id} GetMessageData={this.HandleGetMessageData} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
+                ItemNotOnline.push(<Item key = {this.props.FriendsDate[i].id} isOpened={this.state.isOpened} TheObj={this.state.TheObj} GetMessageData={this.HandleGetMessageData} BaseDate={this.props.FriendsDate[i]} username={this.props.username}/>);
             }
         }
         var Items = ItemsNew.concat(ItemOnline).concat(ItemNotOnline);
         return(
             <div className="YouFriend">
                 {Items}
-                <ChatPanelOnline UnreadMessage={this.state.UnreadMessage} Text={this.state.Text} username={this.state.username} baseUsername={this.props.username} UserPhoto={this.state.UserPhoto}/>
+                <ChatPanelOnline ClosePanel={this.HandleClosePanel} UnreadMessage={this.state.UnreadMessage} Text={this.state.Text} username={this.state.username} baseUsername={this.props.username} UserPhoto={this.state.UserPhoto}/>
             </div>
         )
     },
@@ -42,6 +44,13 @@ var YouFriend = React.createClass({
             username:obj.username,
             UserPhoto:obj.UserPhoto,
             Text:""
+        });
+    },
+    /*关闭聊天窗口，相关操作*/
+    HandleClosePanel:function (obj) {
+        this.setState({
+            Text:"双击用户列表，可以打开聊天窗口，进行聊天。",
+            TheObj:obj
         });
     },
     componentWillReceiveProps:function (nextprops) {

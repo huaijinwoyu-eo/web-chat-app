@@ -10,7 +10,7 @@ var ChatPanelOnline = require("./chat-panel-online");
 var UserListItem = React.createClass({
     getInitialState:function () {
         return{
-            isOpened:this.props.BaseDate.isOpened,
+            isOpened:this.props.isOpened,
             UnreadMessage:this.props.BaseDate.UnreadMessage
         }
     },
@@ -46,8 +46,9 @@ var UserListItem = React.createClass({
         }
         else if(this.props.BaseDate.New){
             return(
-                <li className="item new">
+                <li className="item new" onDoubleClick={this.HandleOpenChatForm}>
                     <img src={this.props.BaseDate.UserPhoto} alt="" className="user-photo fl"/>
+                    <div className="unreadcount">{!this.state.isOpened && this.state.UnreadMessage.length>0 ? this.state.UnreadMessage.length : ""}</div>
                     <div className="info">
                         <p className="name">{this.props.BaseDate.username}</p>
                         <div className="message">{this.props.BaseDate.UserText}</div>
@@ -124,7 +125,20 @@ var UserListItem = React.createClass({
         this.setState({
             UnreadMessage:[],
             isOpened:true
-        })
+        },function () {
+            console.log("this state",this.state)
+        });
+    },
+    componentWillReceiveProps:function (nextprops) {
+        console.log("new props",nextprops);
+        var MessagesList = window.localStorage.getItem(this.props.username).split(",");
+        MessagesList = nextprops.BaseDate.UnreadMessage;
+        window.localStorage.setItem(this.props.username,JSON.stringify(MessagesList));
+        if(nextprops.TheObj == this.props.BaseDate.username){
+            this.setState({
+                isOpened:nextprops.isOpened
+            });
+        }
     },
     componentDidMount:function () {
         /*这里之所以要写成这样，就是因为初次加载临时好友（addTempFriend）的时候组件已经加载过一次了，此时this.state.isOpened是undefined */
@@ -132,18 +146,19 @@ var UserListItem = React.createClass({
         /*如果写成！this.state.isOpened 这种写法，socket监听事件会产生逻辑错误。。导致出错。*/
         if(this.state.isOpened === false){
             socket.on("New Message",function (data) {
-                if(!this.state.isOpened){
-                    if(data.username == this.props.BaseDate.username){
+                if(data.username == this.props.BaseDate.username){
+                    if(!this.state.isOpened){
                         var temp = this.state.UnreadMessage;
                         temp.push(data);
                         this.setState({
                             UnreadMessage:temp
                         },function () {
                             temp = null;
+                            var MessagesList = window.localStorage.getItem(this.props.username).split(",");
+                            MessagesList = this.state.UnreadMessage;
+                            window.localStorage.setItem(this.props.username,JSON.stringify(MessagesList));
                         });
-                    }
-                }else {
-                    if(data.username == this.props.BaseDate.username){
+                    }else {
                         var Temp = [];
                         Temp.push(data);
                         this.props.GetMessageData({
@@ -151,6 +166,9 @@ var UserListItem = React.createClass({
                             username:data.username,
                             UserPhoto:this.props.BaseDate.UserPhoto
                         });
+                        var MessagesList = window.localStorage.getItem(this.props.username).split(",");
+                        MessagesList.push(data);
+                        window.localStorage.setItem(this.props.username,JSON.stringify(MessagesList));
                         Temp = null;
                     }
                 }

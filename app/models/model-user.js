@@ -38,10 +38,6 @@ var UserSchema = new mongoose.Schema({
         UnreadMessage:{
             type:Array,
             default:[]
-        },
-        isOpened:{
-            type:Boolean,
-            default:false
         }
     }],
     TempFriendList:[{

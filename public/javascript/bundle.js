@@ -21627,6 +21627,10 @@
 	                                React.createElement(FriendList, {username: this.state.username}),
 	                                document.getElementById("user-list")
 	                            );
+	                            /*设置聊天消息存储，local storage*/
+	                            var s = window.localStorage;
+	                            var test = [];
+	                            s.setItem(this.state.username,JSON.stringify(test));
 	                            break;
 	                        case "4":this.setState({
 	                            status:"密码错误，请重新输入。",
@@ -21654,6 +21658,10 @@
 	                                React.createElement(FriendList, {username: this.state.username}),
 	                                document.getElementById("user-list")
 	                            );
+	                            /*设置聊天消息存储，local storage*/
+	                            var s = window.localStorage;
+	                            var test = [];
+	                            s.setItem(this.state.username,JSON.stringify(test));
 	                            break;
 	                        default:break;
 	                    }
@@ -41003,6 +41011,8 @@
 	            username:"",/*发送消息对象的名称，改状态通过friend-list组件来动态获取。*/
 	            UserPhoto:"",/*对方的头像。*/
 	            Text:"双击用户列表，可以打开聊天窗口，进行聊天。",/*消息发送窗口不打开时，需要在该区域现实的文字。*/
+	            isOpened:false,
+	            TheObj:""
 	        }
 	    },
 	    render:function () {
@@ -41011,18 +41021,18 @@
 	        var ItemNotOnline = [];
 	        for(var i=0; i<this.props.FriendsDate.length; i++){
 	            if(this.props.FriendsDate[i].New){
-	                ItemsNew.push(React.createElement(Item, {key: this.props.FriendsDate[i].id, GetMessageData: this.HandleGetMessageData, RemoveNewTag: this.props.RemoveNewTag, BaseDate: this.props.FriendsDate[i], username: this.props.username}));
+	                ItemsNew.push(React.createElement(Item, {key: this.props.FriendsDate[i].id, isOpened: this.state.isOpened, TheObj: this.state.TheObj, GetMessageData: this.HandleGetMessageData, RemoveNewTag: this.props.RemoveNewTag, BaseDate: this.props.FriendsDate[i], username: this.props.username}));
 	            }else if(this.props.FriendsDate[i].OnlineTag && !this.props.FriendsDate[i].New){
-	                ItemOnline.push(React.createElement(Item, {key: this.props.FriendsDate[i].id, GetMessageData: this.HandleGetMessageData, BaseDate: this.props.FriendsDate[i], username: this.props.username}));
+	                ItemOnline.push(React.createElement(Item, {key: this.props.FriendsDate[i].id, isOpened: this.state.isOpened, TheObj: this.state.TheObj, GetMessageData: this.HandleGetMessageData, BaseDate: this.props.FriendsDate[i], username: this.props.username}));
 	            }else if(!this.props.FriendsDate[i].OnlineTag && !this.props.FriendsDate[i].New){
-	                ItemNotOnline.push(React.createElement(Item, {key: this.props.FriendsDate[i].id, GetMessageData: this.HandleGetMessageData, BaseDate: this.props.FriendsDate[i], username: this.props.username}));
+	                ItemNotOnline.push(React.createElement(Item, {key: this.props.FriendsDate[i].id, isOpened: this.state.isOpened, TheObj: this.state.TheObj, GetMessageData: this.HandleGetMessageData, BaseDate: this.props.FriendsDate[i], username: this.props.username}));
 	            }
 	        }
 	        var Items = ItemsNew.concat(ItemOnline).concat(ItemNotOnline);
 	        return(
 	            React.createElement("div", {className: "YouFriend"}, 
 	                Items, 
-	                React.createElement(ChatPanelOnline, {UnreadMessage: this.state.UnreadMessage, Text: this.state.Text, username: this.state.username, baseUsername: this.props.username, UserPhoto: this.state.UserPhoto})
+	                React.createElement(ChatPanelOnline, {ClosePanel: this.HandleClosePanel, UnreadMessage: this.state.UnreadMessage, Text: this.state.Text, username: this.state.username, baseUsername: this.props.username, UserPhoto: this.state.UserPhoto})
 	            )
 	        )
 	    },
@@ -41033,6 +41043,13 @@
 	            username:obj.username,
 	            UserPhoto:obj.UserPhoto,
 	            Text:""
+	        });
+	    },
+	    /*关闭聊天窗口，相关操作*/
+	    HandleClosePanel:function (obj) {
+	        this.setState({
+	            Text:"双击用户列表，可以打开聊天窗口，进行聊天。",
+	            TheObj:obj
 	        });
 	    },
 	    componentWillReceiveProps:function (nextprops) {
@@ -41066,7 +41083,7 @@
 	var UserListItem = React.createClass({displayName: "UserListItem",
 	    getInitialState:function () {
 	        return{
-	            isOpened:this.props.BaseDate.isOpened,
+	            isOpened:this.props.isOpened,
 	            UnreadMessage:this.props.BaseDate.UnreadMessage
 	        }
 	    },
@@ -41102,8 +41119,9 @@
 	        }
 	        else if(this.props.BaseDate.New){
 	            return(
-	                React.createElement("li", {className: "item new"}, 
+	                React.createElement("li", {className: "item new", onDoubleClick: this.HandleOpenChatForm}, 
 	                    React.createElement("img", {src: this.props.BaseDate.UserPhoto, alt: "", className: "user-photo fl"}), 
+	                    React.createElement("div", {className: "unreadcount"}, !this.state.isOpened && this.state.UnreadMessage.length>0 ? this.state.UnreadMessage.length : ""), 
 	                    React.createElement("div", {className: "info"}, 
 	                        React.createElement("p", {className: "name"}, this.props.BaseDate.username), 
 	                        React.createElement("div", {className: "message"}, this.props.BaseDate.UserText), 
@@ -41180,7 +41198,20 @@
 	        this.setState({
 	            UnreadMessage:[],
 	            isOpened:true
-	        })
+	        },function () {
+	            console.log("this state",this.state)
+	        });
+	    },
+	    componentWillReceiveProps:function (nextprops) {
+	        console.log("new props",nextprops);
+	        var MessagesList = window.localStorage.getItem(this.props.username).split(",");
+	        MessagesList = nextprops.BaseDate.UnreadMessage;
+	        window.localStorage.setItem(this.props.username,JSON.stringify(MessagesList));
+	        if(nextprops.TheObj == this.props.BaseDate.username){
+	            this.setState({
+	                isOpened:nextprops.isOpened
+	            });
+	        }
 	    },
 	    componentDidMount:function () {
 	        /*这里之所以要写成这样，就是因为初次加载临时好友（addTempFriend）的时候组件已经加载过一次了，此时this.state.isOpened是undefined */
@@ -41188,18 +41219,19 @@
 	        /*如果写成！this.state.isOpened 这种写法，socket监听事件会产生逻辑错误。。导致出错。*/
 	        if(this.state.isOpened === false){
 	            socket.on("New Message",function (data) {
-	                if(!this.state.isOpened){
-	                    if(data.username == this.props.BaseDate.username){
+	                if(data.username == this.props.BaseDate.username){
+	                    if(!this.state.isOpened){
 	                        var temp = this.state.UnreadMessage;
 	                        temp.push(data);
 	                        this.setState({
 	                            UnreadMessage:temp
 	                        },function () {
 	                            temp = null;
+	                            var MessagesList = window.localStorage.getItem(this.props.username).split(",");
+	                            MessagesList = this.state.UnreadMessage;
+	                            window.localStorage.setItem(this.props.username,JSON.stringify(MessagesList));
 	                        });
-	                    }
-	                }else {
-	                    if(data.username == this.props.BaseDate.username){
+	                    }else {
 	                        var Temp = [];
 	                        Temp.push(data);
 	                        this.props.GetMessageData({
@@ -41207,6 +41239,9 @@
 	                            username:data.username,
 	                            UserPhoto:this.props.BaseDate.UserPhoto
 	                        });
+	                        var MessagesList = window.localStorage.getItem(this.props.username).split(",");
+	                        MessagesList.push(data);
+	                        window.localStorage.setItem(this.props.username,JSON.stringify(MessagesList));
 	                        Temp = null;
 	                    }
 	                }
@@ -41229,8 +41264,6 @@
 	var ChatItemMy = __webpack_require__(240);
 	//引入socket
 	var socket = __webpack_require__(179);
-	/*jquery*/
-	var Jquery = __webpack_require__(174);
 
 
 	var ChatPanel = React.createClass({displayName: "ChatPanel",
@@ -41277,6 +41310,7 @@
 	    /*关闭聊天窗口*/
 	    HandleClose:function (event) {
 	        event.preventDefault();
+	        this.props.ClosePanel(this.props.username);
 	    },
 	    /*text-input数据改变，更新组件的数据。*/
 	    HandleChange:function (event) {
@@ -41288,26 +41322,40 @@
 	    /*数据发送函数。*/
 	    HandleSendMessage:function (event) {
 	        event.preventDefault();
-	        socket.emit("sendMessage",{
-	            username:this.props.username,//想要发送给谁，那个用户的用户名。
-	            baseUsername:this.props.baseUsername,//当前用户的 用户名
-	            Message:this.state.MessageText
-	        });
-	        console.log("emit");
-	        var Temp = this.state.MessageList;
-	        Temp.push(React.createElement(ChatItemMy, {key: (new Date()).getTime(), Message: this.state.MessageText, UserPhoto: localStorage.UserPhoto}));
-	        this.setState({
-	            MessageList:Temp
-	        },function () {
-	            this.setState({
-	                MessageText:""
+	        if(this.state.MessageText){
+	            socket.emit("sendMessage",{
+	                username:this.props.username,//想要发送给谁，那个用户的用户名。
+	                baseUsername:this.props.baseUsername,//当前用户的 用户名
+	                Message:this.state.MessageText
 	            });
-	            Temp = null;
-	        });
+	            console.log("emit");
+	            var Temp = this.state.MessageList;
+	            Temp.push(React.createElement(ChatItemMy, {key: (new Date()).getTime(), Message: this.state.MessageText, UserPhoto: localStorage.UserPhoto}));
+	            this.setState({
+	                MessageList:Temp
+	            },function () {
+	                this.setState({
+	                    MessageText:""
+	                });
+	                Temp = null;
+	            });
+	        }else {
+	            alert("消息为空时，不能发送。");
+	        }
 	    },
 	    /*组件完成加载之前，获取未读消息数据，进行渲染。*/
 	    componentWillReceiveProps:function (nextprops) {
-	        var temp = this.state.MessageList;
+	        /*打开一个新的聊天窗口时，不能显示上一个聊天窗口的消息。（如果下一个username和当前的不一样）*/
+	        var temp = [];
+	        if(nextprops.username != this.props.username){
+	            this.setState({
+	                MessageList:[]
+	            },function () {
+	                temp = this.state.MessageList;
+	            }.bind(this));
+	        }else {
+	            temp = this.state.MessageList;
+	        }
 	        for(var i=0; i<nextprops.UnreadMessage.length; i++){
 	            temp.push(React.createElement(ChatItemOther, {key: temp.length+1, Message: nextprops.UnreadMessage[i].Message, UserPhoto: nextprops.UserPhoto}))
 	        }
