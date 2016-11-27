@@ -13,7 +13,8 @@ var ChatPanel = React.createClass({
         return{
             MessageList:[],
             MessageText:"",
-            UnreadMessage:this.props.UnreadMessage
+            targetUsername:this.props.username,
+            targetUserPhoto:this.props.UserPhoto
         }
     },
     render:function () {
@@ -81,31 +82,92 @@ var ChatPanel = React.createClass({
                 });
                 Temp = null;
             });
+            /*localStorage存储自己发送的消息*/
+            var ThisUsername = this.props.baseUsername;
+            var MessageList = JSON.parse(localStorage[ThisUsername]);
+            if(!MessageList[this.state.targetUsername]){
+                MessageList[this.state.targetUsername] = [];
+            }
+            MessageList[this.state.targetUsername].push({
+                Message:this.state.MessageText,
+                from:2
+            });
+            localStorage.setItem(ThisUsername,JSON.stringify(MessageList));
         }else {
             alert("消息为空时，不能发送。");
         }
     },
     /*组件完成加载之前，获取未读消息数据，进行渲染。*/
     componentWillReceiveProps:function (nextprops) {
-        /*打开一个新的聊天窗口时，不能显示上一个聊天窗口的消息。（如果下一个username和当前的不一样）*/
         var temp = [];
-        if(nextprops.username != this.props.username){
+        /*打开一个新的聊天窗口时，不能显示上一个聊天窗口的消息。（如果下一个username和当前的不一样）*/
+        if(nextprops.username != this.state.targetUsername){
+            this.setState({
+                MessageList:[],
+                targetUsername:nextprops.username,
+                targetUserPhoto:nextprops.UserPhoto
+            },function () {
+                temp = this.state.MessageList;
+            });
+        }else {
             this.setState({
                 MessageList:[]
             },function () {
                 temp = this.state.MessageList;
-            }.bind(this));
+            });
+        }
+
+        /*localstroage 存储*/
+        var ThisUsername = this.props.baseUsername;
+        if(!localStorage[ThisUsername]){
+            var MessageListL = {};
+            var subUsernameHas = this.state.targetUsername;
+            if(!MessageListL[subUsernameHas]) {
+                MessageListL[subUsernameHas] = [];
+            }
+            for(var i=0; i<nextprops.UnreadMessage.length; i++){
+                MessageListL[subUsernameHas].push({
+                    Message:nextprops.UnreadMessage[i].Message,
+                    from:1
+                })
+            }
+            /*渲染*/
+            for(var i=0; i<nextprops.UnreadMessage.length; i++){
+                temp.push(<ChatItemOther key={temp.length+1} Message={nextprops.UnreadMessage[i].Message} UserPhoto={this.state.targetUserPhoto}/>)
+            }
+            this.setState({
+                MessageList:temp
+            },function () {
+                temp = null;
+            });
+            localStorage.setItem(ThisUsername,JSON.stringify(MessageListL));
         }else {
-            temp = this.state.MessageList;
+            var MessageList = JSON.parse(localStorage.getItem(ThisUsername));
+            var subUsername = this.state.targetUsername;
+            if(!MessageList[subUsername]){
+                MessageList[subUsername] = [];
+            }
+            for(var i=0; i<nextprops.UnreadMessage.length; i++){
+                MessageList[subUsername].push({
+                    Message:nextprops.UnreadMessage[i].Message,
+                    from:1
+                })
+            }
+            /*渲染*/
+            for(var i=0; i<MessageList[subUsername].length; i++){
+                if(MessageList[subUsername][i].from == 1){
+                    temp.push(<ChatItemOther key={temp.length+1} Message={MessageList[subUsername][i].Message} UserPhoto={this.state.targetUserPhoto}/>)
+                }else {
+                    temp.push(<ChatItemMy key={temp.length+1} Message={MessageList[subUsername][i].Message} UserPhoto={localStorage.UserPhoto}/>)
+                }
+            }
+            this.setState({
+                MessageList:temp
+            },function () {
+                temp = null;
+            });
+            localStorage.setItem(ThisUsername,JSON.stringify(MessageList));
         }
-        for(var i=0; i<nextprops.UnreadMessage.length; i++){
-            temp.push(<ChatItemOther key={temp.length+1} Message={nextprops.UnreadMessage[i].Message} UserPhoto={nextprops.UserPhoto}/>)
-        }
-        this.setState({
-            MessageList:temp
-        },function () {
-            temp = null;
-        });
     },
     componentDidUpdate:function () {
         var TargetObj = document.getElementById("message-list");

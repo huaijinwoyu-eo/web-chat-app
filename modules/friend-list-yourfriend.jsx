@@ -33,7 +33,7 @@ var YouFriend = React.createClass({
         return(
             <div className="YouFriend">
                 {Items}
-                <ChatPanelOnline ClosePanel={this.HandleClosePanel} UnreadMessage={this.state.UnreadMessage} Text={this.state.Text} username={this.state.username} baseUsername={this.props.username} UserPhoto={this.state.UserPhoto}/>
+                <ChatPanelOnline ClosePanel={this.HandleClosePanel} Text={this.state.Text} UnreadMessage={this.state.UnreadMessage} username={this.state.username} baseUsername={this.props.username} UserPhoto={this.state.UserPhoto}/>
             </div>
         )
     },
