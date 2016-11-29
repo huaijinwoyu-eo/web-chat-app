@@ -132,7 +132,6 @@ var UserList = React.createClass({
                         count++;
                     }
                 }
-                console.log(data);
                 var temp = data.FriendList;
                 for(var i=0; i<data.UnreadMessage.length; i++){
                     for(var j=0; j<temp.length; j++){

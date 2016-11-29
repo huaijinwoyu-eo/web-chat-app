@@ -117,7 +117,7 @@ var UserListItem = React.createClass({
         }
         /*调用父层提供的方法，以打开聊天窗口。*/
         this.props.GetMessageData({
-            UnreadMessage:this.props.BaseDate.UnreadMessage,
+            UnreadMessage:this.state.UnreadMessage,
             username:this.props.BaseDate.username,
             UserPhoto:this.props.BaseDate.UserPhoto
         });
@@ -125,13 +125,10 @@ var UserListItem = React.createClass({
         this.setState({
             UnreadMessage:[],
             isOpened:true
-        },function () {
-            console.log("this state",this.state)
         });
 
     },
     componentWillReceiveProps:function (nextprops) {
-        console.log("new props",nextprops);
         if(nextprops.TheObj == this.props.BaseDate.username){
             this.setState({
                 isOpened:nextprops.isOpened
@@ -153,35 +150,13 @@ var UserListItem = React.createClass({
                         },function () {
                             temp = null;
                         });
-                        /*localStorage 消息存储*/
-                        var ThisUserName = this.props.username;
-                        if(!localStorage[ThisUserName]){
-                            var MessageListL = {};
-                            var subUsernameL = data.username;
-                            if(!MessageListL[subUsernameL]){
-                                MessageListL[subUsernameL] = [];
-                            }
-                            MessageListL[subUsernameL].push({
-                                Message:data.Message,
-                                from:1
-                            });
-                            localStorage.setItem(ThisUserName,JSON.stringify(MessageListL))
-                        }else {
-                            var MessageList = JSON.parse(localStorage[ThisUserName]);
-                            var subUsername = data.username;
-                            if(!MessageList[subUsername]){
-                                MessageList[subUsername] = [];
-                            }
-                            MessageList[subUsername].push({
-                                Message:data.Message,
-                                from:1
-                            });
-                            var str = JSON.stringify(MessageList);
-                            localStorage.setItem(ThisUserName,str);
-                        }
                     }else {
+                        console.log("it is opened.");
+                        /*data是一个对象，而不是一个数组，所以需要转换一下。*/
+                        var Temp = [];
+                        Temp.push(data);
                         this.props.GetMessageData({
-                            UnreadMessage:data,
+                            UnreadMessage:Temp,
                             username:data.username,
                             UserPhoto:this.props.BaseDate.UserPhoto
                         });

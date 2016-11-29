@@ -43,14 +43,16 @@ var YouFriend = React.createClass({
             UnreadMessage:obj.UnreadMessage,
             username:obj.username,
             UserPhoto:obj.UserPhoto,
-            Text:""
+            Text:"",
+            TheObj:""
         });
     },
     /*关闭聊天窗口，相关操作*/
     HandleClosePanel:function (obj) {
         this.setState({
             Text:"双击用户列表，可以打开聊天窗口，进行聊天。",
-            TheObj:obj
+            TheObj:obj,
+            UnreadMessage:[]
         });
     },
     componentWillReceiveProps:function (nextprops) {
