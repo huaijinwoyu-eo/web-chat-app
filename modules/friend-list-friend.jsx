@@ -137,7 +137,6 @@ var UserList = React.createClass({
                     for(var j=0; j<temp.length; j++){
                         if(temp[j].username == data.UnreadMessage[i].username){
                             temp[j].UnreadMessage.push(data.UnreadMessage[i]);
-                        }else {
                             break;
                         }
                     }
@@ -189,7 +188,6 @@ var UserList = React.createClass({
                         for(var j=0; j<Temp.length; j++){
                             if(Temp[j].username == data.UnreadMessage[i].username){
                                 Temp[j].UnreadMessage.push(data.UnreadMessage[i]);
-                            }else {
                                 break;
                             }
                         }

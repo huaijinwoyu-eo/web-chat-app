@@ -120,7 +120,8 @@ var ChatPanel = React.createClass({
             }
             /*下一个窗口的用户名不能为空，并且和当前不是一个窗口。*/
             if(nextprops.username != this.props.username && nextprops.username){
-                console.log(1)
+                /*聊天窗口对象变了，同样要运行上一个窗口的关闭函数。*/
+                this.props.ClosePanelOfChange(this.props.username);
                 var Temp = [];
                 this.setState({
                     MessageList:[]
@@ -147,7 +148,6 @@ var ChatPanel = React.createClass({
                 });
                 localStorage.setItem(ThisUsername,JSON.stringify(MessageList));
             }else if(nextprops.username == this.props.username && nextprops.username){//同一个窗口。
-                console.log(2)
                 var temp = this.state.MessageList;
                 for(var i=0; i<nextprops.UnreadMessage.length; i++){
                     temp.push(<ChatItemOther key={temp.length +1} Message={nextprops.UnreadMessage[i].Message} UserPhoto={nextprops.UserPhoto} />);

@@ -33,7 +33,7 @@ var YouFriend = React.createClass({
         return(
             <div className="YouFriend">
                 {Items}
-                <ChatPanelOnline ClosePanel={this.HandleClosePanel} Text={this.state.Text} UnreadMessage={this.state.UnreadMessage} username={this.state.username} baseUsername={this.props.username} UserPhoto={this.state.UserPhoto}/>
+                <ChatPanelOnline ClosePanel={this.HandleClosePanel} ClosePanelOfChange={this.HandleClosePanelOfChange} Text={this.state.Text} UnreadMessage={this.state.UnreadMessage} username={this.state.username} baseUsername={this.props.username} UserPhoto={this.state.UserPhoto}/>
             </div>
         )
     },
@@ -51,6 +51,13 @@ var YouFriend = React.createClass({
     HandleClosePanel:function (obj) {
         this.setState({
             Text:"双击用户列表，可以打开聊天窗口，进行聊天。",
+            TheObj:obj,
+            UnreadMessage:[]
+        });
+    },
+    /*因为聊天窗口改变需要做的操作。*/
+    HandleClosePanelOfChange:function (obj) {
+        this.setState({
             TheObj:obj,
             UnreadMessage:[]
         });

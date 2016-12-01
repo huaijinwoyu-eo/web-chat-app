@@ -40369,7 +40369,6 @@
 	                    for(var j=0; j<temp.length; j++){
 	                        if(temp[j].username == data.UnreadMessage[i].username){
 	                            temp[j].UnreadMessage.push(data.UnreadMessage[i]);
-	                        }else {
 	                            break;
 	                        }
 	                    }
@@ -40421,7 +40420,6 @@
 	                        for(var j=0; j<Temp.length; j++){
 	                            if(Temp[j].username == data.UnreadMessage[i].username){
 	                                Temp[j].UnreadMessage.push(data.UnreadMessage[i]);
-	                            }else {
 	                                break;
 	                            }
 	                        }
@@ -41023,7 +41021,7 @@
 	        return(
 	            React.createElement("div", {className: "YouFriend"}, 
 	                Items, 
-	                React.createElement(ChatPanelOnline, {ClosePanel: this.HandleClosePanel, Text: this.state.Text, UnreadMessage: this.state.UnreadMessage, username: this.state.username, baseUsername: this.props.username, UserPhoto: this.state.UserPhoto})
+	                React.createElement(ChatPanelOnline, {ClosePanel: this.HandleClosePanel, ClosePanelOfChange: this.HandleClosePanelOfChange, Text: this.state.Text, UnreadMessage: this.state.UnreadMessage, username: this.state.username, baseUsername: this.props.username, UserPhoto: this.state.UserPhoto})
 	            )
 	        )
 	    },
@@ -41041,6 +41039,13 @@
 	    HandleClosePanel:function (obj) {
 	        this.setState({
 	            Text:"双击用户列表，可以打开聊天窗口，进行聊天。",
+	            TheObj:obj,
+	            UnreadMessage:[]
+	        });
+	    },
+	    /*因为聊天窗口改变需要做的操作。*/
+	    HandleClosePanelOfChange:function (obj) {
+	        this.setState({
 	            TheObj:obj,
 	            UnreadMessage:[]
 	        });
@@ -41361,7 +41366,8 @@
 	            }
 	            /*下一个窗口的用户名不能为空，并且和当前不是一个窗口。*/
 	            if(nextprops.username != this.props.username && nextprops.username){
-	                console.log(1)
+	                /*聊天窗口对象变了，同样要运行上一个窗口的关闭函数。*/
+	                this.props.ClosePanelOfChange(this.props.username);
 	                var Temp = [];
 	                this.setState({
 	                    MessageList:[]
@@ -41388,7 +41394,6 @@
 	                });
 	                localStorage.setItem(ThisUsername,JSON.stringify(MessageList));
 	            }else if(nextprops.username == this.props.username && nextprops.username){//同一个窗口。
-	                console.log(2)
 	                var temp = this.state.MessageList;
 	                for(var i=0; i<nextprops.UnreadMessage.length; i++){
 	                    temp.push(React.createElement(ChatItemOther, {key: temp.length +1, Message: nextprops.UnreadMessage[i].Message, UserPhoto: nextprops.UserPhoto}));
