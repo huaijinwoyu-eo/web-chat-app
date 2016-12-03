@@ -161,7 +161,6 @@ var UserList = React.createClass({
         );
         //有人已经确认添加你了
         socket.on("Added you",function (text) {
-            console.log("add you",text);
             Jquery.ajax({
                 type:"POST",
                 url:"/users/getFriends",

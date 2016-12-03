@@ -17,34 +17,42 @@ io.on('connection', function(socket){
                 return false;
             }else if(doc){
                 doc.socket_id = socket.id;
-                doc.OnlineTag = true;
                 doc.loginTime = (new Date()).getTime();
-                doc.save(function (err) {
-                    if(err) return console.log(err);
-                    for(var i = 0; i<doc.FriendList.length; i++){
-                        Users.findOne({username:doc.FriendList[i].username},function (err, obj) {
-                            if(err){
-                                console.log(err);
-                            }else if(obj){
-                                for(var j=0; j<obj.FriendList.length; j++){
-                                    if(obj.FriendList[j].username == doc.username){
-                                        obj.FriendList[j].OnlineTag = true;
-                                        break;
+                /*如果当前用户不在线，就登陆，并且提示好友列表内的用户更新数据。*/
+                /*主要是防止用户刷新，导致好友客户端重复加载数据。*/
+                if(!doc.OnlineTag){
+                    doc.OnlineTag = true;
+                    doc.save(function (err) {
+                        if(err) return console.log(err);
+                        for(var i = 0; i<doc.FriendList.length; i++){
+                            Users.findOne({username:doc.FriendList[i].username},function (err, obj) {
+                                if(err){
+                                    console.log(err);
+                                }else if(obj){
+                                    for(var j=0; j<obj.FriendList.length; j++){
+                                        if(obj.FriendList[j].username == doc.username){
+                                            obj.FriendList[j].OnlineTag = true;
+                                            break;
+                                        }
                                     }
+                                    obj.save(function (err) {
+                                        if(err){
+                                            console.log(err);
+                                        }
+                                        //如果用户登录，提示刷新。
+                                        if(obj.socket_id){
+                                            io.sockets.sockets[obj.socket_id].emit("someone is online");
+                                        }
+                                    }.bind(obj));
                                 }
-                                obj.save(function (err) {
-                                    if(err){
-                                        console.log(err);
-                                    }
-                                    //如果用户登录，提示刷新。
-                                    if(obj.socket_id){
-                                        io.sockets.sockets[obj.socket_id].emit("someone is online");
-                                    }
-                                }.bind(obj));
-                            }
-                        }.bind(doc))
-                    }
-                }.bind(doc));
+                            }.bind(doc))
+                        }
+                    }.bind(doc));
+                }else {
+                    doc.save(function (err) {
+                        if(err) return console.log(err);
+                    }.bind(doc));
+                }
             }
         })
     });
@@ -290,7 +298,6 @@ io.on('connection', function(socket){
                 doc.socket_id = "";
                 /*如果用户刷新页面，不广播用户下线信息。时间界限限制为20秒。*/
                 var TimePath = (new Date()).getTime() - doc.loginTime;
-                console.log(TimePath);
                 if(TimePath>20000){
                     doc.OnlineTag = false;
                     doc.save(function (err) {
